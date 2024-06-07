@@ -31,15 +31,13 @@
 							</thead>
 							<tbody>
 								<c:forEach var="info" items="${MainBoardInfo}">
-									<c:if test="${info.content_board_idx == obj.board_info_idx}">
-									 	<c:if test="${status.count <= 5}">
-											<tr>
-												<td class="text-center">${info.content_idx}</td>
-												<th><a href="${root }/board/read?content_idx=${info.content_idx }" >${info.content_subject}</a></th>
-												<td class="text-center d-none d-xl-table-cell">${info.content_date}</td>
-											</tr>	
-										</c:if>
-									</c:if>
+									<c:if test="${info.content_board_idx == obj.board_info_idx}">    
+			                                <tr>
+			                                    <td class="text-center">${info.content_idx}</td>
+			                                    <td><a href="${root }/board/read?content_idx=${info.content_idx }" >${info.content_subject}</a></td>
+			                                    <td class="text-center d-none d-xl-table-cell">${info.content_date}</td>
+			                                </tr>	 
+		                            	</c:if>	  
 								</c:forEach>
 							</tbody>
 						</table>

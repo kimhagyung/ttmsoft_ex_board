@@ -23,6 +23,7 @@ import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import kr.co.ttmsoft.beans.UserBean;
+import kr.co.ttmsoft.interceptor.LoginInterceptor;
 import kr.co.ttmsoft.interceptor.TopMenuInterceptor;
 import kr.co.ttmsoft.interceptor.TopMenuInterceptor2;
 import kr.co.ttmsoft.mapper.BoardMapper;
@@ -113,14 +114,18 @@ public class ServletAppContext implements WebMvcConfigurer {
 	}
 
 	@Override
-	public void addInterceptors(InterceptorRegistry registry) {
-
+	public void addInterceptors(InterceptorRegistry registry) { 
 		TopMenuInterceptor topMenuInterceptor = new TopMenuInterceptor(topMenuService);
 		TopMenuInterceptor2 topMenuInterceptor2 = new TopMenuInterceptor2(loginUserBean);
+		LoginInterceptor loginInterceptor=new LoginInterceptor(loginUserBean);
+		
 		InterceptorRegistration reg1 = registry.addInterceptor(topMenuInterceptor);
 		InterceptorRegistration reg2 = registry.addInterceptor(topMenuInterceptor2);
+		InterceptorRegistration reg3 = registry.addInterceptor(loginInterceptor);
+		
 		reg1.addPathPatterns("/**"); // 모든 요청에서 동작
 		reg2.addPathPatterns("/**");
+		reg3.addPathPatterns("/board/modify","/board/delete", "/user/modify");
 	}
 
 	@Bean

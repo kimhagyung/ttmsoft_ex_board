@@ -1,5 +1,6 @@
 package kr.co.ttmsoft.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +20,14 @@ public class MainController {
 	
 	@GetMapping("/index")
 	public String main(Model model) {
-		List<ContentBean> MainBoardInfo=boardService.getBoardInfoo();
+		List<ContentBean> MainBoardInfo=new ArrayList<ContentBean>();
+		for(int i=1;i<=4;i++) {
+			MainBoardInfo.addAll(boardService.getBoardInfoo(i)); 
+		}
+		
 		model.addAttribute("MainBoardInfo", MainBoardInfo); 
+		
+		
 		return "index";
 	} 
 

@@ -26,15 +26,13 @@
 							</div>
 							<div class="form-group">
 								<label for="board_content">내용</label>
-								<form:textarea path="content_text" id="board_content" name="board_content"
+								<form:textarea path="content_text" id="board_content" name="board_content" placeholder="내용을 입력해주세요"
 									class="form-control" rows="10" style="resize: none"></form:textarea>
 							</div>
 							<div class="form-group">
 								<form:label path="content_file" for="board_file">첨부 이미지</form:label> 
 								<input type="file" id="board_file" name="uploadFiles" class="form-control" accept="image/*" multiple  />
-							</div>
-							  
-							
+							</div>							  
 							<div class="form-group">
 								<div class="text-right">
 									<button type="submit" class="btn btn-primary">작성하기</button>

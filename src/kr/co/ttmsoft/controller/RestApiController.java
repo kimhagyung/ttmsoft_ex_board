@@ -12,6 +12,7 @@ public class RestApiController {
 	@Autowired
 	private UserService userService;
 	
+	//아이디 중복 검사 
 	@GetMapping("/user/checkUserIdExist/{user_id:.+}")
 	public boolean checkUserIdExist(@PathVariable String user_id) {
 		boolean chk = userService.checkuserIdExist(user_id);

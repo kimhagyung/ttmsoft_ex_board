@@ -20,7 +20,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 			throws Exception {
 		
 		if(loginUserBean.isUserLogin()==false) {
-			String contextPath=request.getContentType();
+			String contextPath=request.getContextPath();
 			response.sendRedirect(contextPath+"/user/not_login");
 			return false;
 		}

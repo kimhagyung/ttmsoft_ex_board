@@ -22,4 +22,8 @@ public class UserDao {
 	public String checkuserIdExist(String user_id) {
 		return UserMapper.checkuserIdExist(user_id);
 	}
+	
+	public void ModifyUserInfo(UserBean modifyUserBean) {
+		UserMapper.ModifyUserInfo(modifyUserBean);
+	}
 }

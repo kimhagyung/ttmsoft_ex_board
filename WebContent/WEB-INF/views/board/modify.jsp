@@ -32,7 +32,7 @@
 							</div>
 							<div class="form-group">
 							    <label for="board_content">내용</label>
-							    <textarea path="content_text" id="board_content" name="content_text" class="form-control" rows="10" style="resize: none">${boardInfo.content_text }</textarea>
+							    <textarea id="board_content" name="content_text" class="form-control" rows="10" style="resize: none">${boardInfo.content_text }</textarea>
 							</div>
 							<div class="form-group">
 								<form:label path="content_file" for="board_file">첨부 이미지</form:label> 

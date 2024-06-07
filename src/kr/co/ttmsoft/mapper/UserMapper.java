@@ -2,6 +2,7 @@ package kr.co.ttmsoft.mapper;
 
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import kr.co.ttmsoft.beans.UserBean;
 
@@ -14,4 +15,9 @@ public interface UserMapper {
 	
 	@Insert("insert into user_table values(user_seq.nextval, #{user_name}, #{user_id},#{user_pw}) ")
 	void addUserInfo(UserBean joinUserBean); //회원가입
+	
+	@Update("update user_table\r\n"
+			+ "set user_name=#{user_name, jdbcType=VARCHAR} ,user_id=#{user_id, jdbcType=VARCHAR}\r\n"
+			+ "where user_idx=#{user_idx}")
+	void ModifyUserInfo(UserBean modifyUserBean);
 }

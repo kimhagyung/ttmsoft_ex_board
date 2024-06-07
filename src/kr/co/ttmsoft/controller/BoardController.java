@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import kr.co.ttmsoft.beans.ContentBean;
+import kr.co.ttmsoft.beans.PageBean;
 import kr.co.ttmsoft.beans.UserBean;
 import kr.co.ttmsoft.service.BoardService;
 
@@ -31,15 +32,24 @@ public class BoardController {
 	private BoardService boardService;
 
 	@GetMapping("/main")
-	public String main(Model model) {
-		List<ContentBean> MainBoardInfo = boardService.getBoardInfoo();
+	public String main(Model model,@RequestParam(value="page",defaultValue="1") int page, @RequestParam("index") int content_board_idx) {
+		//List<ContentBean> MainBoardInfo = boardService.getBoardInfoo();
 		List<String> boardWriterName = new ArrayList<String>();
-
-		for (ContentBean main : MainBoardInfo) {
+		List<ContentBean> getPostPageInfo=boardService.getBoardPageInfo(content_board_idx, page);
+		
+		for (ContentBean main : getPostPageInfo) {
 			boardWriterName.add(boardService.getContentUserName(main.getContent_idx()));
 		}
-		model.addAttribute("MainBoardInfo", MainBoardInfo);
+		//model.addAttribute("MainBoardInfo", MainBoardInfo);
 		model.addAttribute("boardWriterName", boardWriterName);
+		
+		//-----------------------------------------------------------------------------------
+		model.addAttribute("MainBoardInfo", getPostPageInfo);
+		
+		PageBean pageBean = boardService.getBoardPageInfoCnt(page,content_board_idx);
+		model.addAttribute("pageBean", pageBean);
+		
+		System.out.println("전체 페이지 개수 "+pageBean.getPageCnt());
 		return "board/main";
 	}
 
@@ -77,7 +87,7 @@ public class BoardController {
 		try {
 			if (loginUserBean.isUserLogin() == true) {
 				boardService.addBoardInfo(boardPostBean, uploadFile);
-				model.addAttribute("content_board_idx", boardPostBean.getContent_board_idx());
+				model.addAttribute("content_board_idx", boardPostBean.getContent_board_idx()); 
 			} else {
 				System.out.println("로그인이 되어있지 않습니다.");
 				return "user/not_login";

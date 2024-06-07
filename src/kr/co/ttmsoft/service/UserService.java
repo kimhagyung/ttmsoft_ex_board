@@ -47,5 +47,9 @@ public class UserService {
 		}	
 	}
 	
+	public void ModifyUserInfo(UserBean modifyUserBean) {
+		userDao.ModifyUserInfo(modifyUserBean);
+	}
+	
 	
 }

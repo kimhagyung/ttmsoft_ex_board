@@ -46,8 +46,10 @@
 					<div class="form-group">
 						<div class="text-right"> 
 							<a href="${root }/board/main?index=${boardInfo.content_board_idx}" class="btn btn-primary">목록보기</a> 
-							<a href="${root }/board/modify?content_idx=${param.content_idx}" class="btn btn-info">수정하기</a> 
-							<a href="#" onclick="confirmDelete('${root}/board/delete?content_idx=${param.content_idx}')" class="btn btn-danger">삭제하기</a>
+							<c:if test="${loginUserBean.user_idx==boardInfo.content_writer_idx }">
+								<a href="${root }/board/modify?content_idx=${param.content_idx}" class="btn btn-info">수정하기</a> 
+								<a href="#" onclick="confirmDelete('${root}/board/delete?content_idx=${param.content_idx}')" class="btn btn-danger">삭제하기</a>
+							</c:if> 
 						</div>
 					</div>
 				</div>

@@ -14,8 +14,7 @@
 	src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<!-- 상단 메뉴 부분 -->
+<meta name="viewport" content="width=device-width, initial-scale=1"> 
 <nav
 	class="navbar navbar-expand-md bg-dark navbar-dark fixed-top shadow-lg">
 	<a class="navbar-brand" href="${root }index">TTMSoft</a>
@@ -23,9 +22,7 @@
 		data-target="#navMenu">
 		<span class="navbar-toggler-icon"></span>
 	</button>
-
-	<!-- #1-6 -->
-	<!-- #게시판 카테고리 -->
+ 
 	<div class="collapse navbar-collapse" id="navMenu">
 		<ul class="navbar-nav">
 			<c:forEach var='obj' items='${topMenuList }'>
@@ -46,7 +43,7 @@
 			</c:when>
 			<c:when test="${loginUserBean.userLogin==true }">
 				<ul class="navbar-nav ml-auto"> 
-					<li class="nav-item"><a href="${root }user/modify"
+					<li class="nav-item"><a href="${root }user/modify?id=${loginUserBean.user_idx}"
 						class="nav-link">정보수정</a></li>
 					<li class="nav-item"><a href="${root }user/logout"
 						class="nav-link">로그아웃</a></li>
