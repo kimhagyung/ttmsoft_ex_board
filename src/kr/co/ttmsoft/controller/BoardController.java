@@ -137,4 +137,10 @@ public class BoardController {
 	
 		return "board/delete";
 	}
+	
+	
+	@GetMapping("/writer2")
+	public String writer2() {
+		return "board/writer2";
+	}
 }
