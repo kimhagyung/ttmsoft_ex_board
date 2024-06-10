@@ -10,8 +10,7 @@
 <body> 
 	<!-- 상단메뉴 -->
 	<c:import url="/WEB-INF/views/include/top_menu.jsp" />
-
-	<!-- 게시판 미리보기 부분 -->
+ 
 	<div class="container" style="margin-top: 100px">
 		<c:forEach var="obj" items="${topMenuList }" varStatus="status">
 			<c:if test="${status.index % 2 == 0}">
@@ -29,15 +28,17 @@
 									<th class="text-center w-25 d-none d-xl-table-cell">작성날짜</th>
 								</tr>
 							</thead>
-							<tbody>
+							<tbody> 
 								<c:forEach var="info" items="${MainBoardInfo}">
-									<c:if test="${info.content_board_idx == obj.board_info_idx}">    
+									<c:if test="${info.content_board_idx == obj.board_info_idx}">  
+										<c:if test="${info.is_public==1 }"> 
 			                                <tr>
 			                                    <td class="text-center">${info.content_idx}</td>
 			                                    <td><a href="${root }/board/read?content_idx=${info.content_idx }" >${info.content_subject}</a></td>
 			                                    <td class="text-center d-none d-xl-table-cell">${info.content_date}</td>
-			                                </tr>	 
-		                            	</c:if>	  
+			                                </tr>
+			                            </c:if> 	 
+		                            </c:if>	  
 								</c:forEach>
 							</tbody>
 						</table>

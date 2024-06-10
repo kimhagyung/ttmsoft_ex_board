@@ -9,10 +9,11 @@ import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.session.RowBounds;
 
 import kr.co.ttmsoft.beans.ContentBean;
+import kr.co.ttmsoft.beans.NaverEditorBean;
 import kr.co.ttmsoft.beans.PageBean;
 
 public interface BoardMapper {
-	@Insert("insert into content_table(content_idx,content_subject,content_text,content_file,content_writer_idx,content_board_idx,content_date) values(content_seq.nextval,#{content_subject},#{content_text},#{content_file, jdbcType=VARCHAR},#{content_writer_idx},#{content_board_idx},sysdate)")
+	@Insert("insert into content_table(content_idx,content_subject,content_text,content_file,content_writer_idx,content_board_idx,content_date,is_public) values(content_seq.nextval,#{content_subject},#{content_text, jdbcType=VARCHAR},#{content_file, jdbcType=VARCHAR},#{content_writer_idx},#{content_board_idx},sysdate,#{is_public})")
 	void addBoardInfo(ContentBean boardPostBean);
 	
 	@Select("select * from content_table where content_idx=#{content_idx} ")
@@ -33,20 +34,27 @@ public interface BoardMapper {
 			+ "    FROM content_table \r\n"
 			+ "    ORDER BY content_idx DESC\r\n"
 			+ ") \r\n"
-			+ "WHERE ROWNUM <= 5 and content_board_idx=#{content_board_idx}")
+			+ "WHERE ROWNUM <= 5 and content_board_idx=#{content_board_idx} and is_public=1")
 	List<ContentBean> getBoardInfoo(int content_board_idx); //메인에 뿌려주는 게시글들  
 	
 	@Select("select distinct(user_name) from content_table c, user_table u where c.content_writer_idx=u.user_idx and content_idx=#{content_idx}")
 	String getContentUserName(int content_idx); //작성자 이름 조회
 	
 	@Update("update content_table\r\n"
-			+ "set content_subject=#{content_subject}, content_text=#{content_text}, content_file=#{content_file, jdbcType=VARCHAR},content_date=sysdate\r\n"
+			+ "set content_subject=#{content_subject}, is_public=#{is_public}, content_text=#{content_text}, content_file=#{content_file, jdbcType=VARCHAR},content_date=sysdate\r\n"
 			+ "where content_idx=#{content_idx}")
 	void modifyBoardInfo(ContentBean modifyBoardInfo); //게시글 수정
 	
+	@Update("update content_table\r\n"
+			+ "set content_subject=#{content_subject}, is_public=#{is_public},  content_text=#{content_text},content_date=sysdate\r\n"
+			+ "where content_idx=#{content_idx}")
+	void modifyBoardInfoWithoutFile(ContentBean modifyBoardInfo); //추가된 사진없는게시글 수정
+	
 	@Delete("delete from content_table where content_idx=#{content_idx}")
 	void deleteBoardInfo(int content_idx);
-
+ 
 	
-	
+	//네이버 에디터 (테스트용)
+	@Insert("insert into naverEditor_table(naverEditor_idx,naverEditor_subject,naverEditor_text,naverEditor_file,naverEditor_date,is_publish,user_idx,board_info_idx) values(naverEditor_seq.nextval, #{naverEditor_subject},#{naverEditor_text},#{naverEditor_file, jdbcType=VARCHAR},sysdate,#{is_publish, jdbcType=INTEGER },#{user_idx},#{board_info_idx})")
+	void addNaverEditorBean(NaverEditorBean naverEditorBean);
 }

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import kr.co.ttmsoft.beans.ContentBean;
+import kr.co.ttmsoft.beans.NaverEditorBean;
 import kr.co.ttmsoft.beans.PageBean;
 import kr.co.ttmsoft.beans.UserBean;
 import kr.co.ttmsoft.service.BoardService;
@@ -76,14 +77,13 @@ public class BoardController {
 
 	@PostMapping("/write_pro")
 	public String write_pro(@ModelAttribute("boardPostBean") ContentBean boardPostBean, Model model,
-			BindingResult result, @RequestParam("uploadFiles") MultipartFile uploadFile) {
-		if (result.hasErrors()) {
-			return "board/main";
-		}
+			  @RequestParam("uploadFiles") MultipartFile uploadFile) {
+	 
 		System.out.println("받아온 카테고리값은?" + boardPostBean.getContent_idx());
 		System.out.println("받아온 사용자 아이디는?" + boardPostBean.getContent_writer_idx());
 		System.out.println("받아온 글내용은?" + boardPostBean.getContent_text());
 		System.out.println("받아온 제목은?" + boardPostBean.getContent_subject());
+		System.out.println("곻개여부는?" + boardPostBean.getIs_public());
 		try {
 			if (loginUserBean.isUserLogin() == true) {
 				boardService.addBoardInfo(boardPostBean, uploadFile);
@@ -115,11 +115,19 @@ public class BoardController {
 
 	@PostMapping("/modify_pro")
 	public String modify_pro(Model model, @ModelAttribute("modifyPostBean") ContentBean modifyPostBean, @RequestParam("uploadFiles") MultipartFile uploadFile) {
-		try {
-			boardService.modifyBoardInfo(modifyPostBean, uploadFile);
-			model.addAttribute("content_idx", modifyPostBean.getContent_idx());
-		} catch (Exception e) {
+		try { 
+		 if (loginUserBean.isUserLogin() == true) { 
+            if (!uploadFile.isEmpty()) { // 업로드된 파일이 있는지 확인
+            	boardService.modifyBoardInfo(modifyPostBean, uploadFile); 
+            } else {
+            	modifyPostBean.setContent_file(modifyPostBean.getExistingFile()); 
+                boardService.modifyBoardInfoWithoutFile(modifyPostBean); // 파일이 없는 경우의 로직 처리
+            }
+		 }
+		}catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			model.addAttribute("content_idx", modifyPostBean.getContent_idx());
 		}
 
 		return "board/modify_success";
@@ -134,13 +142,36 @@ public class BoardController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 	
 		return "board/delete";
 	}
 	
+
+	//naver-smart-editor
+	@GetMapping("/naverEditor")
+	public String naverEditor(@ModelAttribute("naverEditorBean") NaverEditorBean naverEditorBean) {
+		return "board/naverEditor";
+	}
 	
-	@GetMapping("/writer2")
-	public String writer2() {
-		return "board/writer2";
+	@PostMapping("/WriteNaverEditorPro")
+	public String WriteNaverEditorPro(@ModelAttribute("naverEditorBean") NaverEditorBean naverEditorBean,
+			@RequestParam("uploadFiles") MultipartFile uploadFile, Model model) {
+		System.out.println("받아온 카테고리값은?" + naverEditorBean.getBoard_info_idx());
+		System.out.println("받아온 사용자 아이디는?" + naverEditorBean.getUser_idx());
+		System.out.println("받아온 글내용은?" + naverEditorBean.getNaverEditor_text());
+		System.out.println("받아온 제목은?" + naverEditorBean.getNaverEditor_subject());
+		try {
+			if (loginUserBean.isUserLogin() == true) {
+				boardService.addNaverEditorBean(naverEditorBean, uploadFile);
+				model.addAttribute("content_board_idx", naverEditorBean.getBoard_info_idx()); 
+			} else {
+				System.out.println("로그인이 되어있지 않습니다.");
+				return "user/not_login";
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "board/write_success";
 	}
 }

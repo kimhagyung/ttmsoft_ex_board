@@ -14,8 +14,21 @@ public class ContentBean {
 	private int content_board_idx;//게시판 번호(=게시판테이블의 게시판번호)
 	private String content_date;//작성일
 	private MultipartFile upload_photos;
-	
-	
+	private int is_public; //공개여부  
+	private String existingFile; //기존 파일 경로 
+	 
+	public int getIs_public() {
+		return is_public;
+	}
+	public void setIs_public(int is_public) {
+		this.is_public = is_public;
+	}
+	public String getExistingFile() {
+		return existingFile;
+	}
+	public void setExistingFile(String existingFile) {
+		this.existingFile = existingFile;
+	}
 	public MultipartFile getUpload_photos() {
 		return upload_photos;
 	}

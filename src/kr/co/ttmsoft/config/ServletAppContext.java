@@ -27,6 +27,7 @@ import kr.co.ttmsoft.interceptor.LoginInterceptor;
 import kr.co.ttmsoft.interceptor.TopMenuInterceptor;
 import kr.co.ttmsoft.interceptor.TopMenuInterceptor2;
 import kr.co.ttmsoft.mapper.BoardMapper;
+import kr.co.ttmsoft.mapper.CommentMapper;
 import kr.co.ttmsoft.mapper.TopMenuMapper;
 import kr.co.ttmsoft.mapper.UserMapper;
 import kr.co.ttmsoft.service.TopMenuService;
@@ -61,11 +62,13 @@ public class ServletAppContext implements WebMvcConfigurer {
 
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		// 정적 파일 경로 매핑 
+		// 정적 파일 경로 매핑(이거 지우면 사진 경로 못찾음)
 		registry.addResourceHandler("/**").addResourceLocations("/resources/");
-		WebMvcConfigurer.super.addResourceHandlers(registry); 
+		//WebMvcConfigurer.super.addResourceHandlers(registry);
+		 
+		// 네이버 스마트 에디터 경로때문에 적어둠 
+		 registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
 	}
-
 	@Override
 	public void configureViewResolvers(ViewResolverRegistry registry) {
 		// Controller의 메서드가 반환하는 파일 앞뒤에 경로와 확장자 추가
@@ -112,6 +115,13 @@ public class ServletAppContext implements WebMvcConfigurer {
 		factoryBean.setSqlSessionFactory(factory);
 		return factoryBean;
 	}
+	
+	@Bean
+	public MapperFactoryBean<CommentMapper> getCommentMapper(SqlSessionFactory factory) throws Exception {
+		MapperFactoryBean<CommentMapper> factoryBean = new MapperFactoryBean<CommentMapper>(CommentMapper.class);
+		factoryBean.setSqlSessionFactory(factory);
+		return factoryBean;
+	}
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) { 
@@ -125,7 +135,7 @@ public class ServletAppContext implements WebMvcConfigurer {
 		
 		reg1.addPathPatterns("/**"); // 모든 요청에서 동작
 		reg2.addPathPatterns("/**");
-		reg3.addPathPatterns("/board/modify","/board/delete", "/user/modify");
+		reg3.addPathPatterns("/board/modify","/board/delete", "/user/modify", "/board/write");
 	}
 
 	@Bean

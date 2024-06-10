@@ -22,19 +22,20 @@
 							<th class="text-center d-none d-md-table-cell">작성자</th>
 							<th class="text-center d-none d-md-table-cell">작성날짜</th>
 						</tr>
-					</thead>
-
+					</thead> 
 					<tbody>
-						<c:forEach var="obj" items="${MainBoardInfo }" varStatus="loop">
-							<c:if test="${param.index == obj.content_board_idx}">
-								<tr>
-									<td class="text-center d-none d-md-table-cell">${obj.content_idx }</td>
-									<td><a
-										href="${root }/board/read?content_idx=${obj.content_idx}">${obj.content_subject }</a>
-									</td>
-									<td class="text-center d-none d-md-table-cell">${boardWriterName[loop.index] }</td>
-									<td class="text-center d-none d-md-table-cell">${obj.content_date }</td>
-								</tr>
+						<c:forEach var="obj" items="${MainBoardInfo }" varStatus="loop"> 
+							<c:if test="${param.index == obj.content_board_idx}"> 
+								<c:if test="${obj.is_public==1 }">
+									<tr>
+										<td class="text-center d-none d-md-table-cell">${obj.content_idx }</td>
+										<td><a
+											href="${root }/board/read?content_idx=${obj.content_idx}">${obj.content_subject }</a>
+										</td>
+										<td class="text-center d-none d-md-table-cell">${boardWriterName[loop.index] }</td>
+										<td class="text-center d-none d-md-table-cell">${obj.content_date }</td>
+									</tr>
+								</c:if> 
 							</c:if>
 						</c:forEach>
 					</tbody>
@@ -96,8 +97,10 @@
 				</div>
 
 				<div class="text-right">
-					<a href="${root }/board/write?index=${param.index}"
-						class="btn btn-primary">글쓰기</a>
+				 <a href="${root }/board/write?index=${param.index}"
+						class="btn btn-primary">글쓰기</a> 
+				<!--	<a href="${root }/board/naverEditor?index=${param.index}"
+						class="btn btn-primary">글쓰기</a>-->
 				</div>
 
 			</div>

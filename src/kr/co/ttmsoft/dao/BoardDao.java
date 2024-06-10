@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import kr.co.ttmsoft.beans.BoardInfoBean;
 import kr.co.ttmsoft.beans.ContentBean;
+import kr.co.ttmsoft.beans.NaverEditorBean;
 import kr.co.ttmsoft.beans.PageBean;
 import kr.co.ttmsoft.beans.UserBean;
 import kr.co.ttmsoft.mapper.BoardMapper;
@@ -48,10 +49,17 @@ public class BoardDao {
 		boardMapper.modifyBoardInfo(modifyBoardInfo);
 	}
 	
+	public void modifyBoardInfoWithoutFile(ContentBean modifyBoardInfo) {
+		boardMapper.modifyBoardInfoWithoutFile(modifyBoardInfo);
+	}
+	
 	public void deleteBoardInfo(int content_idx) {
 		boardMapper.deleteBoardInfo(content_idx);
 	}
 	
-	
+	//네이버
+	public void addNaverEditorBean(NaverEditorBean naverEditorBean) {
+		boardMapper.addNaverEditorBean(naverEditorBean);
+	}
 	 
 }
