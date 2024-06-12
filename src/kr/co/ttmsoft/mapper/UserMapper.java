@@ -1,9 +1,11 @@
 package kr.co.ttmsoft.mapper;
 
 import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import kr.co.ttmsoft.beans.AdminBean;
 import kr.co.ttmsoft.beans.UserBean;
 
 public interface UserMapper {
@@ -20,4 +22,13 @@ public interface UserMapper {
 			+ "set user_name=#{user_name, jdbcType=VARCHAR} ,user_id=#{user_id, jdbcType=VARCHAR}\r\n"
 			+ "where user_idx=#{user_idx}")
 	void ModifyUserInfo(UserBean modifyUserBean);
+	
+    @Select("SELECT COUNT(*) " +
+            "FROM user_table " +
+            "WHERE user_idx = #{user_idx} AND user_pw = #{user_pw}")
+    boolean confirmPassword(@Param("user_idx") int user_idx, @Param("user_pw") String user_pw);
+    
+    
+    @Select("select *from admin_table where admin_id=#{admin_id}")
+    AdminBean getAdminInfo(String admin_id);//관리자 로그인 
 }

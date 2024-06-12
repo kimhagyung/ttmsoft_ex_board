@@ -3,6 +3,8 @@ package kr.co.ttmsoft.controller;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,8 +52,6 @@ public class UserController {
 		}
 	}
 
-	
-	
 	@GetMapping("/join")
 	public String join(@ModelAttribute("joinUserBean") UserBean joinUserBean) {
 		return "user/join";
@@ -90,8 +90,12 @@ public class UserController {
 	
 	
 	@GetMapping("/logout")
-	public String logout() {
+	public String logout(HttpServletRequest request) throws Exception {
+		
+		HttpSession session=request.getSession(); 
+		session.invalidate();
 		loginUserBean.setUserLogin(false);
+		
 		return "user/logout_success";
 	}
 

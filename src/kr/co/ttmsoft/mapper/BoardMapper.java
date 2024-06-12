@@ -57,4 +57,5 @@ public interface BoardMapper {
 	//네이버 에디터 (테스트용)
 	@Insert("insert into naverEditor_table(naverEditor_idx,naverEditor_subject,naverEditor_text,naverEditor_file,naverEditor_date,is_publish,user_idx,board_info_idx) values(naverEditor_seq.nextval, #{naverEditor_subject},#{naverEditor_text},#{naverEditor_file, jdbcType=VARCHAR},sysdate,#{is_publish, jdbcType=INTEGER },#{user_idx},#{board_info_idx})")
 	void addNaverEditorBean(NaverEditorBean naverEditorBean);
+	 
 }

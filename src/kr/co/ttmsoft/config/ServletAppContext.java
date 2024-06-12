@@ -22,12 +22,15 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import kr.co.ttmsoft.beans.AdminBean;
 import kr.co.ttmsoft.beans.UserBean;
 import kr.co.ttmsoft.interceptor.LoginInterceptor;
 import kr.co.ttmsoft.interceptor.TopMenuInterceptor;
 import kr.co.ttmsoft.interceptor.TopMenuInterceptor2;
+import kr.co.ttmsoft.interceptor.TopMenuInterceptor3;
 import kr.co.ttmsoft.mapper.BoardMapper;
 import kr.co.ttmsoft.mapper.CommentMapper;
+import kr.co.ttmsoft.mapper.CreateBoardMapper;
 import kr.co.ttmsoft.mapper.TopMenuMapper;
 import kr.co.ttmsoft.mapper.UserMapper;
 import kr.co.ttmsoft.service.TopMenuService;
@@ -56,6 +59,9 @@ public class ServletAppContext implements WebMvcConfigurer {
 
 	@Resource(name = "loginUserBean")
 	private UserBean loginUserBean;
+	
+	@Resource(name="loginAdminBean")
+	private AdminBean loginAdminBean;
 
 	@Autowired
 	private TopMenuService topMenuService;
@@ -122,20 +128,32 @@ public class ServletAppContext implements WebMvcConfigurer {
 		factoryBean.setSqlSessionFactory(factory);
 		return factoryBean;
 	}
-
+	
+	@Bean
+	public MapperFactoryBean<CreateBoardMapper> getCreateBoardMapper(SqlSessionFactory factory) throws Exception {
+		MapperFactoryBean<CreateBoardMapper> factoryBean = new MapperFactoryBean<CreateBoardMapper>(CreateBoardMapper.class);
+		factoryBean.setSqlSessionFactory(factory);
+		return factoryBean;
+	}
+	
+	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) { 
 		TopMenuInterceptor topMenuInterceptor = new TopMenuInterceptor(topMenuService);
 		TopMenuInterceptor2 topMenuInterceptor2 = new TopMenuInterceptor2(loginUserBean);
-		LoginInterceptor loginInterceptor=new LoginInterceptor(loginUserBean);
+		TopMenuInterceptor3 topMenuInterceptor3= new TopMenuInterceptor3(loginAdminBean);
+		LoginInterceptor loginInterceptor=new LoginInterceptor(loginUserBean,loginAdminBean);
 		
 		InterceptorRegistration reg1 = registry.addInterceptor(topMenuInterceptor);
 		InterceptorRegistration reg2 = registry.addInterceptor(topMenuInterceptor2);
 		InterceptorRegistration reg3 = registry.addInterceptor(loginInterceptor);
+		InterceptorRegistration reg4 = registry.addInterceptor(topMenuInterceptor3);
 		
 		reg1.addPathPatterns("/**"); // 모든 요청에서 동작
 		reg2.addPathPatterns("/**");
 		reg3.addPathPatterns("/board/modify","/board/delete", "/user/modify", "/board/write");
+		//reg4.addPathPatterns("/admin/**");
+		reg4.addPathPatterns("/**");
 	}
 
 	@Bean

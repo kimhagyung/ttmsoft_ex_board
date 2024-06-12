@@ -7,6 +7,14 @@ public class CommentBean {
 	private String comment_date;
 	private int content_idx;
 	private int user_idx;
+	private String user_name; 
+	
+	public String getUser_name() {
+		return user_name;
+	}
+	public void setUser_name(String user_name) {
+		this.user_name = user_name;
+	}
 	public int getComment_idx() {
 		return comment_idx;
 	}

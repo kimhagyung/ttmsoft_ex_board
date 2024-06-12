@@ -15,6 +15,9 @@ public class UserBean {
 	private boolean userIdExist;
 	
 	
+	public UserBean() {
+		this.userLogin=false;
+	}
 
 	public boolean isUserIdExist() {
 		return userIdExist;

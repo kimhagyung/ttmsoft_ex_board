@@ -13,7 +13,6 @@ public class HomeController {
 	public String home() {
 		
 		return "redirect:/index";
-		//루트("/") 요청 시, "/main"으로 리다이렉트(->mainController, main()메서드로 매핑) 
-		
+		//루트("/") 요청 시, "/main"으로 리다이렉트(->mainController, main()메서드로 매핑)  
 	}
 }

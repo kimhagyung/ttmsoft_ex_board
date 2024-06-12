@@ -3,6 +3,7 @@ package kr.co.ttmsoft.dao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import kr.co.ttmsoft.beans.AdminBean;
 import kr.co.ttmsoft.beans.UserBean;
 import kr.co.ttmsoft.mapper.UserMapper;
 
@@ -25,5 +26,9 @@ public class UserDao {
 	
 	public void ModifyUserInfo(UserBean modifyUserBean) {
 		UserMapper.ModifyUserInfo(modifyUserBean);
+	}
+	
+	public void getAdminInfo(String admin_id) {
+		UserMapper.getAdminInfo(admin_id);
 	}
 }

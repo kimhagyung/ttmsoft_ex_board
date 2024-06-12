@@ -18,7 +18,13 @@
 </script>
 <script>
 $(function(){
-	$("#commentSubmit").click(function(){
+	// 댓글 목록 조회
+    updateReplyList();
+    window.editComment = editComment;
+    
+    
+	//댓글 작성 ajax
+	$("#commentSubmit").click(function(){ 
 		var replyText = $('#replyText').val();  
 		if(replyText.trim() == ''){
 			alert("댓글을 입력해 주세요");
@@ -38,7 +44,7 @@ $(function(){
 		$.ajax({
 			url:'${root}/comment',
 			type:'POST',
-			contentType: 'application/json',
+			contentType: 'application/json', //전송하는 데이터 타입 지정 
 			data:JSON.stringify({
 				comments : replyText,
 				content_idx : ${param.content_idx},
@@ -61,10 +67,99 @@ $(function(){
 		})
 	});
 });
-</script>
 
+//댓글 입력 함수 
+function updateReplyList(){
+	$.ajax({
+		url:'${root}/commentShow?content_idx=${param.content_idx}', //받아오는 데이터 타입 지정 
+		type: 'GET',
+		dataType:'Json',
+		success: function(response){
+			$("#replySection").empty();
+			$.each(response, function(index, comment){ //댓글 데이터 반복 처리 
+				 //console.log("현재 댓글 번호", comment.comment_idx);
+				 console.log("comment.user_idx",comment.user_idx);
+				 console.log("loginUserBean.user_idx",${loginUserBean.user_idx});
+				 var replyHtml = '<hr><div class="row" style="margin-bottom: 20px;">';
+				 replyHtml += '<div class="col-sm-5"><i class="bi bi-person-circle" style="font-size:25px;"></i> ' + comment.user_name + '</div>'; //댓글 단 사람 이름
+				 replyHtml += '<div class="col-sm-5"></div>'
+				
+				 if (${loginUserBean.user_idx} == comment.user_idx) {
+				      replyHtml += '<input type="button" class="col-sm-1 btn btn-link" onclick="editComment(' + comment.comment_idx + ')" value="수정"/>';
+				      replyHtml += '<input type="button" class="col-sm-1 btn btn-link" onclick="deleteComment(' + comment.comment_idx + ')" id="deleteBtn' + comment.comment_idx + '" value="삭제"/>';
+				    }
+				 replyHtml += '</div>';
+				 replyHtml += '<div style="width:90%" id="commentContent_'+comment.comment_idx + '">' + comment.comments + '</div>' //댓글 내용   
+				 replyHtml += '<div style="color:#D3D3D3;margin-top:3px;">'+comment.comment_date+'</div>'
+    			 $("#replySection").append(replyHtml); 
+			});
+		}
+	});
+}
+
+//댓글 삭제 함수 
+function deleteComment(comment_idx){
+	var isConfirmed=confirm('정말로 이 댓글을 삭제하시겠습니까?');
+	
+	if(isConfirmed){
+		$.ajax({
+			url:'${root}/deleteComment',
+			type: 'GET',
+			data : {comment_idx:comment_idx},
+			success: function(response){
+				alert('댓글이 성공적으로 삭제되었습니다.')
+				updateReplyList();
+			}
+		});
+	} 
+}
+
+
+//댓글 수정 함수 
+function editComment(commentId){
+    var currentContent = $('#commentContent_' + commentId).text().trim(); // 댓글 내용 가져오기 (trim()으로 공백 제거)
+    console.log("댓글내용 :", currentContent);
+
+    // 수정을 위한 input 태그로 변환
+    var inputElement = $('<div class="row"><input type="text" class="form-control edit-comment-input col-11" value="' + currentContent + '"/>'
+                        + '<button class="col-1 btn modifyComment">등록</button></div>');
+    $('#commentContent_' + commentId).replaceWith(inputElement);
+
+    // 수정 완료 시 업데이트
+    inputElement.find('.modifyComment').click(function(){
+        var editedText = inputElement.find('input').val();
+        console.log("수정된 내용 ", editedText);
+        updateComment(commentId, editedText); // 수정된 댓글 내용으로 업데이트 함수 호출
+    });
+}
+
+	
+//댓글 수정 처리 함수 
+function updateComment(commentId, editedText){
+	
+	$.ajax({
+		url:'${root}/modifyComment',
+		type:'POST',
+		contentType: 'application/json',
+		data:JSON.stringify({
+			comment_idx: commentId,
+			comments : editedText
+		}),
+		success:function(response){
+			alert('댓글이 성공적으로 수정되었습니다');
+			updateReplyList();
+		}, 
+		error: function(error){
+			console.log(error);
+			alert('댓글 수정이 실패했습니다');
+		}
+	});
+}
+</script> 
 <body>
 	<c:import url="/WEB-INF/views/include/top_menu.jsp" />
+	
+	
 	<div class="container" style="margin-top: 100px">
 		<div class="col-sm-12">
 			<div class="form-group">
@@ -97,7 +192,7 @@ $(function(){
 						style="border-radius: 5px;" class="mt-3" />
 				</c:if>
 			</div>
-			<hr>
+			<hr>  
 			<div class="form-group">
 				<div class="mb-3 mt-2"><h5>댓글 <i class="bi bi-chat-dots"></i></h5></div>
 				<div class="row">

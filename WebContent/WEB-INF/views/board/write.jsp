@@ -73,8 +73,14 @@
                 </div>   
                 <div class="form-group">
                 <label for="public"><h4>공개여부</h4></label><br>
-                	<input type="radio" name="is_public" value="1" id="public" checked/>공개
-                	<input type="radio" name="is_public" value="0" id="public"/>비공개
+                	<div class="form-check form-check-inline">
+					  <input class="form-check-input" type="radio" name="is_public" id="public1" value="1" checked>
+					  <label class="form-check-label" for="public1">공개</label>
+					</div>
+					<div class="form-check form-check-inline">
+					  <input class="form-check-input" type="radio" name="is_public" id="public2" value="0">
+					  <label class="form-check-label" for="public2">비공개</label>
+					</div>
                 </div>
                 <div class="form-group">
                     <label for="editor"><h4>내용</h4></label>
