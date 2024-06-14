@@ -16,7 +16,7 @@ import kr.co.ttmsoft.beans.NaverEditorBean;
 
 public interface BoardMapper {
 	
-	@Insert("insert into content_table(content_idx,content_subject,content_text,user_idx,content_board_idx,content_date,is_public) values(content_seq.nextval,#{content_subject},#{content_text, jdbcType=VARCHAR},#{user_idx},#{content_board_idx},sysdate,#{is_public})")
+	@Insert("insert into content_table(content_idx,content_subject,content_text,user_idx,content_board_idx,content_date,is_public) values(content_seq.nextval,#{content_subject, jdbcType=VARCHAR},#{content_text, jdbcType=VARCHAR},#{user_idx},#{content_board_idx},sysdate,#{is_public, jdbcType=INTEGER})")
 	@SelectKey(statement="SELECT content_seq.currval FROM dual", keyProperty="content_idx", before=false, resultType=int.class)
 	void addBoardInfo(ContentBean boardPostBean); //컨텐츠 내용 추가 
 	

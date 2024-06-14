@@ -55,12 +55,13 @@ public class BoardService {
 				boardFileBean.setContent_idx(contentIdx);
 				// 파일을 지정된 경로에 저장합니다.
 				uploadFile.transferTo(new File(path_upload + "/" + randomName));
+				boardDao.addBoardFileInfo(boardFileBean);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		boardDao.addBoardFileInfo(boardFileBean);
+		
 	} 
 
 	// 게시글 조회

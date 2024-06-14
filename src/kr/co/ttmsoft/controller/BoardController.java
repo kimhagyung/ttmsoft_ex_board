@@ -95,14 +95,18 @@ public class BoardController {
 	    System.out.println("받아온 글내용은?" + boardPostBean.getContent_text());
 	    System.out.println("받아온 제목은?" + boardPostBean.getContent_subject());
 	    System.out.println("공개여부는?" + boardPostBean.getIs_public());
-
+	    
 	    try {
 	        if (loginUserBean.isUserLogin()) { // 로그인 여부 확인
 	            int contentIdx = boardService.addBoardInfo(boardPostBean); // 내용 저장 및 게시글 번호 반환 
 	            if (contentIdx > 0) { // 내용이 성공적으로 저장된 경우에만 파일 저장
 	                if (boardFilePostBean != null && uploadFiles != null) { // 파일 정보가 존재하고 파일이 업로드되었을 경우 파일 정보 저장
 	                    for (MultipartFile uploadFile : uploadFiles) {
-	                        if (!uploadFile.isEmpty()) {
+	                    	if (!uploadFile.isEmpty()) {
+	                            System.out.println("업로드된 파일 이름: " + uploadFile.getOriginalFilename());
+	                            System.out.println("업로드된 파일 크기: " + uploadFile.getSize() + " bytes");
+	                            
+	                            // 파일 저장 로직(boardService.addBoardFileInfo() 호출 등)을 추가해야 합니다.
 	                            boardService.addBoardFileInfo(boardFilePostBean, uploadFile, contentIdx);
 	                        }
 	                    }
