@@ -8,7 +8,7 @@
 <meta charset="UTF-8">  
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="${root}/resources/se2/js/service/HuskyEZCreator.js"></script>
-<script>
+<script>board_file
 	let oEditors = [];
 	smartEditor=function(){
 	    nhn.husky.EZCreator.createInIFrame({
@@ -33,24 +33,38 @@
     });
 </script>  
 <script>
-	$(function(){
-		$('#board_file').on('change', function(event){
-			const selectedImageDiv=$('.selected-image')
-			selectedImageDiv.empty();
-			const files=event.target.files;
-			
-			 for (const file of files) {
-	            const reader = new FileReader();
+$(function() {
+    $('#board_file').on('change', function (event) {
+        const selectedImageDiv = $('.selected-image');
 
-	            reader.onload = function (e) {
-	                const img = $('<img>').attr('src', e.target.result).addClass('selected-image-item');
-	                selectedImageDiv.append(img); 
-	            };
+        // Count only images, not remove buttons
+        if (selectedImageDiv.find('.selected-image-item:not(.remove-button)').length >= 3) {
+            alert('최대 5개의 이미지까지만 선택할 수 있습니다.');
+            return;
+        }
 
-	            reader.readAsDataURL(file);
-	        }
-		})
-	});
+        const files = event.target.files;
+
+        for (const file of files) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const img = $('<img>').attr('src', e.target.result).addClass('selected-image-item');
+                selectedImageDiv.append(img);
+
+                const removeButton = $('<button>').text('삭제').addClass('remove-button');
+                removeButton.on('click', function () {
+                    img.remove();
+                    removeButton.remove();
+                });
+
+                img.after(removeButton);
+            };
+
+            reader.readAsDataURL(file);
+        }
+    });
+});
 </script>
 <style>
 .selected-image-item{
@@ -64,40 +78,44 @@
     <div class="container" style="margin-top: 100px"> 
         <div class="col-sm-3"></div>
         <div class="col-sm"> 
-            <form:form action="${root }/board/write_pro" method="post" modelAttribute="boardPostBean" enctype="multipart/form-data">
-                <form:hidden path="content_board_idx" value="${param.index}" />
-                <form:hidden path="content_writer_idx" value="${loginUserBean.user_idx}" /> 
+            <form action="${root }/board/write_pro" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="content_board_idx" value="${param.index}" />
+                <input type="hidden" name="user_idx" value="${loginUserBean.user_idx}" /> 
                 <div class="form-group">
                     <label for="board_subject"><h4>제목</h4></label> 
-                    <form:input path="content_subject" type="text" id="board_subject" name="board_subject" class="form-control" placeholder="제목을 입력해 주세요" />
-                </div>   
-                <div class="form-group">
-                <label for="public"><h4>공개여부</h4></label><br>
-                	<div class="form-check form-check-inline">
-					  <input class="form-check-input" type="radio" name="is_public" id="public1" value="1" checked>
-					  <label class="form-check-label" for="public1">공개</label>
-					</div>
-					<div class="form-check form-check-inline">
-					  <input class="form-check-input" type="radio" name="is_public" id="public2" value="0">
-					  <label class="form-check-label" for="public2">비공개</label>
-					</div>
-                </div>
+                    <input name="content_subject" type="text" id="board_subject" name="board_subject" class="form-control" placeholder="제목을 입력해 주세요" />
+                </div>    
+                <c:if test="${boardAllInfo.is_public==0 }">
+	                <div class="form-group">
+	                <label for="public"><h4>공개여부</h4></label><br>
+	                	<div class="form-check form-check-inline">
+						  <input class="form-check-input" type="radio" name="is_public" id="public1" value="1" checked>
+						  <label class="form-check-label" for="public1">공개</label>
+						</div>
+						<div class="form-check form-check-inline">
+						  <input class="form-check-input" type="radio" name="is_public" id="public2" value="0">
+						  <label class="form-check-label" for="public2">비공개</label>
+						</div>
+	                </div>
+                </c:if>
                 <div class="form-group">
                     <label for="editor"><h4>내용</h4></label>
                     <textarea id="editor" name="content_text" placeholder="내용을 입력해주세요" rows="10" style="resize: none" class="form-control"></textarea> 
                 </div>
-                <div class="form-group">
-                    <input type="file" id="board_file" name="uploadFiles" style="display: none;"class="form-control" accept="image/*" multiple  />
-                    <label for="board_file"><h5>첨부 이미지<i class="bi bi-camera-fill mx-2"></i></h5></label> 
-                    <div class="selected-image"></div>
-                </div>                             
+                <c:if test="${boardAllInfo.file_checked==1 }">
+	                <div class="form-group">
+	                    <input type="file" id="board_file" name="uploadFiles" style="display: none;" class="form-control" accept="image/*" multiple />
+	                    <label for="board_file"><h5>첨부 이미지<i class="bi bi-camera-fill mx-2"></i></h5></label> 
+	                    <div class="selected-image"></div>
+	                </div>     
+                </c:if>                        
                 <div class="form-group">
                     <div class="text-right">
                         <button type="submit" id="submit" class="btn btn-primary">작성하기</button>
                     </div>
                 </div>                  
                 <div class="col-sm-3"></div> 
-            </form:form>
+            </form>
         </div>
     </div> 
 <c:import url="/WEB-INF/views/include/bottom_info.jsp" />

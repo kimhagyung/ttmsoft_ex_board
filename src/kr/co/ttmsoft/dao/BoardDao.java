@@ -6,6 +6,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import kr.co.ttmsoft.beans.BoardFileBean;
 import kr.co.ttmsoft.beans.BoardInfoBean;
 import kr.co.ttmsoft.beans.ContentBean;
 import kr.co.ttmsoft.beans.NaverEditorBean;
@@ -22,7 +23,12 @@ public class BoardDao {
 	public void addBoardInfo(ContentBean addBoardInfo) {
 		boardMapper.addBoardInfo(addBoardInfo);
 	}
-
+	
+	public void addBoardFileInfo(BoardFileBean boardFileBean) {
+		boardMapper.addBoardFileInfo(boardFileBean);
+	}
+	 
+	
 	public List<ContentBean> getBoardPageInfo(int content_board_idx, RowBounds rowBounds){
 		return boardMapper.getBoardPageInfo(content_board_idx,rowBounds);
 	}
@@ -37,6 +43,10 @@ public class BoardDao {
 		return boardMapper.getBoardInfo(content_idx);
 	}
 
+	public BoardFileBean getBoardFileInfo(int content_idx){
+		return boardMapper.getBoardFileInfo(content_idx);
+	}
+	
 	public List<ContentBean> getBoardInfoo(int content_board_idx){
 		return boardMapper.getBoardInfoo(content_board_idx);
 	}
@@ -56,6 +66,12 @@ public class BoardDao {
 	public void deleteBoardInfo(int content_idx) {
 		boardMapper.deleteBoardInfo(content_idx);
 	}
+	
+
+	public BoardInfoBean getAllBoardInfo(int board_info_idx) {
+		return boardMapper.getAllBoardInfo(board_info_idx);
+	}
+
 	
 	//네이버
 	public void addNaverEditorBean(NaverEditorBean naverEditorBean) {

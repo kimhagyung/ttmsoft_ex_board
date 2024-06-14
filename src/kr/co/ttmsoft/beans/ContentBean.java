@@ -1,19 +1,17 @@
 package kr.co.ttmsoft.beans;
 
-import java.util.List;
-
-import org.springframework.web.multipart.MultipartFile;
+import org.apache.ibatis.annotations.Options;
 
 public class ContentBean {
-	
+	 
 	private int content_idx;//게시글 번호
+	
 	private String content_subject;//게시글 제목
 	private String content_text;//게시글 본문
 	private String content_file;//게시글 첨부파일명
-	private int content_writer_idx;//작성자 번호(=회원테이블의 회원번호)
+	private int user_idx;//작성자 번호(=회원테이블의 회원번호)
 	private int content_board_idx;//게시판 번호(=게시판테이블의 게시판번호)
-	private String content_date;//작성일
-	private MultipartFile upload_photos;
+	private String content_date;//작성일 
 	private int is_public; //공개여부  
 	private String existingFile; //기존 파일 경로 
 	 
@@ -28,13 +26,7 @@ public class ContentBean {
 	}
 	public void setExistingFile(String existingFile) {
 		this.existingFile = existingFile;
-	}
-	public MultipartFile getUpload_photos() {
-		return upload_photos;
-	}
-	public void setUpload_photos(MultipartFile upload_photos) {
-		this.upload_photos = upload_photos;
-	}
+	} 
 	public int getContent_idx() {
 		return content_idx;
 	}
@@ -59,11 +51,12 @@ public class ContentBean {
 	public void setContent_file(String content_file) {
 		this.content_file = content_file;
 	}
-	public int getContent_writer_idx() {
-		return content_writer_idx;
+	
+	public int getUser_idx() {
+		return user_idx;
 	}
-	public void setContent_writer_idx(int content_writer_idx) {
-		this.content_writer_idx = content_writer_idx;
+	public void setUser_idx(int user_idx) {
+		this.user_idx = user_idx;
 	}
 	public int getContent_board_idx() {
 		return content_board_idx;
@@ -77,6 +70,8 @@ public class ContentBean {
 	public void setContent_date(String content_date) {
 		this.content_date = content_date;
 	}
+	
+	
 	
 	
 }

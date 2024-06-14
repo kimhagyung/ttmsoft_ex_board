@@ -13,6 +13,8 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import kr.co.ttmsoft.beans.BoardFileBean;
+import kr.co.ttmsoft.beans.BoardInfoBean;
 import kr.co.ttmsoft.beans.ContentBean;
 import kr.co.ttmsoft.beans.NaverEditorBean;
 import kr.co.ttmsoft.beans.PageBean;
@@ -35,14 +37,22 @@ public class BoardService {
 	private int page_paginationcnt;
 
 	// 게시글 작성
-	public void addBoardInfo(ContentBean addBoardInfo, MultipartFile uploadFile) { 
+	public int addBoardInfo(ContentBean addBoardInfo) {  
+		boardDao.addBoardInfo(addBoardInfo);
+		return addBoardInfo.getContent_idx(); 
+	}
+	
+	//게시글 사진 저장
+	public void addBoardFileInfo(BoardFileBean boardFileBean, MultipartFile uploadFile, int contentIdx) { 
 
 		try {
 			if (uploadFile != null && !uploadFile.isEmpty()) { // 파일이 null이 아니고 비어있지 않은 경우에만 파일 업로드를 수행합니다.
 				String originalFileName = uploadFile.getOriginalFilename();
 				String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
 				String randomName = UUID.randomUUID().toString() + extension; // 임의의 이름 생성
-				addBoardInfo.setContent_file(randomName);
+				boardFileBean.setFile_name(originalFileName);
+				boardFileBean.setFile_path(randomName);
+				boardFileBean.setContent_idx(contentIdx);
 				// 파일을 지정된 경로에 저장합니다.
 				uploadFile.transferTo(new File(path_upload + "/" + randomName));
 			}
@@ -50,15 +60,19 @@ public class BoardService {
 			e.printStackTrace();
 		}
 
-		boardDao.addBoardInfo(addBoardInfo);
-	}
+		boardDao.addBoardFileInfo(boardFileBean);
+	} 
 
 	// 게시글 조회
-	public ContentBean getBoardInfo(int content_idx) {
-
+	public ContentBean getBoardInfo(int content_idx) { 
 		return boardDao.getBoardInfo(content_idx);
 	}
 
+	//게시글 사진 조회 
+	public BoardFileBean getBoardFileInfo(int content_idx){
+		return boardDao.getBoardFileInfo(content_idx);
+	}
+	
 	// 게시글리스트 조회
 	public List<ContentBean> getBoardInfoo(int content_board_idx) {
 
@@ -107,6 +121,11 @@ public class BoardService {
 	// 게시글 삭제
 	public void deleteBoardInfo(int content_idx) {
 		boardDao.deleteBoardInfo(content_idx);
+	}
+	
+	//게시판 테이블 정보 
+	public BoardInfoBean getAllBoardInfo(int board_info_idx) {
+		return boardDao.getAllBoardInfo(board_info_idx);
 	}
 
 	// 네이버

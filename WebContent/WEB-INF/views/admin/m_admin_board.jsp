@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <c:set var="root" value="${pageContext.request.contextPath }" />
 <!DOCTYPE html>
@@ -20,27 +20,71 @@
 <link href="${root}/resources/css/sb-admin-2.min.css" rel="stylesheet">
 <link
 	href="${root}/resources/vendor/datatables/dataTables.bootstrap4.min.css"
-	rel="stylesheet"><!-- 
+	rel="stylesheet">
+<!-- 
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script
 	src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
-<link
+<!-- <link
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css"
-	rel="stylesheet">
+	rel="stylesheet"> -->
 <script
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
 	integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
 	crossorigin="anonymous"></script>
- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
- 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+
+
 <script>
-	$(function(){
-		$('#CheckFile').change(function(){
-			var isChecked=$(this).is(":checked");
-			 $("#inputState, #fileSizeInput").prop("disabled", !isChecked);
+	$(function() {
+		$('#CheckFile').change(
+			function() {
+				var isChecked = $(this).is(":checked");
+				$("#inputState, #fileSizeInput, .CheckExt").prop("disabled", !isChecked);
+			});
+		$('#allcheck').change(function() {
+			var isChecked = $(this).is(":checked");
+			$(".CheckExt").prop("checked", isChecked);
 		});
+
+		
 	});
 </script>
+<script>
+	$(function(){  
+        // 초기 로드 시 파일 확장자 체크박스들 초기화 
+         <c:forEach var="boardinfo" items="${CreateBoard}">
+             // 값 콘솔에 출력
+             console.log("board_info_idx: ${boardinfo.board_info_idx}, file_ext: ${boardinfo.file_ext}, ${boardinfo.is_public}");
+
+             var fileExts_${boardinfo.board_info_idx} = "${boardinfo.file_ext}".split(',');
+
+             fileExts_${boardinfo.board_info_idx}.forEach(function(ext) {
+                 $('.CheckExt2_${boardinfo.board_info_idx}[value="' + ext + '"]').prop('checked', true);
+             });
+
+             // 전체 선택 체크박스의 동작 설정
+             $('#allcheck2_${boardinfo.board_info_idx}').change(function() {
+                 var isChecked = $(this).is(":checked");
+                 $('.CheckExt2_${boardinfo.board_info_idx}').prop('checked', isChecked);
+             });
+             
+          // 전체 선택 체크박스의 동작 설정
+             $('#CheckFile2_${boardinfo.board_info_idx}').change(function() {
+            	 var isChecked = $(this).is(":checked");
+                 var modalIdx = $(this).attr('id').split('_')[1]; // board_info_idx 추출
+                 $("#inputState2_" + modalIdx + ", #fileSizeInput2_" + modalIdx + ", .CheckExt2_" + modalIdx).prop("disabled", !isChecked);
+             });
+          
+             // is_checked 값에 따른 초기 활성화 상태 설정
+             <c:if test="${boardinfo.file_checked == 1}">
+                 $('#CheckFile2_${boardinfo.board_info_idx}').prop('checked', true).trigger('change');
+             </c:if>
+         </c:forEach> 
+	});
+</script> 
 </head>
 
 <body id="page-top">
@@ -107,22 +151,7 @@
 						<i class="fa fa-bars"></i>
 					</button>
 				</form>
-
-				<!-- Topbar Search -->
-				<form
-					class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-					<div class="input-group">
-						<input type="text" class="form-control bg-light border-0 small"
-							placeholder="Search for..." aria-label="Search"
-							aria-describedby="basic-addon2">
-						<div class="input-group-append">
-							<button class="btn btn-primary" type="button">
-								<i class="fas fa-search fa-sm"></i>
-							</button>
-						</div>
-					</div>
-				</form>
-
+ 
 				<!-- Topbar Navbar -->
 				<ul class="navbar-nav ml-auto">
 					<div class="topbar-divider d-none d-sm-block"></div>
@@ -220,51 +249,21 @@
 									</tr>
 								</tfoot>
 								<tbody>
-									<tr>
-										<td>Colleen Hurst</td>
-										<td>Javascript Developer</td>
-										<td>San Francisco</td>
-										<td>39</td>
-										<td>2009/09/15</td>
-										<td>$205,500</td>
-										<td>$205,500</td>
-									</tr>
-									<tr>
-										<td>Sonya Frost</td>
-										<td>Software Engineer</td>
-										<td>Edinburgh</td>
-										<td>23</td>
-										<td>2008/12/13</td>
-										<td>$103,600</td>
-										<td>$103,600</td>
-									</tr>
-									<tr>
-										<td>Jena Gaines</td>
-										<td>Office Manager</td>
-										<td>London</td>
-										<td>30</td>
-										<td>2008/12/19</td>
-										<td>$90,560</td>
-										<td>$90,560</td>
-									</tr>
-									<tr>
-										<td>Quinn Flynn</td>
-										<td>Support Lead</td>
-										<td>Edinburgh</td>
-										<td>22</td>
-										<td>2013/03/03</td>
-										<td>$342,000</td>
-										<td>$342,000</td>
-									</tr>
-									<tr>
-										<td>Charde Marshall</td>
-										<td>Regional Director</td>
-										<td>San Francisco</td>
-										<td>36</td>
-										<td>2008/10/16</td>
-										<td>$470,600</td>
-										<td>$470,600</td>
-									</tr>
+									<c:forEach var="boardinfo" items="${CreateBoard }"
+										varStatus="var">
+										<tr>
+											<td>${(var.index - createBoardSize)}</td>
+											<td>${boardinfo.board_info_idx }</td>
+											<td>${boardinfo.board_info_name }</td>
+											<td>총게시물</td>
+											<td>${boardinfo.is_usage }</td>
+											<td>${boardinfo.board_date }</td>
+											<td><input type="button" value="수정"
+												data-bs-toggle="modal"
+												data-bs-target="#BoardModifyModal_${boardinfo.board_info_idx }"
+												class="btn btn-info" /></td>
+										</tr>
+									</c:forEach>
 								</tbody>
 							</table>
 						</div>
@@ -286,101 +285,415 @@
 	<a class="scroll-to-top rounded" href="#page-top"> <i
 		class="fas fa-angle-up"></i>
 	</a>
+
+	<!-- 게시판 수정 모달 -->
+		<c:forEach var="boardinfo" items="${CreateBoard }" varStatus="var">
+			<form:form action="${root }/admin/modifyBoardPro" method="post" modelAttribute="ModifyCreateBoardBean">  
+				<div class="modal fade"
+					id="BoardModifyModal_${boardinfo.board_info_idx }"
+					tabindex="-1" aria-labelledby="BoardModifyModalLabel"
+					aria-hidden="true">
+					<div class="modal-dialog modal-xl">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h1 class="modal-title fs-5" id="BoardModifyModal">게시판 수정</h1>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"
+									aria-label="Close"></button>
+							</div> 
+							<div class="modal-body"> 
+								<table class="table table-bordered">
+									<tbody>
+										<tr>
+											<th scope="row">게시판 코드</th>
+											<td>
+												<input type="hidden" name="board_info_idx" value="${boardinfo.board_info_idx}">
+											</td>
+										</tr>
+										<tr>
+											<th scope="row">게시판명</th>
+											<td>
+											<input type="text" class="form-control "
+												name="board_info_name" value="${boardinfo.board_info_name }" />
+											</td>
+										</tr>
+										<tr>
+											<th scope="row">게시판 설명</th>
+											<td colspan="2"><textarea class="form-control"
+													name="board_explanation">${boardinfo.board_explanation }</textarea></td>
+										</tr>
+										<tr>
+											<th scope="row">게시판 기능</th>
+											<td>
+												<div class="row">
+													<div class="col-6">
+														<div class="form-check">
+															<input class="form-check-input" type="checkbox" value="1"
+																id="CheckAnswer_${boardinfo.board_info_idx}"
+																name="is_answer"
+																${boardinfo.is_answer == 1 ? 'checked' : ''}> 
+																<label class="form-check-label" for="CheckAnswer_${boardinfo.board_info_idx}">
+																답변기능 </label>
+														</div>
+														<div class="form-check">
+															<input class="form-check-input" type="checkbox" value="1"
+																id="CheckComment2_${boardinfo.board_info_idx}"
+																name="is_comment"
+																${boardinfo.is_comment == 1 ? 'checked' : ''}> 
+																<label class="form-check-label" for="CheckComment2_${boardinfo.board_info_idx}">
+																댓글기능 </label>
+														</div>
+														<div class="form-check">
+														    <input class="form-check-input" type="checkbox" value="1"
+														        id="IsPublic2_${boardinfo.board_info_idx}"
+														        name="is_public"
+														        ${boardinfo.is_public == 1 ? 'checked' : ''}>
+														    <label class="form-check-label" for="IsPublic2_${boardinfo.board_info_idx}">
+														        비공개 여부
+														    </label>
+														</div>
+														<div class="form-check">
+															<input class="form-check-input" type="checkbox" value="1"
+																name="file_checked"
+																id="CheckFile2_${boardinfo.board_info_idx}"
+																${boardinfo.file_checked == 1 ? 'checked' : ''}> <label
+																class="form-check-label"
+																for="CheckFile2_${boardinfo.board_info_idx}">
+																파일 첨부기능 </label>
+														</div>
+													</div>
+													<div class="col-6">
+														<div class="d-flex align-items-center">
+															첨부파일 수 : &nbsp;
+															<select class="form-select form-control"
+																style="width: 15%;" id="inputState2_${boardinfo.board_info_idx}"
+																aria-label="Default select example" name="is_file"
+																disabled>
+																<option value="0" ${boardinfo.is_file == 0 ? 'selected' : ''}>0</option>
+													            <option value="1" ${boardinfo.is_file == 1 ? 'selected' : ''}>1</option>
+													            <option value="2" ${boardinfo.is_file == 2 ? 'selected' : ''}>2</option>
+													            <option value="3" ${boardinfo.is_file == 3 ? 'selected' : ''}>3</option>
+															</select> &nbsp;개
+														</div>
+														 <div class="d-flex align-items-center  mt-2">
+		                                                첨부파일 사이즈 : <input type="text" name="file_size"
+		                                                                      id="fileSizeInput2_${boardinfo.board_info_idx}"
+		                                                                      value="${boardinfo.file_size}" min="0"
+		                                                                      class="form-control mx-2"
+		                                                                      style="width: 15%;"
+		                                                                      placeholder="5000" disabled/> KByte
+		                                            </div>
+													</div>
+												</div>
+												<div class="row-col12">
+													첨부파일 확장자(선택) <i class="bi bi-chevron-compact-down"></i>
+												</div>
+												<div class="row-col12">
+													<div class="form-check">
+														<input class="form-check-input CheckExt2_${boardinfo.board_info_idx}" type="checkbox"
+															id="allcheck2_${boardinfo.board_info_idx}" disabled> <label
+															class="form-check-label" for="allcheck2_${boardinfo.board_info_idx}">전체선택</label>
+													</div>
+												</div>
+												<div class="row mt-2">
+													<div class="col-3 ">
+														<div class="form-check">
+															<input class="form-check-input CheckExt2_${boardinfo.board_info_idx}" type="checkbox"
+																value="*.jpg" id="jpg2" name="file_ext" disabled> <label
+																class="form-check-label" for="jpg2"> *.jpg </label>
+														</div>
+														<div class="form-check">
+															<input class="form-check-input CheckExt2_${boardinfo.board_info_idx}" type="checkbox"
+																value="*.jpeg" id="jpeg2" name="file_ext" disabled>
+															<label class="form-check-label" for="jpeg2"> *.jpeg
+															</label>
+														</div>
+														<div class="form-check">
+															<input class="form-check-input CheckExt2_${boardinfo.board_info_idx}" type="checkbox"
+																value="*.png" id="png2" name="file_ext" disabled> <label
+																class="form-check-label" for="png2"> *.png </label>
+														</div>
+														<div class="form-check">
+															<input class="form-check-input CheckExt2_${boardinfo.board_info_idx}" type="checkbox"
+																value="*.bmp" id="bmp2" name="file_ext" disabled> <label
+																class="form-check-label" for="bmp2"> *.bmp </label>
+														</div>
+													</div>
+													<div class="col-3">
+														<div class="form-check">
+															<input class="form-check-input CheckExt2_${boardinfo.board_info_idx}" type="checkbox"
+																value="*.tif" id="tif2" name="file_ext" disabled> <label
+																class="form-check-label" for="tif2"> *.tif </label>
+														</div>
+														<div class="form-check">
+															<input class="form-check-input CheckExt2_${boardinfo.board_info_idx}" type="checkbox"
+																value="*.tiff" id="tiff2" name="file_ext" disabled>
+															<label class="form-check-label" for="tiff2"> *.tiff
+															</label>
+														</div>
+														<div class="form-check">
+															<input class="form-check-input CheckExt2_${boardinfo.board_info_idx}" type="checkbox"
+																value="*.xls" id="xls2" name="file_ext" disabled> <label
+																class="form-check-label" for="xls2"> *.xls </label>
+														</div>
+													</div>
+													<div class="col-3">
+														<div class="form-check">
+															<input class="form-check-input CheckExt2_${boardinfo.board_info_idx}" type="checkbox"
+																value="*.xlsx" id="xlsx2" name="file_ext" disabled>
+															<label class="form-check-label" for="xlsx2"> *.xlsx
+															</label>
+														</div>
+														<div class="form-check">
+															<input class="form-check-input CheckExt2_${boardinfo.board_info_idx}" type="checkbox"
+																value="*.csv" id="csv2" name="file_ext" disabled> <label
+																class="form-check-label" for="csv2"> *.csv </label>
+														</div>
+														<div class="form-check">
+															<input class="form-check-input CheckExt2_${boardinfo.board_info_idx}" type="checkbox"
+																value="*.hwp" id="hwp2" name="file_ext" disabled> <label
+																class="form-check-label" for="hwp2"> *.hwp </label>
+														</div>
+		
+													</div>
+													<div class="col-3">
+														<div class="form-check">
+															<input class="form-check-input CheckExt2_${boardinfo.board_info_idx}" type="checkbox"
+																value="*.doc" id="doc2" name="file_ext" disabled> <label
+																class="form-check-label" for="doc2"> *.doc </label>
+														</div>
+														<div class="form-check">
+															<input class="form-check-input CheckExt2_${boardinfo.board_info_idx}" type="checkbox"
+																value="*.docx" id="docx2" name="file_ext" disabled>
+															<label class="form-check-label" for="docx2"> *.docx
+															</label>
+														</div>
+														<div class="form-check">
+															<input class="form-check-input CheckExt2_${boardinfo.board_info_idx}" type="checkbox"
+																value="*.txt" id="txt2" name="file_ext" disabled> <label
+																class="form-check-label" for="txt2"> *.txt </label>
+														</div>
+		
+													</div>
+												</div>
+											</td>
+										</tr>
+										<tr>
+											<th scope="row">사용여부</th>
+											<td colspan="2">
+												<select class="form-select form-control usage_${boardinfo.board_info_idx}" aria-label="Default select example" name="is_usage">
+														<option value="Y" ${boardinfo.is_usage == 'Y'?'selected':'' }>사용</option>
+														<option value="N" ${boardinfo.is_usage =='N'?'selected':'' }>미사용</option>
+												</select>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<div class="modal-footer">
+								<button type="submit" class="btn btn-primary">수정</button>
+								<button type="button" class="btn btn-secondary"
+									data-bs-dismiss="modal">닫기</button>
+							</div> 
+						</div>
+					</div>
+				</div> 
+			</form:form>
+		</c:forEach> 
 	
-	<!-- 게시판 생성 모달 -->
-	<form:form action="${root }/admin/admin_boardPro" method="post" modelAttribute="CreateBoardBean">
-	<div class="modal fade" id="exampleModal" tabindex="-1"
-		aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-xl">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h1 class="modal-title fs-5" id="exampleModalLabel">게시판 생성</h1>
-					<button type="button" class="btn-close" data-bs-dismiss="modal"
-						aria-label="Close"></button>
-				</div>
-				<div class="modal-body">
-					<table class="table table-bordered">
-						<tbody>
-							<tr>
-								<th scope="row">게시판 코드</th>
-							</tr>
-							<tr>
-								<th scope="row">게시판명</th>
-								<td><input type="text" class="form-control" name="board_name"/></td>
-							</tr>
-							<tr>
-								<th scope="row">게시판 설명</th>
-								<td colspan="2"><textarea class="form-control" name="board_explanation" ></textarea></td>
-							</tr>
-							<tr>
-								<th scope="row">게시판 기능</th>
-								<td>
-									<div class="row">
-										<div class="col-6">
-											<div class="form-check">
-												<input class="form-check-input" type="checkbox" value="1"
-													id="CheckAnswer" name="is_answer"> <label
-													class="form-check-label" for="CheckAnswer">
-													답변기능 </label>
-											</div>
-											<div class="form-check">
-												<input class="form-check-input" type="checkbox" value="1"
-													id="CheckComment" name="is_comment"> <label
-													class="form-check-label" for="CheckComment">
-													댓글기능 </label>
-											</div>
-											<div class="form-check">
-												<input class="form-check-input" type="checkbox" value="1"
-													id="CheckFile"> <label
-													class="form-check-label" for="CheckFile">
-													파일 첨부기능 </label>
-											</div>
-										</div>
-										<div class="col-6">
-											<div class="d-flex align-items-center">
-											  첨부파일 수 : &nbsp;<select class="form-select form-control" style="width:15%;"
-															id="inputState" aria-label="Default select example" name="is_file" disabled>
-																<option value="0" selected>0</option>
-																<option value="1">1</option>
-																<option value="2">2</option>
-																<option value="3">3</option>
+		<!-- board Modify Modal End  -->
+	
+	
+	
+		<!-- 게시판 생성 모달 -->
+		<form:form action="${root }/admin/admin_boardPro" method="post"
+			modelAttribute="CreateBoardBean">
+			<div class="modal fade" id="exampleModal" tabindex="-1"
+				aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-xl">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h1 class="modal-title fs-5" id="exampleModalLabel">게시판 생성</h1>
+							<button type="button" class="btn-close" data-bs-dismiss="modal"
+								aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<table class="table table-bordered">
+								<tbody>
+									<tr>
+										<th scope="row">게시판 코드</th>
+									</tr>
+									<tr>
+										<th scope="row">게시판명</th>
+										<td><input type="text" class="form-control"
+											name="board_info_name" /></td>
+									</tr>
+									<tr>
+										<th scope="row">게시판 설명</th>
+										<td colspan="2"><textarea class="form-control"
+												name="board_explanation"></textarea></td>
+									</tr>
+									<tr>
+										<th scope="row">게시판 기능</th>
+										<td>
+											<div class="row mb-2">
+												<div class="col-6">
+													<div class="form-check">
+														<input class="form-check-input" type="checkbox" value="1"
+															id="CheckAnswer" name="is_answer"> <label
+															class="form-check-label" for="CheckAnswer"> 답변기능 </label>
+													</div>
+													<div class="form-check">
+														<input class="form-check-input" type="checkbox" value="1"
+															id="CheckComment" name="is_comment"> <label
+															class="form-check-label" for="CheckComment"> 댓글기능
+														</label>
+													</div> 
+													<div class="form-check">
+														<input class="form-check-input" type="checkbox" value="1"
+															id="IsPublic" name="is_public"> <label class="form-check-label"
+															for="IsPublic">비공개 여부 </label>
+													</div>
+													<div class="form-check">
+														<input class="form-check-input" type="checkbox" value="1"
+															id="CheckFile" name="file_checked"> <label class="form-check-label"
+															for="CheckFile"> 파일 첨부기능 </label>
+													</div>
+												</div>
+												<div class="col-6">
+													<div class="d-flex align-items-center">
+														첨부파일 수 : &nbsp;<select class="form-select form-control"
+															style="width: 15%;" id="inputState"
+															aria-label="Default select example" name="is_file"
+															disabled>
+															<option value="0" selected>0</option>
+															<option value="1">1</option>
+															<option value="2">2</option>
+															<option value="3">3</option>
 														</select> &nbsp;개
+													</div>
+													<div class="d-flex align-items-center  mt-2">
+														첨부파일 사이즈 : <input type="text" name="file_size"
+															id="fileSizeInput" value="0" min="0"
+														class="form-control mx-2" style="width: 15%;"
+														placeholder="5000" disabled /> KByte
+												</div>
 											</div>
-											<div class="d-flex align-items-center  mt-2">
-											  첨부파일 사이즈 : <input type="text" name="file_size" id="fileSizeInput" class="form-control mx-2" style="width: 15%;" placeholder="5000" disabled/> KByte
-											</div> 
 										</div>
-									</div>
-									<div class="row mt-2">
-										<div class="d-flex align-items-center col-12">
-											  첨부파일 확장자 : <input type="text" class="form-control mx-2" name="file_ext" style="width: 70%;" placeholder="예)*.jpg,*.gif (컴마로 구분)"/> 
+										<div class="row-col12">
+											첨부파일 확장자(선택) <i class="bi bi-chevron-compact-down"></i>
 										</div>
-									</div>
-								</td>
-							</tr>
-							<tr>
-								<th scope="row">사용여부</th>
-								<td colspan="2">
-									<select class="form-select form-control" aria-label="Default select example" name="is_usage">
+										<div class="row-col12">
+											<div class="form-check">
+												<input class="form-check-input CheckExt" type="checkbox"
+													id="allcheck" disabled> <label
+													class="form-check-label" for="allcheck">전체선택</label>
+											</div>
+										</div>
+										<div class="row mt-2">
+											<div class="col-3 ">
+												<div class="form-check">
+													<input class="form-check-input CheckExt" type="checkbox"
+														value="*.jpg" id="jpg" name="file_ext" disabled> <label
+														class="form-check-label" for="jpg"> *.jpg </label>
+												</div>
+												<div class="form-check">
+													<input class="form-check-input CheckExt" type="checkbox"
+														value="*.jpeg" id="jpeg" name="file_ext" disabled>
+													<label class="form-check-label" for="jpeg"> *.jpeg
+													</label>
+												</div>
+												<div class="form-check">
+													<input class="form-check-input CheckExt" type="checkbox"
+														value="*.png" id="png" name="file_ext" disabled> <label
+														class="form-check-label" for="png"> *.png </label>
+												</div>
+												<div class="form-check">
+													<input class="form-check-input CheckExt" type="checkbox"
+														value="*.bmp" id="bmp" name="file_ext" disabled> <label
+														class="form-check-label" for="bmp"> *.bmp </label>
+												</div>
+											</div>
+											<div class="col-3">
+												<div class="form-check">
+													<input class="form-check-input CheckExt" type="checkbox"
+														value="*.tif" id="tif" name="file_ext" disabled> <label
+														class="form-check-label" for="tif"> *.tif </label>
+												</div>
+												<div class="form-check">
+													<input class="form-check-input CheckExt" type="checkbox"
+														value="*.tiff" id="tiff" name="file_ext" disabled>
+													<label class="form-check-label" for="tiff"> *.tiff
+													</label>
+												</div>
+												<div class="form-check">
+													<input class="form-check-input CheckExt" type="checkbox"
+														value="*.xls" id="xls" name="file_ext" disabled> <label
+														class="form-check-label" for="xls"> *.xls </label>
+												</div>
+											</div>
+											<div class="col-3">
+												<div class="form-check">
+													<input class="form-check-input CheckExt" type="checkbox"
+														value="*.xlsx" id="xlsx" name="file_ext" disabled>
+													<label class="form-check-label" for="xlsx"> *.xlsx
+													</label>
+												</div>
+												<div class="form-check">
+													<input class="form-check-input CheckExt" type="checkbox"
+														value="*.csv" id="csv" name="file_ext" disabled> <label
+														class="form-check-label" for="csv"> *.csv </label>
+												</div>
+												<div class="form-check">
+													<input class="form-check-input CheckExt" type="checkbox"
+														value="*.hwp" id="hwp" name="file_ext" disabled> <label
+														class="form-check-label" for="hwp"> *.hwp </label>
+												</div>
+
+											</div>
+											<div class="col-3">
+												<div class="form-check">
+													<input class="form-check-input CheckExt" type="checkbox"
+														value="*.doc" id="doc" name="file_ext" disabled> <label
+														class="form-check-label" for="doc"> *.doc </label>
+												</div>
+												<div class="form-check">
+													<input class="form-check-input CheckExt" type="checkbox"
+														value="*.docx" id="docx" name="file_ext" disabled>
+													<label class="form-check-label" for="docx"> *.docx
+													</label>
+												</div>
+												<div class="form-check">
+													<input class="form-check-input CheckExt" type="checkbox"
+														value="*.txt" id="txt" name="file_ext" disabled> <label
+														class="form-check-label" for="txt"> *.txt </label>
+												</div>
+
+											</div>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<th scope="row">사용여부</th>
+									<td colspan="2"><select class="form-select form-control"
+										aria-label="Default select example" name="is_usage">
 											<option value="Y" selected>사용</option>
 											<option value="N">미사용</option>
-									</select>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<div class="modal-footer">
-					<button type="submit" class="btn btn-primary">생성</button> 
-					<button type="button" class="btn btn-secondary"
-						data-bs-dismiss="modal">닫기</button>
+									</select></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary">생성</button>
+						<button type="button" class="btn btn-secondary"
+							data-bs-dismiss="modal">닫기</button>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	<!-- board Create Modal End  -->
-	</form:form>
-	
+		<!-- board Create Modal End  -->
+	</form:form> 
+
 	<!-- Logout Modal-->
 	<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog"
 		aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -411,8 +724,7 @@
 			</div>
 		</div>
 	</footer>
-	<!-- End of Footer -->
-
+	<!-- End of Footer --> 
 	<!-- Bootstrap core JavaScript-->
 	<script src="${root}/resources/vendor/jquery/jquery.min.js"></script>
 	<script

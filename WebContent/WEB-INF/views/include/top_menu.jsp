@@ -26,14 +26,16 @@
 	<button class="navbar-toggler" type="button" data-toggle="collapse"
 		data-target="#navMenu">
 		<span class="navbar-toggler-icon"></span>
-	</button>
- 
+	</button> 
 	<div class="collapse navbar-collapse" id="navMenu">
 		<ul class="navbar-nav">
 			<c:forEach var='obj' items='${topMenuList }'>
-				<li class="nav-item"><a
-					href="${root }board/main?index=${obj.board_info_idx }" class="nav-link">${obj.board_info_name }</a>
-				</li>
+				 <c:if test="${obj.is_usage=='Y' }">
+					 <li class="nav-item">
+	                    <a href="${root}board/main?index=${obj.board_info_idx }"
+	                       class="nav-link <c:if test='${param.index == obj.board_info_idx}'>active</c:if>">${obj.board_info_name }</a>
+	                </li>
+                </c:if> 
 			</c:forEach>
 		</ul>
 		<c:choose>

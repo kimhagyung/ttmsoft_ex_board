@@ -7,8 +7,9 @@ public class CommentBean {
 	private String comment_date;
 	private int content_idx;
 	private int user_idx;
-	private String user_name; 
+	private String user_name;  
 	
+	 
 	public String getUser_name() {
 		return user_name;
 	}

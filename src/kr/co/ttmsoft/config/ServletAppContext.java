@@ -151,7 +151,8 @@ public class ServletAppContext implements WebMvcConfigurer {
 		
 		reg1.addPathPatterns("/**"); // 모든 요청에서 동작
 		reg2.addPathPatterns("/**");
-		reg3.addPathPatterns("/board/modify","/board/delete", "/user/modify", "/board/write");
+		//reg3.addPathPatterns("/board/modify","/board/delete", "/user/modify", "/board/write");
+		reg3.addPathPatterns("/board/modify","/board/delete", "/user/modify");
 		//reg4.addPathPatterns("/admin/**");
 		reg4.addPathPatterns("/**");
 	}

@@ -212,7 +212,7 @@ function updateComment(commentId, editedText){
 					<a href="${root }/board/main?index=${boardInfo.content_board_idx}"
 						class="btn btn-primary">목록보기</a>
 					<c:if
-						test="${loginUserBean.user_idx==boardInfo.content_writer_idx }">
+						test="${loginUserBean.user_idx==boardInfo.user_idx }">
 						<a href="${root }/board/modify?content_idx=${param.content_idx}"
 							class="btn btn-info">수정하기</a>
 						<a href="#"

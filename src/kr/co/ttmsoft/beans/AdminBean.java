@@ -1,12 +1,14 @@
 package kr.co.ttmsoft.beans;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public class AdminBean {
 	
 	private int admin_idx;
 	private String admin_id;
 	private String admin_pw;
 	private String admin_name;
-	private boolean admin_login;
+	private boolean admin_login; 
 	
 	
 	public AdminBean() {

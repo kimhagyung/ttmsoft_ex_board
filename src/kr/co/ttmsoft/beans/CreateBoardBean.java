@@ -7,13 +7,26 @@ public class CreateBoardBean {
 		private String board_explanation;
 		private int is_answer; 
 		private int is_comment;
+		private String board_date;
 		private int is_file; 
 		private String is_usage;
 		private int file_size;
 		private String file_ext;
+		private int file_checked;
 		
 		
-		
+		public int getFile_checked() {
+			return file_checked;
+		}
+		public void setFile_checked(int file_checked) {
+			this.file_checked = file_checked;
+		}
+		public String getBoard_date() {
+			return board_date;
+		}
+		public void setBoard_date(String board_date) {
+			this.board_date = board_date;
+		}
 		public int getFile_size() {
 			return file_size;
 		}

@@ -24,7 +24,7 @@ public class TopMenuInterceptor implements HandlerInterceptor {
 			throws Exception {
 
 		List<BoardInfoBean> topMenuList = topMenuService.getTopMenuList();  
-		
+		 
 		request.setAttribute("topMenuList", topMenuList); 
 
 		return true;
