@@ -74,21 +74,55 @@ $(function() {
 */
 
 let uploadedFiles = []; // 업로드된 파일들을 담을 배열
-	$('#uploadFiles').click(function(){ 
+
+	/* $('#uploadFiles').click(function(){  //업로드 파일 클릭 ! 
 		$('.selected-image').append('<div class="form-inline">' 
-		+ '<input type="file" name="uploadFiles" class="form-control">' 
+		+ '<input type="file" name="uploadFiles" accept="${boardAllInfo.file_ext}" class="form-control" multiple>' 
 		+ ' <button type="button" class="btn_delete btn btn-sm">삭제</button>' + '</div>'); 
-		}); 
- 
+		}); */ 
+		
+	$(function(){
+		var isFile = ${boardAllInfo.is_file};
+
+        // 숫자만큼 반복하여 "개" 출력
+        for (var i = 0; i < isFile; i++) {
+        	 $('.selected-image').append('<div class="form-inline">' 
+                     + '<input type="file" name="uploadFiles" accept="${boardAllInfo.file_ext}" class="form-control" multiple>'  
+                     + '</div>');
+        }
+        
+        // 파일 선택 시 크기 체크
+        $('input[name="uploadFiles"]').change(function() {
+            var maxFileSizeKB = ${boardAllInfo.file_size}; 
+
+            var files = $(this)[0].files;
+            for (var j = 0; j < files.length; j++) {
+                var fileSizeKB = files[j].size / 1024; // 파일 크기 kB
+                if (fileSizeKB > maxFileSizeKB) {
+                    alert('파일 크기는'+ maxFileSizeKB +'KByte 이하여야 합니다.');
+                    console.log("현재 업로드한 파일 크기", fileSizeKB);
+                    $(this).val(''); // 파일 선택 취소
+                    return false;
+                }else {
+                    uploadedFiles.push(files[j]); // 배열에 파일 추가
+                }
+            }
+        });
+	});
+/* 		// 파일 입력 필드 삭제 버튼에 대한 이벤트 핸들러
+        $(document).on('click', '.btn_delete', function() {
+            $(this).closest('.form-inline').remove();
+        }); */
     $('#uploadForm').submit(function(event) {
-       // event.preventDefault(); // 폼 기본 동작 방지
+       	//event.preventDefault(); // 폼 기본 동작 방지
 
-        var formData = new FormData();
-
+        var formData = new FormData(); 
+        
         for (var i = 0; i < uploadedFiles.length; i++) {
             formData.append('uploadFiles', uploadedFiles[i]);
+            //formData.append('file_size', (uploadedFiles[i].size / 1024));
             console.log('파일 이름:', uploadedFiles[i].name);
-            console.log('파일 크기:', uploadedFiles[i].size, '바이트');
+            console.log('파일 크기:', uploadedFiles[i].size / 1024, 'kB'); 
         }
 
         var board_subject = $('input[name="board_subject"]').val();
@@ -141,11 +175,11 @@ let uploadedFiles = []; // 업로드된 파일들을 담을 배열
 	                <div class="form-group">
 	                <label for="public"><h4>공개여부</h4></label><br>
 	                	<div class="form-check form-check-inline">
-						  <input class="form-check-input" type="radio" name="is_public" id="public1" value="1" checked>
+						  <input class="form-check-input" type="radio" name="content_is_public" id="public1" value="1" checked>
 						  <label class="form-check-label" for="public1">공개</label>
 						</div>
 						<div class="form-check form-check-inline">
-						  <input class="form-check-input" type="radio" name="is_public" id="public2" value="0">
+						  <input class="form-check-input" type="radio" name="content_is_public" id="public2" value="0">
 						  <label class="form-check-label" for="public2">비공개</label>
 						</div>
 	                </div>
@@ -156,8 +190,8 @@ let uploadedFiles = []; // 업로드된 파일들을 담을 배열
                 </div>
                 <c:if test="${boardAllInfo.file_checked==1 }">
 	                <div class="form-group">
-	                    <input type="file" id="uploadFiles" name="uploadFiles" style="display: none;"class="form-control" accept="image/*" multiple  />
-	                    <label for="uploadFiles"><h5>첨부 이미지<i class="bi bi-camera-fill mx-2"></i></h5></label> 
+	                  <!--   <input type="file" id="uploadFiles" name="uploadFiles" style="display: none;"class="form-control" accept="image/*" multiple  /> -->
+	                    <label for="uploadFiles"> <h5>첨부파일(최대 ${boardAllInfo.is_file }개)<i class="bi bi-camera-fill mx-2" id="uploadFiles"></i></h5></label> 
 	                    <div class="selected-image"></div>
 	                </div>     
                 </c:if>                        

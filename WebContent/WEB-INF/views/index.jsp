@@ -6,6 +6,11 @@
 <html>
 <head>
 <title>미니 프로젝트</title>
+<script>
+function SecretWrite(){
+	alert("접근할 수 없는 글입니다")
+}
+</script>
 </head>
 <body> 
 	<!-- 상단메뉴 -->
@@ -30,14 +35,28 @@
 							</thead>
 							<tbody> 
 								<c:forEach var="info" items="${MainBoardInfo}">
-									<c:if test="${info.content_board_idx == obj.board_info_idx}">  
-										<c:if test="${info.is_public==1 }"> 
-			                                <tr>
-			                                    <td class="text-center">${info.content_idx}</td>
-			                                    <td><a href="${root }/board/read?content_idx=${info.content_idx }" >${info.content_subject}</a></td>
-			                                    <td class="text-center d-none d-xl-table-cell">${info.content_date}</td>
-			                                </tr>
-			                            </c:if> 	 
+									<c:if test="${info.content_board_idx == obj.board_info_idx}">   
+		                                <tr>
+		                                    <td class="text-center">${info.content_idx}</td>
+		                                    <td>
+		                                    	<c:choose>
+												    <c:when test="${info.content_is_public == 1}">
+												        <a href="${root}/board/read?content_idx=${info.content_idx}">${info.content_subject}</a>
+												    </c:when>
+												    <c:when test="${info.content_is_public == 0}">
+												        <c:choose>
+												            <c:when test="${empty loginUserBean.user_idx or loginUserBean.user_idx != info.user_idx}">
+												                <a href="${root}/board/read?content_idx=${info.content_idx}" onclick="SecretWrite(); return false;">${info.content_subject}</a>
+												            </c:when>
+												            <c:when test="${loginUserBean.user_idx == info.user_idx}">
+												                <a href="${root}/board/read?content_idx=${info.content_idx}">${info.content_subject}</a>
+												            </c:when>
+												        </c:choose>
+												    </c:when>
+												</c:choose> 
+		                                    </td> 
+		                                    <td class="text-center d-none d-xl-table-cell">${info.content_date}</td>
+		                                </tr> 	 
 		                            </c:if>	  
 								</c:forEach>
 							</tbody>

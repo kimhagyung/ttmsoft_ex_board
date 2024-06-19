@@ -161,14 +161,11 @@
 						class="nav-link dropdown-toggle" href="#" id="userDropdown"
 						role="button" data-toggle="dropdown" aria-haspopup="true"
 						aria-expanded="false"> <span
-							class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas
-								McGee</span> <img class="img-profile rounded-circle"
-							src="${root}/resources/upload/logo.png">
+							class="mr-2 d-none d-lg-inline text-gray-600 small">${loginAdminBean.admin_name }</span> 
 					</a> <!-- Dropdown - User Information -->
 						<div
 							class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-							aria-labelledby="userDropdown">
-							<!-- <div class="dropdown-divider"></div> -->
+							aria-labelledby="userDropdown"> 
 							<a class="dropdown-item" href="#" data-toggle="modal"
 								data-target="#logoutModal"> <i
 								class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -252,7 +249,7 @@
 									<c:forEach var="boardinfo" items="${CreateBoard }"
 										varStatus="var">
 										<tr>
-											<td>${(var.index - createBoardSize)}</td>
+											<td>${(var.index+1)}</td>
 											<td>${boardinfo.board_info_idx }</td>
 											<td>${boardinfo.board_info_name }</td>
 											<td>총게시물</td>
@@ -325,15 +322,7 @@
 											<th scope="row">게시판 기능</th>
 											<td>
 												<div class="row">
-													<div class="col-6">
-														<div class="form-check">
-															<input class="form-check-input" type="checkbox" value="1"
-																id="CheckAnswer_${boardinfo.board_info_idx}"
-																name="is_answer"
-																${boardinfo.is_answer == 1 ? 'checked' : ''}> 
-																<label class="form-check-label" for="CheckAnswer_${boardinfo.board_info_idx}">
-																답변기능 </label>
-														</div>
+													<div class="col-6"> 
 														<div class="form-check">
 															<input class="form-check-input" type="checkbox" value="1"
 																id="CheckComment2_${boardinfo.board_info_idx}"
@@ -398,59 +387,59 @@
 													<div class="col-3 ">
 														<div class="form-check">
 															<input class="form-check-input CheckExt2_${boardinfo.board_info_idx}" type="checkbox"
-																value="*.jpg" id="jpg2" name="file_ext" disabled> <label
+																value="image/jpg" id="jpg2" name="file_ext" disabled> <label
 																class="form-check-label" for="jpg2"> *.jpg </label>
 														</div>
 														<div class="form-check">
 															<input class="form-check-input CheckExt2_${boardinfo.board_info_idx}" type="checkbox"
-																value="*.jpeg" id="jpeg2" name="file_ext" disabled>
+																value="image/jpeg" id="jpeg2" name="file_ext" disabled>
 															<label class="form-check-label" for="jpeg2"> *.jpeg
 															</label>
 														</div>
 														<div class="form-check">
 															<input class="form-check-input CheckExt2_${boardinfo.board_info_idx}" type="checkbox"
-																value="*.png" id="png2" name="file_ext" disabled> <label
+																value="image/png" id="png2" name="file_ext" disabled> <label
 																class="form-check-label" for="png2"> *.png </label>
 														</div>
 														<div class="form-check">
 															<input class="form-check-input CheckExt2_${boardinfo.board_info_idx}" type="checkbox"
-																value="*.bmp" id="bmp2" name="file_ext" disabled> <label
+																value="image/bmp" id="bmp2" name="file_ext" disabled> <label
 																class="form-check-label" for="bmp2"> *.bmp </label>
 														</div>
 													</div>
 													<div class="col-3">
 														<div class="form-check">
 															<input class="form-check-input CheckExt2_${boardinfo.board_info_idx}" type="checkbox"
-																value="*.tif" id="tif2" name="file_ext" disabled> <label
+																value="image/tif" id="tif2" name="file_ext" disabled> <label
 																class="form-check-label" for="tif2"> *.tif </label>
 														</div>
 														<div class="form-check">
 															<input class="form-check-input CheckExt2_${boardinfo.board_info_idx}" type="checkbox"
-																value="*.tiff" id="tiff2" name="file_ext" disabled>
+																value="image/tiff" id="tiff2" name="file_ext" disabled>
 															<label class="form-check-label" for="tiff2"> *.tiff
 															</label>
 														</div>
 														<div class="form-check">
 															<input class="form-check-input CheckExt2_${boardinfo.board_info_idx}" type="checkbox"
-																value="*.xls" id="xls2" name="file_ext" disabled> <label
+																value="application/vnd.ms-excel" id="xls2" name="file_ext" disabled> <label
 																class="form-check-label" for="xls2"> *.xls </label>
 														</div>
 													</div>
 													<div class="col-3">
 														<div class="form-check">
 															<input class="form-check-input CheckExt2_${boardinfo.board_info_idx}" type="checkbox"
-																value="*.xlsx" id="xlsx2" name="file_ext" disabled>
+																value="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" id="xlsx2" name="file_ext" disabled>
 															<label class="form-check-label" for="xlsx2"> *.xlsx
 															</label>
 														</div>
 														<div class="form-check">
 															<input class="form-check-input CheckExt2_${boardinfo.board_info_idx}" type="checkbox"
-																value="*.csv" id="csv2" name="file_ext" disabled> <label
+																value="text/csv" id="csv2" name="file_ext" disabled> <label
 																class="form-check-label" for="csv2"> *.csv </label>
 														</div>
 														<div class="form-check">
 															<input class="form-check-input CheckExt2_${boardinfo.board_info_idx}" type="checkbox"
-																value="*.hwp" id="hwp2" name="file_ext" disabled> <label
+																value="application/x-hwp" id="hwp2" name="file_ext" disabled> <label
 																class="form-check-label" for="hwp2"> *.hwp </label>
 														</div>
 		
@@ -458,18 +447,18 @@
 													<div class="col-3">
 														<div class="form-check">
 															<input class="form-check-input CheckExt2_${boardinfo.board_info_idx}" type="checkbox"
-																value="*.doc" id="doc2" name="file_ext" disabled> <label
+																value="application/msword" id="doc2" name="file_ext" disabled> <label
 																class="form-check-label" for="doc2"> *.doc </label>
 														</div>
 														<div class="form-check">
 															<input class="form-check-input CheckExt2_${boardinfo.board_info_idx}" type="checkbox"
-																value="*.docx" id="docx2" name="file_ext" disabled>
+																value="application/vnd.openxmlformats-officedocument.wordprocessingml.document" id="docx2" name="file_ext" disabled>
 															<label class="form-check-label" for="docx2"> *.docx
 															</label>
 														</div>
 														<div class="form-check">
 															<input class="form-check-input CheckExt2_${boardinfo.board_info_idx}" type="checkbox"
-																value="*.txt" id="txt2" name="file_ext" disabled> <label
+																value="text/plain" id="txt2" name="file_ext" disabled> <label
 																class="form-check-label" for="txt2"> *.txt </label>
 														</div>
 		
@@ -536,12 +525,7 @@
 										<th scope="row">게시판 기능</th>
 										<td>
 											<div class="row mb-2">
-												<div class="col-6">
-													<div class="form-check">
-														<input class="form-check-input" type="checkbox" value="1"
-															id="CheckAnswer" name="is_answer"> <label
-															class="form-check-label" for="CheckAnswer"> 답변기능 </label>
-													</div>
+												<div class="col-6"> 
 													<div class="form-check">
 														<input class="form-check-input" type="checkbox" value="1"
 															id="CheckComment" name="is_comment"> <label
@@ -593,59 +577,59 @@
 											<div class="col-3 ">
 												<div class="form-check">
 													<input class="form-check-input CheckExt" type="checkbox"
-														value="*.jpg" id="jpg" name="file_ext" disabled> <label
+														value="image/jpg"  id="jpg" name="file_ext" disabled> <label
 														class="form-check-label" for="jpg"> *.jpg </label>
 												</div>
 												<div class="form-check">
 													<input class="form-check-input CheckExt" type="checkbox"
-														value="*.jpeg" id="jpeg" name="file_ext" disabled>
+														value="image/jpeg"  id="jpeg" name="file_ext" disabled>
 													<label class="form-check-label" for="jpeg"> *.jpeg
 													</label>
 												</div>
 												<div class="form-check">
 													<input class="form-check-input CheckExt" type="checkbox"
-														value="*.png" id="png" name="file_ext" disabled> <label
+														value="image/png" id="png" name="file_ext" disabled> <label
 														class="form-check-label" for="png"> *.png </label>
 												</div>
 												<div class="form-check">
 													<input class="form-check-input CheckExt" type="checkbox"
-														value="*.bmp" id="bmp" name="file_ext" disabled> <label
+														value="image/bmp"  id="bmp" name="file_ext" disabled> <label
 														class="form-check-label" for="bmp"> *.bmp </label>
 												</div>
 											</div>
 											<div class="col-3">
 												<div class="form-check">
 													<input class="form-check-input CheckExt" type="checkbox"
-														value="*.tif" id="tif" name="file_ext" disabled> <label
+														value="image/tif" id="tif" name="file_ext" disabled> <label
 														class="form-check-label" for="tif"> *.tif </label>
 												</div>
 												<div class="form-check">
 													<input class="form-check-input CheckExt" type="checkbox"
-														value="*.tiff" id="tiff" name="file_ext" disabled>
+														value="image/tiff" id="tiff" name="file_ext" disabled>
 													<label class="form-check-label" for="tiff"> *.tiff
 													</label>
 												</div>
 												<div class="form-check">
 													<input class="form-check-input CheckExt" type="checkbox"
-														value="*.xls" id="xls" name="file_ext" disabled> <label
+														value="application/vnd.ms-excel"  id="xls" name="file_ext" disabled> <label
 														class="form-check-label" for="xls"> *.xls </label>
 												</div>
 											</div>
 											<div class="col-3">
 												<div class="form-check">
 													<input class="form-check-input CheckExt" type="checkbox"
-														value="*.xlsx" id="xlsx" name="file_ext" disabled>
+														value="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" id="xlsx" name="file_ext" disabled>
 													<label class="form-check-label" for="xlsx"> *.xlsx
 													</label>
 												</div>
 												<div class="form-check">
 													<input class="form-check-input CheckExt" type="checkbox"
-														value="*.csv" id="csv" name="file_ext" disabled> <label
+														value="text/csv"  id="csv" name="file_ext" disabled> <label
 														class="form-check-label" for="csv"> *.csv </label>
 												</div>
 												<div class="form-check">
 													<input class="form-check-input CheckExt" type="checkbox"
-														value="*.hwp" id="hwp" name="file_ext" disabled> <label
+														value="application/x-hwp" id="hwp" name="file_ext" disabled> <label
 														class="form-check-label" for="hwp"> *.hwp </label>
 												</div>
 
@@ -653,18 +637,18 @@
 											<div class="col-3">
 												<div class="form-check">
 													<input class="form-check-input CheckExt" type="checkbox"
-														value="*.doc" id="doc" name="file_ext" disabled> <label
+														value="application/msword" id="doc" name="file_ext" disabled> <label
 														class="form-check-label" for="doc"> *.doc </label>
 												</div>
 												<div class="form-check">
 													<input class="form-check-input CheckExt" type="checkbox"
-														value="*.docx" id="docx" name="file_ext" disabled>
+														value="application/vnd.openxmlformats-officedocument.wordprocessingml.document" id="docx" name="file_ext" disabled>
 													<label class="form-check-label" for="docx"> *.docx
 													</label>
 												</div>
 												<div class="form-check">
 													<input class="form-check-input CheckExt" type="checkbox"
-														value="*.txt" id="txt" name="file_ext" disabled> <label
+														value="text/plain" id="txt" name="file_ext" disabled> <label
 														class="form-check-label" for="txt"> *.txt </label>
 												</div>
 

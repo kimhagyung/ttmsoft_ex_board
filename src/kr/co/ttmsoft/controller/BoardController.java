@@ -44,12 +44,20 @@ public class BoardController {
 		
 		for (ContentBean main : getPostPageInfo) {
 			boardWriterName.add(boardService.getContentUserName(main.getContent_idx()));
+			System.out.println(main.getContent_subject());
+			System.out.println(main.getContent_idx());
+			System.out.println(main.getContent_subject());
+			System.out.println(main.getContent_text());
+			System.out.println(main.getUser_idx());
+			System.out.println(main.getContent_board_idx()); 
+			System.out.println(main.getContent_is_public());
+			System.out.println(main.getIs_deleted());
 		}
 		//model.addAttribute("MainBoardInfo", MainBoardInfo);
 		model.addAttribute("boardWriterName", boardWriterName);
 		
 		//-----------------------------------------------------------------------------------
-		model.addAttribute("MainBoardInfo", getPostPageInfo);
+		model.addAttribute("MainBoardInfo", getPostPageInfo); //게시글 전체 정보 
 		PageBean pageBean = boardService.getBoardPageInfoCnt(page,content_board_idx);
 		model.addAttribute("pageBean", pageBean);
 		
@@ -61,15 +69,23 @@ public class BoardController {
 	@GetMapping("/read")
 	public String read(@RequestParam("content_idx") int content_idx, Model model) {
 		ContentBean boardInfo = boardService.getBoardInfo(content_idx); //게시글 내용 정보 
-		BoardFileBean boardfileBean=boardService.getBoardFileInfo(content_idx); //게시글 사진 정보 
+		List<BoardFileBean> boardfileBean=boardService.getBoardFileInfo(content_idx); //게시글 사진 정보 
 		String boardWriterName = (boardService.getContentUserName(content_idx));
-			
+		BoardInfoBean boardAllInfo = boardService.getAllBoardInfo(boardInfo.getContent_board_idx());
+		
+		/*
 		System.out.println("받아온 게시글 내용: " + boardInfo.getContent_text());
-		System.out.println("받아온 사진 이름 :"+boardfileBean.getFile_name());
+		for(BoardFileBean boardfile:boardfileBean) { 
+			System.out.println("받아온 사진 이름 :"+boardfile.getFile_name());
+			System.out.println("받아온 사진 경로 :"+boardfile.getFile_path());
+		}
 		System.out.println("받아온 작성자 이름: " + boardWriterName);
-
-		model.addAttribute("boardWriterName", boardWriterName);
-		model.addAttribute("boardInfo", boardInfo);
+	*/
+		
+		model.addAttribute("boardWriterName", boardWriterName); //게시글 작성자 이름 
+		model.addAttribute("boardInfo", boardInfo); //게시글 정보 
+		model.addAttribute("boardAllInfo", boardAllInfo); //게시판 보든 정보 
+		model.addAttribute("boardfileBean", boardfileBean); //게시글의 사진 정보 
 		return "board/read";
 	}
 	
@@ -94,7 +110,8 @@ public class BoardController {
 	    System.out.println("받아온 사용자 아이디는?" + boardPostBean.getUser_idx());
 	    System.out.println("받아온 글내용은?" + boardPostBean.getContent_text());
 	    System.out.println("받아온 제목은?" + boardPostBean.getContent_subject());
-	    System.out.println("공개여부는?" + boardPostBean.getIs_public());
+	    System.out.println("받아온 파일 사이즈는?" + boardFilePostBean.getFile_size());
+	    System.out.println("공개여부는?" + boardPostBean.getContent_is_public());
 	    
 	    try {
 	        if (loginUserBean.isUserLogin()) { // 로그인 여부 확인
@@ -104,8 +121,7 @@ public class BoardController {
 	                    for (MultipartFile uploadFile : uploadFiles) {
 	                    	if (!uploadFile.isEmpty()) {
 	                            System.out.println("업로드된 파일 이름: " + uploadFile.getOriginalFilename());
-	                            System.out.println("업로드된 파일 크기: " + uploadFile.getSize() + " bytes");
-	                            
+	                            System.out.println("업로드된 파일 크기: " + uploadFile.getSize() + " bytes"); 
 	                            // 파일 저장 로직(boardService.addBoardFileInfo() 호출 등)을 추가해야 합니다.
 	                            boardService.addBoardFileInfo(boardFilePostBean, uploadFile, contentIdx);
 	                        }
@@ -131,27 +147,28 @@ public class BoardController {
 	@GetMapping("/modify")
 	public String modify(Model model, @RequestParam("content_idx") int content_idx,
 			@ModelAttribute("modifyPostBean") ContentBean modifyPostBean) {
-		ContentBean boardInfo = boardService.getBoardInfo(content_idx);
-		String boardWriterName = (boardService.getContentUserName(content_idx));
-
-		System.out.println("받아온 게시글 내용: " + boardInfo.getContent_text());
+		ContentBean boardInfo = boardService.getBoardInfo(content_idx); //게시글 정보 
+		String boardWriterName = (boardService.getContentUserName(content_idx)); //작성자 
+		BoardInfoBean boardAllInfo = boardService.getAllBoardInfo(boardInfo.getContent_board_idx()); //게시판 정보들 
+		List<BoardFileBean> boardfileBean=boardService.getBoardFileInfo(content_idx); //게시글 파일 정보 
+		
+		System.out.println("받아온 게시글 내용: " + boardInfo.getContent_text()); 
 		System.out.println("받아온 작성자 이름: " + boardWriterName);
 
 		model.addAttribute("boardWriterName", boardWriterName);
 		model.addAttribute("boardInfo", boardInfo);
-		return "board/modify";
+		model.addAttribute("boardAllInfo", boardAllInfo);
+		model.addAttribute("boardfileBean", boardfileBean); //게시글 파일 정보 
+		return "board/modify"; 
 	}
 
 	@PostMapping("/modify_pro")
-	public String modify_pro(Model model, @ModelAttribute("modifyPostBean") ContentBean modifyPostBean, @RequestParam("uploadFiles") MultipartFile uploadFile) {
+	public String modify_pro(Model model, @ModelAttribute("modifyPostBean") ContentBean modifyPostBean,@ModelAttribute("modifyBoardFileBean") BoardFileBean modifyBoardFileBean, @RequestParam("uploadFiles") MultipartFile uploadFile) {
 		try { 
-		 if (loginUserBean.isUserLogin() == true) { 
-            if (!uploadFile.isEmpty()) { // 업로드된 파일이 있는지 확인
-            	boardService.modifyBoardInfo(modifyPostBean, uploadFile); 
-            } else {
-            	modifyPostBean.setContent_file(modifyPostBean.getExistingFile()); 
-                boardService.modifyBoardInfoWithoutFile(modifyPostBean); // 파일이 없는 경우의 로직 처리
-            }
+		 if (loginUserBean.isUserLogin() == true) {  
+				//modifyBoardFileBean.setFile_path(modifyPostBean.getExistingFile()); 
+	            // boardService.modifyBoardFileBean(modifyBoardFileBean, uploadFile);
+				 boardService.modifyBoardInfo(modifyPostBean);    
 		 }
 		}catch (Exception e) {
 			e.printStackTrace();

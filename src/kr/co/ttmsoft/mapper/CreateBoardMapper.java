@@ -12,8 +12,8 @@ import kr.co.ttmsoft.beans.CreateBoardBean;
 
 public interface CreateBoardMapper {
 
-	@Insert("insert into board_info_table(board_info_idx,board_info_name,board_explanation,is_answer,is_comment,is_file,is_usage,file_checked,file_size,file_ext,board_date,is_public)\r\n"
-			+ "values(board_info_seq.nextval, #{board_info_name}, #{board_explanation}, #{is_answer},#{is_comment},#{is_file}, #{is_usage},#{file_checked}, #{file_size, jdbcType=INTEGER},#{file_ext, jdbcType=VARCHAR}, SYSDATE, #{is_public})\r\n")
+	@Insert("insert into board_info_table(board_info_idx,board_info_name,board_explanation,is_comment,is_file,is_usage,file_checked,file_size,file_ext,board_date,is_public)\r\n"
+			+ "values(board_info_seq.nextval, #{board_info_name}, #{board_explanation}, #{is_comment},#{is_file}, #{is_usage},#{file_checked}, #{file_size, jdbcType=INTEGER},#{file_ext, jdbcType=VARCHAR}, SYSDATE, #{is_public})\r\n")
 	void addCreateBoardInfo(BoardInfoBean CreateBoardBean); //게시판 생성 
 
 	
@@ -24,7 +24,6 @@ public interface CreateBoardMapper {
 			+ "SET\r\n"
 			+ "    board_info_name = #{board_info_name, jdbcType=VARCHAR},\r\n"
 			+ "    board_explanation = #{board_explanation, jdbcType=VARCHAR},\r\n"
-			+ "    is_answer = #{is_answer, jdbcType=INTEGER},\r\n"
 			+ "    is_comment = #{is_comment, jdbcType=INTEGER},\r\n"
 			+ "    is_file = #{is_file, jdbcType=INTEGER},\r\n"
 			+ "    is_usage = #{is_usage, jdbcType=VARCHAR},\r\n"

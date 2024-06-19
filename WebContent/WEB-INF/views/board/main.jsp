@@ -5,8 +5,18 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script> 
+	function SecretWrite(){
+		alert("접근할 수 없는 글입니다")
+	}
+ 
+	function confirm(is_public){
+		console.log(("공개(1)?비공개(0)?" ,is_public));
+	}
+</script>
 </head>
-<body>
+<body> 
 	<c:import url="/WEB-INF/views/include/top_menu.jsp" />
 
 	<!-- 게시글 리스트 -->
@@ -27,18 +37,32 @@
 				</thead> 
 				<tbody>
 					<c:forEach var="obj" items="${MainBoardInfo }" varStatus="loop"> 
-						<c:if test="${param.index == obj.content_board_idx}"> 
-							<c:if test="${obj.is_public==1 }">
-								<tr>
-									<td class="text-center d-none d-md-table-cell">${obj.content_idx }</td>
-									<td><a
-										href="${root }/board/read?content_idx=${obj.content_idx}">${obj.content_subject }</a>
-									</td>
-									<td class="text-center d-none d-md-table-cell">${boardWriterName[loop.index] }</td>
-									<td class="text-center d-none d-md-table-cell">${obj.content_date }</td>
-								</tr>
-							</c:if> 
-						</c:if>
+						<c:if test="${param.index == obj.content_board_idx}">  
+							<c:if test="${obj.is_deleted=='N' }"> 
+									<tr>
+										<td class="text-center d-none d-md-table-cell">${obj.content_idx }</td>
+										<td>
+											<c:choose>
+											    <c:when test="${obj.content_is_public == 1}">
+											        <a href="${root}/board/read?content_idx=${obj.content_idx}" onclick="confirm(${obj.content_is_public})">${obj.content_subject}</a>
+											    </c:when>
+											    <c:when test="${obj.content_is_public == 0}">
+											        <c:choose>
+											            <c:when test="${empty loginUserBean.user_idx or loginUserBean.user_idx != obj.user_idx}">
+											                <a href="${root}/board/read?content_idx=${obj.content_idx}" onclick="SecretWrite(); return false;">${obj.content_subject}</a>
+											            </c:when>
+											            <c:when test="${loginUserBean.user_idx == obj.user_idx}">
+											                <a href="${root}/board/read?content_idx=${obj.content_idx}">${obj.content_subject}</a>
+											            </c:when>
+											        </c:choose>
+											    </c:when>
+											</c:choose> 
+										</td>
+										<td class="text-center d-none d-md-table-cell">${boardWriterName[loop.index] }</td>
+										<td class="text-center d-none d-md-table-cell">${obj.content_date }</td>
+									</tr>
+								</c:if>
+							</c:if>  
 					</c:forEach>
 				</tbody>
 			</table>

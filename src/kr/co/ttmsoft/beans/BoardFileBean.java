@@ -12,9 +12,24 @@ public class BoardFileBean {
 	private String uploaded_at; 
 	private int content_idx; 
 	private int user_idx;
-	private List<MultipartFile> upload_photos; 
+	//private List<MultipartFile> upload_photos;
+	private long file_size;
+	private String existingFile; //기존 파일 경로 
 	
-	  
+	 
+	 
+	public String getExistingFile() {
+		return existingFile;
+	}
+	public void setExistingFile(String existingFile) {
+		this.existingFile = existingFile;
+	}
+	public long getFile_size() {
+		return file_size;
+	}
+	public void setFile_size(long file_size) {
+		this.file_size = file_size;
+	}
 	public int getBoard_file_idx() {
 		return board_file_idx;
 	}

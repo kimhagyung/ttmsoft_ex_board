@@ -12,4 +12,10 @@ public interface TopMenuMapper {
 			"from board_info_table " + 
 			"order by board_info_idx")
 	List<BoardInfoBean> getTopMenuList();
+	
+	/*
+	@Select("select * " +
+			"from board_info_table " + 
+			"order by board_info_idx")
+	int get getTopMenuList();*/
 }

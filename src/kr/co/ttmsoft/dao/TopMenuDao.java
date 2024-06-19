@@ -11,8 +11,7 @@ import kr.co.ttmsoft.mapper.TopMenuMapper;
 public class TopMenuDao {
 
 	@Autowired
-	private TopMenuMapper topMenuMapper;
-	//ServletAppContext에서 등록한 TopMenuMapper를 주입
+	private TopMenuMapper topMenuMapper; 
 	
 	
 	public List<BoardInfoBean> getTopMenuList(){

@@ -98,6 +98,8 @@ public class AdminController {
 
 	@GetMapping("/m_admin_content")
 	public String m_admin_content() {
+		
+		
 		return "admin/m_admin_content";
 	}
 

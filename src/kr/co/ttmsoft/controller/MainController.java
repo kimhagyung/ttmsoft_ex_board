@@ -26,15 +26,24 @@ public class MainController {
 	@GetMapping("/index")
 	public String main(Model model) {
 		List<ContentBean> MainBoardInfo=new ArrayList<ContentBean>();
-		List<BoardInfoBean> topMenuList = topMenuService.getTopMenuList();
+		List<BoardInfoBean> topMenuList = topMenuService.getTopMenuList(); //메뉴 사이즈를 위해 
+		
+		System.out.println("메뉴 사이즈 !!"+topMenuList.size());
 		
 		for(int i=1;i<=topMenuList.size();i++) {
-			MainBoardInfo.addAll(boardService.getBoardInfoo(i)); 
+			MainBoardInfo.addAll(boardService.getBoardInfoo(i));  
+			System.out.println("i의 값은? "+i);
 		}
 		
 		model.addAttribute("MainBoardInfo", MainBoardInfo);   
 		
 		return "index";
 	} 
+	
+	@GetMapping("/fileTest")
+	public String fileTest(Model model) {
+		
+		return "fileTest";
+	}
 
 }

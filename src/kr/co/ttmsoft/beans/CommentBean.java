@@ -9,6 +9,7 @@ public class CommentBean {
 	private int user_idx;
 	private String user_name;  
 	
+	
 	 
 	public String getUser_name() {
 		return user_name;

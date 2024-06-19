@@ -50,9 +50,12 @@ public class BoardService {
 				String originalFileName = uploadFile.getOriginalFilename();
 				String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
 				String randomName = UUID.randomUUID().toString() + extension; // 임의의 이름 생성
+				long fileSize = uploadFile.getSize()/ 1024;
 				boardFileBean.setFile_name(originalFileName);
 				boardFileBean.setFile_path(randomName);
 				boardFileBean.setContent_idx(contentIdx);
+				boardFileBean.setFile_size(fileSize);
+				System.out.println("서비스에서 파일 사이즈"+fileSize);
 				// 파일을 지정된 경로에 저장합니다.
 				uploadFile.transferTo(new File(path_upload + "/" + randomName));
 				boardDao.addBoardFileInfo(boardFileBean);
@@ -70,7 +73,7 @@ public class BoardService {
 	}
 
 	//게시글 사진 조회 
-	public BoardFileBean getBoardFileInfo(int content_idx){
+	public List<BoardFileBean> getBoardFileInfo(int content_idx){
 		return boardDao.getBoardFileInfo(content_idx);
 	}
 	
@@ -100,23 +103,29 @@ public class BoardService {
 	}
 
 	// 게시글 수정
-	public void modifyBoardInfo(ContentBean modifyBoardInfo, MultipartFile uploadFile) {
-		String fileName = uploadFile.getOriginalFilename();
-		modifyBoardInfo.setContent_file(fileName);
-
-		try {
-			// 파일을 지정된 경로에 저장합니다.
-			String photo_name = FilenameUtils.getBaseName(fileName) + "." + FilenameUtils.getExtension(fileName);
-			uploadFile.transferTo(new File(path_upload + "/" + photo_name));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public void modifyBoardInfo(ContentBean modifyBoardInfo) { 
 		boardDao.modifyBoardInfo(modifyBoardInfo);
 	}
 
 	// 사진 수정없는 게시글 수정
-	public void modifyBoardInfoWithoutFile(ContentBean modifyBoardInfo) {
-		boardDao.modifyBoardInfoWithoutFile(modifyBoardInfo);
+	public void modifyBoardFileBean(BoardFileBean modifyBoardFileInfo, MultipartFile uploadFile) {
+		try {
+			if (uploadFile != null && !uploadFile.isEmpty()) { // 파일이 null이 아니고 비어있지 않은 경우에만 파일 업로드를 수행합니다.
+				String originalFileName = uploadFile.getOriginalFilename();
+				String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+				String randomName = UUID.randomUUID().toString() + extension; // 임의의 이름 생성
+				long fileSize = uploadFile.getSize()/ 1024;
+				modifyBoardFileInfo.setFile_name(originalFileName);
+				modifyBoardFileInfo.setFile_path(randomName); 
+				modifyBoardFileInfo.setFile_size(fileSize);
+				System.out.println("서비스에서 파일 사이즈"+fileSize);
+				// 파일을 지정된 경로에 저장합니다.
+				uploadFile.transferTo(new File(path_upload + "/" + randomName)); 
+				boardDao.modifyBoardFileBean(modifyBoardFileInfo);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	// 게시글 삭제
@@ -127,6 +136,21 @@ public class BoardService {
 	//게시판 테이블 정보 
 	public BoardInfoBean getAllBoardInfo(int board_info_idx) {
 		return boardDao.getAllBoardInfo(board_info_idx);
+	}
+	
+	//게시판 아이디를 사용하여 해당하는 게시판의 게시글 조회하기 
+	public List<ContentBean> getAllContentInfo(int board_info_idx){
+		return boardDao.getAllContentInfo(board_info_idx);
+	}
+	
+	//삭제처리 함수 
+	public void UpdateIsDeletedYes(int content_idx) {
+		boardDao.UpdateIsDeletedYes(content_idx);
+	}
+	
+	//삭제처리 취소 함수 
+	public void UpdateIsDeletedNo(int content_idx) {
+		boardDao.UpdateIsDeletedNo(content_idx);
 	}
 
 	// 네이버

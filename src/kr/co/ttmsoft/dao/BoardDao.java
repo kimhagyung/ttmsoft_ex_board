@@ -43,7 +43,7 @@ public class BoardDao {
 		return boardMapper.getBoardInfo(content_idx);
 	}
 
-	public BoardFileBean getBoardFileInfo(int content_idx){
+	public List<BoardFileBean> getBoardFileInfo(int content_idx){
 		return boardMapper.getBoardFileInfo(content_idx);
 	}
 	
@@ -59,8 +59,8 @@ public class BoardDao {
 		boardMapper.modifyBoardInfo(modifyBoardInfo);
 	}
 	
-	public void modifyBoardInfoWithoutFile(ContentBean modifyBoardInfo) {
-		boardMapper.modifyBoardInfoWithoutFile(modifyBoardInfo);
+	public void modifyBoardFileBean(BoardFileBean modifyBoardFileInfo) {
+		boardMapper.modifyBoardFileBean(modifyBoardFileInfo);
 	}
 	
 	public void deleteBoardInfo(int content_idx) {
@@ -72,6 +72,18 @@ public class BoardDao {
 		return boardMapper.getAllBoardInfo(board_info_idx);
 	}
 
+	
+	public List<ContentBean> getAllContentInfo(int board_info_idx){
+		return boardMapper.getAllContentInfo(board_info_idx);
+	}
+	
+	public void UpdateIsDeletedYes(int content_idx) {
+		boardMapper.UpdateIsDeletedYes(content_idx);
+	}
+	
+	public void UpdateIsDeletedNo(int content_idx) {
+		boardMapper.UpdateIsDeletedNo(content_idx);
+	}
 	
 	//네이버
 	public void addNaverEditorBean(NaverEditorBean naverEditorBean) {

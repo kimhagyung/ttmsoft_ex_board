@@ -28,9 +28,11 @@ import kr.co.ttmsoft.interceptor.LoginInterceptor;
 import kr.co.ttmsoft.interceptor.TopMenuInterceptor;
 import kr.co.ttmsoft.interceptor.TopMenuInterceptor2;
 import kr.co.ttmsoft.interceptor.TopMenuInterceptor3;
+import kr.co.ttmsoft.mapper.AnswerMapper;
 import kr.co.ttmsoft.mapper.BoardMapper;
 import kr.co.ttmsoft.mapper.CommentMapper;
 import kr.co.ttmsoft.mapper.CreateBoardMapper;
+import kr.co.ttmsoft.mapper.ReplyMapper;
 import kr.co.ttmsoft.mapper.TopMenuMapper;
 import kr.co.ttmsoft.mapper.UserMapper;
 import kr.co.ttmsoft.service.TopMenuService;
@@ -101,6 +103,7 @@ public class ServletAppContext implements WebMvcConfigurer {
 		return factory;
 	}
 
+	//BoardMapper
 	@Bean
 	public MapperFactoryBean<BoardMapper> getBoardMapper(SqlSessionFactory factory) throws Exception {
 		MapperFactoryBean<BoardMapper> factoryBean = new MapperFactoryBean<BoardMapper>(BoardMapper.class);
@@ -108,6 +111,7 @@ public class ServletAppContext implements WebMvcConfigurer {
 		return factoryBean;
 	}
 
+	//TopMenuMapper
 	@Bean
 	public MapperFactoryBean<TopMenuMapper> getTopMenuMapper(SqlSessionFactory factory) throws Exception {
 		MapperFactoryBean<TopMenuMapper> factoryBean = new MapperFactoryBean<TopMenuMapper>(TopMenuMapper.class);
@@ -115,6 +119,7 @@ public class ServletAppContext implements WebMvcConfigurer {
 		return factoryBean;
 	}
 
+	//UserMapper
 	@Bean
 	public MapperFactoryBean<UserMapper> getUserMapper(SqlSessionFactory factory) throws Exception {
 		MapperFactoryBean<UserMapper> factoryBean = new MapperFactoryBean<UserMapper>(UserMapper.class);
@@ -122,6 +127,7 @@ public class ServletAppContext implements WebMvcConfigurer {
 		return factoryBean;
 	}
 	
+	//CommentMapper
 	@Bean
 	public MapperFactoryBean<CommentMapper> getCommentMapper(SqlSessionFactory factory) throws Exception {
 		MapperFactoryBean<CommentMapper> factoryBean = new MapperFactoryBean<CommentMapper>(CommentMapper.class);
@@ -132,6 +138,22 @@ public class ServletAppContext implements WebMvcConfigurer {
 	@Bean
 	public MapperFactoryBean<CreateBoardMapper> getCreateBoardMapper(SqlSessionFactory factory) throws Exception {
 		MapperFactoryBean<CreateBoardMapper> factoryBean = new MapperFactoryBean<CreateBoardMapper>(CreateBoardMapper.class);
+		factoryBean.setSqlSessionFactory(factory);
+		return factoryBean;
+	}
+	
+	//ReplyMapper
+	@Bean
+	public MapperFactoryBean<ReplyMapper> getReplyMapper(SqlSessionFactory factory) throws Exception {
+		MapperFactoryBean<ReplyMapper> factoryBean = new MapperFactoryBean<ReplyMapper>(ReplyMapper.class);
+		factoryBean.setSqlSessionFactory(factory);
+		return factoryBean;
+	}
+	
+	//AnswerMapper
+	@Bean
+	public MapperFactoryBean<AnswerMapper> getAnswerMapper(SqlSessionFactory factory) throws Exception {
+		MapperFactoryBean<AnswerMapper> factoryBean = new MapperFactoryBean<AnswerMapper>(AnswerMapper.class);
 		factoryBean.setSqlSessionFactory(factory);
 		return factoryBean;
 	}
@@ -151,8 +173,7 @@ public class ServletAppContext implements WebMvcConfigurer {
 		
 		reg1.addPathPatterns("/**"); // 모든 요청에서 동작
 		reg2.addPathPatterns("/**");
-		//reg3.addPathPatterns("/board/modify","/board/delete", "/user/modify", "/board/write");
-		reg3.addPathPatterns("/board/modify","/board/delete", "/user/modify");
+		reg3.addPathPatterns("/board/modify","/board/delete", "/user/modify", "/board/write"); 
 		//reg4.addPathPatterns("/admin/**");
 		reg4.addPathPatterns("/**");
 	}
