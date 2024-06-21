@@ -190,8 +190,8 @@ function updateReReplyList(commentIdx){
 				 console.log("reply.user_idx",reply.user_idx);
 				 console.log("loginUserBean.user_idx",${loginUserBean.user_idx}); 
 				 var replyHtml = '<hr><div class="row" style="margin-bottom: 20px;">';
-				 replyHtml += '<i class="bi bi-arrow-return-right class="col-sm-1""></i><div class="col-sm-5"><i class="bi bi-person-circle" style="font-size:25px;"></i> ' + reply.user_name + '</div>'; //댓글 단 사람 이름
-				 replyHtml += '<div class="col-sm-5"></div>' 
+				 replyHtml += '<span><i class="bi bi-arrow-return-right "></i></span><div class="col-sm-5"><i class="bi bi-person-circle" style="font-size:25px;"></i> ' + reply.user_name + '</div>'; //댓글 단 사람 이름
+				 replyHtml += '<div class="col-sm-4"></div>' 
 				 if (${loginUserBean.user_idx} == reply.user_idx) {
 					 replyHtml += '<input type="button" class="col-sm-1 btn btn-link" onclick="editReply(' + reply.reply_idx + ', ' + reply.comment_idx + ')" value="답글수정"/>';
 				      replyHtml += '<input type="button" class="col-sm-1 btn btn-link" onclick="deleteReply(' + reply.reply_idx + ', ' + reply.comment_idx + ')" id="deleteBtn' + reply.reply_idx + '" value="답글삭제"/>';
@@ -545,7 +545,7 @@ function updateReply(replyIdx, editedText,commentIdx){
 				                <c:if test="${not (extension eq 'jpg' or extension eq 'jpeg' or extension eq 'png' or extension eq 'gif' or extension eq 'bmp' or extension eq 'tiff' or extension eq 'tif')}">
 				                    <div>
 				                        파일: &nbsp;
-				                        <a href="<c:url value='/resources/upload/${file.file_path}' />" download="${file.file_name}">
+				                        <a href="<c:url value='/resources/upload/${file.file_path}' />" download="${file.file_name}"><i class="bi bi-download"></i>
 				                            <span class="glyphicon glyphicon-save" aria-hidden="true"></span> ${file.file_name}
 				                        </a> 
 				                        &nbsp; &nbsp; Size: ${file.file_size} KByte

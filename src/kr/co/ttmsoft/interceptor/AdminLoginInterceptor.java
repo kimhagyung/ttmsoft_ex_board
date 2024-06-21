@@ -8,21 +8,21 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import kr.co.ttmsoft.beans.AdminBean;
 import kr.co.ttmsoft.beans.UserBean;
 
-public class LoginInterceptor implements HandlerInterceptor {
+public class AdminLoginInterceptor implements HandlerInterceptor {
 	
-	private UserBean loginUserBean; 
+	private AdminBean loginAdminBean;
 	
-	public LoginInterceptor(UserBean loginUserBean) {
-		this.loginUserBean=loginUserBean; 
+	public AdminLoginInterceptor(AdminBean loginAdminBean) {
+		this.loginAdminBean=loginAdminBean;
 	}
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 		
-		if(loginUserBean.isUserLogin()==false ) {
+		if(loginAdminBean.isAdmin_login()==false) {
 			String contextPath=request.getContextPath();
-			response.sendRedirect(contextPath+"/user/not_login");
+			response.sendRedirect(contextPath+"/admin/not_login");
 			return false;
 		}
 			

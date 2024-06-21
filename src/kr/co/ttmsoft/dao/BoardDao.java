@@ -2,6 +2,7 @@ package kr.co.ttmsoft.dao;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -36,6 +37,10 @@ public class BoardDao {
 	public int getBoardPageInfoCnt(int content_board_idx) {
 		 
 		return boardMapper.getBoardPageInfoCnt(content_board_idx);
+	}
+	
+	public List<ContentBean> getAllContentInfoYesORNo(int board_info_idx, String is_deleted){
+		return boardMapper.getAllContentInfoYesORNo(board_info_idx, is_deleted);
 	}
 	
 	public ContentBean getBoardInfo(int content_idx) {
@@ -84,6 +89,19 @@ public class BoardDao {
 	public void UpdateIsDeletedNo(int content_idx) {
 		boardMapper.UpdateIsDeletedNo(content_idx);
 	}
+	
+	public void deleteBoardFile(int board_file_idx) {
+		boardMapper.deleteBoardFile(board_file_idx);
+	}
+	
+	public List<BoardInfoBean> searchBoardNameInfo(String board_info_name){
+		return boardMapper.searchBoardNameInfo(board_info_name);
+	}
+	
+    public List<BoardInfoBean> searchBoardNameInfoYOrNo(String board_info_name, String is_usage){
+    	return boardMapper.searchBoardNameInfoYOrNo(board_info_name, is_usage);
+    }
+	
 	
 	//네이버
 	public void addNaverEditorBean(NaverEditorBean naverEditorBean) {

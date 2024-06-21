@@ -13,10 +13,10 @@ public class BoardInfoBean {
 	private int file_size;
 	private String file_ext;
 	private int file_checked;
-	private int is_public;
+	private int is_public; 
 	
 	
-	
+	 
 	public int getIs_public() {
 		return is_public;
 	}

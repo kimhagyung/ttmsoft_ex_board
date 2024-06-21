@@ -35,8 +35,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link rel="stylesheet"
 	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
-	<!-- jQuery CDN 추가 (head 태그 안에 추가) -->  
-<script src="${root}/resources/se2/js/service/HuskyEZCreator.js"></script>
+ <script src="${root}/resources/se2/js/service/HuskyEZCreator.js"></script>
 <script>
 	
 	$(document).ready(function() {
@@ -74,22 +73,31 @@
 	$(document).ready(function() {
 	
     // 검색 버튼 클릭 시 이동
-    $('#searchButton').on('click', function() {
+    $('#searchButton').on('click', handleSearchButtonClick);
+
+	});
+function handleSearchButtonClick() {
         const selectedOption = $('#inputState2').val(); // board_info_idx인듯
+        const selectedOption2 = $('#inputState3').val(); // 임시 삭제 여부 검색
         console.log("선택한 옵션", selectedOption);
+        console.log("선택한 임시삭제", selectedOption2);
 
         $.ajax({
-        	url: '${root}/searchBoard?board_info_idx=' + selectedOption,  
+        	url: '${root}/searchBoard?board_info_idx=' + selectedOption + '&isDeleted=' + selectedOption2,
             type: "GET",  
             dataType:'Json',
             success: function(response) { 
                 $('#searchResults').empty(); // 이전 결과 초기화  
                 console.log("검색이 성공했습니다")
-                if (response.length > 0) {
-                    $.each(response, function(index, board) {
-                    	console.log("??",board.board_info_name)
+                //console.log("받아온 게시글: ",response.searchBoard)
+               	//console.log("받아온 파일들: ",response.searchFileBoard) 
+                var searchFileBoard = response.searchFileBoard;
+                
+                if (response.searchBoard.length > 0) {
+                	for (var i = 0; i < response.searchBoard.length; i++) {
+                		var board=response.searchBoard[i]; 
                     	var replyHtml = '<tr>'
-                      	replyHtml += '<td>'+ (index + 1) + '</td>'
+                      	replyHtml += '<td>'+ i + '</td>'
                       	replyHtml += '<td>'+ board.content_idx + '</td>'
                       	replyHtml += '<td>'+ board.board_info_name + '</td>'
                       	replyHtml += '<td>'+ board.content_subject + '</td>'
@@ -119,7 +127,7 @@
 		                modalHtml += '						<th scope="row">등록일</th>'; 
 		                modalHtml += '						<td>'+board.content_date+'</td>'; 
 		                modalHtml += '						<th scope="row">수정일</th>'; 
-		                modalHtml += '						<td> 칼럼 추가 하기 </td>'; 
+		                modalHtml += '						<td>'+ board.modifyContent_date+'</td>'; 
 		                modalHtml += '						</tr>';
 		                modalHtml += '						<tr>';
 		                modalHtml += '						<th scope="row">작성자</th>'; 
@@ -135,11 +143,26 @@
 		                modalHtml += '						</tr>';
 		                modalHtml += '						<tr>';
 		                modalHtml += '						<th scope="row">첨부</th>'; 
-		                modalHtml += '						<td colspan="3">'+  +'</td>'; 
+		                modalHtml += '						<td colspan="3">';
+		             // 파일 리스트 추가
+                        var relatedFiles = searchFileBoard.filter(file => file.content_idx === board.content_idx);
+                        for (var j = 0; j < relatedFiles.length; j++) { 
+                            modalHtml += '<a href="${root}/resources/upload/' + relatedFiles[j].file_path + '" download="' + relatedFiles[j].file_name + '"><i class="bi bi-download"></i>';
+                            modalHtml += '<span class="glyphicon glyphicon-save" aria-hidden="true"></span> ' + relatedFiles[j].file_name + '</a>';
+                            modalHtml += '&nbsp; &nbsp; Size: ' + relatedFiles[j].file_size + ' KByte<br>';
+                        }
+ 
+                        modalHtml += '						</td>';
 		                modalHtml += '						</tr>';
 		                modalHtml += '						</tbody></table></div>';   
 		                modalHtml += '				<div class="modal-footer">';
-		                modalHtml += '					<button type="button" class="btn btn-link" onclick="isdeleted(' + board.content_idx + ')" >삭제처리</button>';
+		                if(board.is_deleted == 'N'){
+		                	 modalHtml += '	     			<button type="button" class="btn btn-link" id="isDeleted" onclick="isdeleted(' + board.content_idx + ')" >삭제처리</button>';
+				               
+		                }else if(board.is_deleted=='Y'){
+		                	 modalHtml += '					<button type="button" class="btn btn-link" id="isDeleted" onclick="clearDelete(' + board.content_idx + ')" >삭제처리 해제</button>';
+				               
+		                }
 		                modalHtml += '					<button type="button" class="btn btn-link" onclick="deleted(' + board.content_idx + ')">완전삭제</button>';
 		                modalHtml += ' 					<button class="btn btn-link" data-bs-target="#ModifyModalToggle_' + board.content_idx + '"" data-bs-toggle="modal">수정</button>'; 
 		                modalHtml += '					<button type="button" class="btn btn-link" data-bs-dismiss="modal">닫기</button>';
@@ -181,7 +204,13 @@
                         modifyModal += '                 			</tr>';
 		                modifyModal += '							<tr>';
 		                modifyModal += '								<th scope="row">첨부</th>'; 
-		                modifyModal += '								<td colspan="3">'+  +'</td>'; 
+		                modifyModal += '									<td colspan="3">';
+			             // 파일 리스트 추가 
+	                        for (var k = 0; k < relatedFiles.length; k++) { 
+	                        	modifyModal += '<div>'+ relatedFiles[k].file_name + '</div>'
+	                        }
+	 
+	                    modifyModal += '									</td>';
 		                modifyModal += '							</tr>';
 		                modifyModal += '						</tbody>';     
 		                modifyModal += '					</table>';     
@@ -212,8 +241,8 @@
 		                        nhn.husky.EZCreator.getById[currentEditorId].destroy();
 		                        currentEditorId = null;
 		                    }
-		                });
-                    });
+		                }); 
+                	}
                 } else {
                 	$("#searchResults").append('<tr><td colspan="7">검색 결과가 없습니다.</td></tr>');
                 }
@@ -223,12 +252,8 @@
                 alert('검색 중 오류가 발생했습니다.');
             }
         });
-    });
-});
-	
-	
-
-
+	}
+ 
 //게시글 임시삭제처리 함수 
 function isdeleted(content_idx){
 	var isConfirmed=confirm('삭제처리 하시겠습니까?')
@@ -239,7 +264,29 @@ function isdeleted(content_idx){
 			type : 'GET',
 			data : {content_idx:content_idx},
 			success : function(response){
-				alert('게시글이 삭제처리 되었습니다.') 
+				alert('게시글이 삭제처리 되었습니다.')  
+				$('#ContentManage_' + content_idx).modal('hide');
+				handleSearchButtonClick();
+			}
+		});
+	}else{
+		alert('취소하셨습니다. ')
+	}
+}
+
+//삭제처리 해제 
+function clearDelete(content_idx){
+var isConfirmed=confirm('삭제처리를 해제 하시겠습니까?')
+	
+	if(isConfirmed){
+		$.ajax({
+			url : '${root}/ClearDeleted',
+			type : 'GET',
+			data : {content_idx:content_idx},
+			success : function(response){
+				alert('게시글이 삭제처리 되었습니다.')  
+				$('#ContentManage_' + content_idx).modal('hide');
+				handleSearchButtonClick();
 			}
 		});
 	}else{
@@ -250,7 +297,7 @@ function isdeleted(content_idx){
 //게시글 완전삭제 처리 함수 
 function deleted(content_idx){
 	var isConfirmed=confirm('게시글을 영구적으로 삭제 하시겠습니까?')
-	
+	console.log("content_idx :",content_idx)
 	if(isConfirmed){
 		$.ajax({
 			url : '${root}/ComDeleted',
@@ -258,7 +305,8 @@ function deleted(content_idx){
 			data : {content_idx:content_idx},
 			success : function(response){
 				alert('게시글이 삭제 되었습니다.') 
-				window.location.reload();
+				$('#ContentManage_' + content_idx).modal('hide');
+				handleSearchButtonClick();
 			}
 		});
 	}else{
@@ -282,8 +330,7 @@ function deleted(content_idx){
 					<i class="fas fa-laugh-wink"></i>
 				</div>
 				<div class="sidebar-brand-text mx-3">
-					SB Admin <sup>2</sup>
-				</div>
+					TTMSoft				</div>
 			</a>
 			<!-- Divider -->
 			<hr class="sidebar-divider">
@@ -303,7 +350,7 @@ function deleted(content_idx){
 				href="${root }/admin/m_admin_board"> <i
 					class="fas fa-fw fa-chart-area"></i> <span>게시판관리</span></a></li>
 			<!-- Nav Item - Tables -->
-			<li class="nav-item"><a class="nav-link"
+			<li class="nav-item"><a class="nav-link active"
 				href="${root }/admin/m_admin_content"> <i
 					class="fas fa-fw fa-chart-area"></i> <span>게시물관리</span></a></li>
 			<!-- Divider -->
@@ -368,16 +415,27 @@ function deleted(content_idx){
 				<hr class="mb-3">
 				<span class="h5 mb-2 text-gray-800">게시물 관리 &nbsp</span> <span
 					class="mb-4">Post Management<a target="_blank"></span>
-				<p> 
-				<div class="row-col-md-2  g-3">
-					<label for="inputState2" class="form-label">게시판 선택</label> <select
+				<p>  
+				<div class="row g-3">
+					<div class="col-md-10">
+						<label for="inputState2" class="form-label">게시판 선택</label> <select
 						class="form-select form-control" id="inputState2"
 						aria-label="Default select example">
 						<c:forEach var="obj" items="${topMenuList }">
 							<option value="${obj.board_info_idx}">${obj.board_info_name }</option> 
 						</c:forEach>
 					</select>
-				</div> 
+					</div>
+					<div class="col-md-2">
+						<label for="inputState3" class="form-label">임시삭제여부</label>
+						<select class="form-select form-control" id="inputState3" name="is_deleted"
+							aria-label="Default select example">
+							<option value="All" selected>전체</option>
+							<option value="Y">Y</option>
+							<option value="N">N</option>
+						</select>
+					</div>
+				</div>
 				<div class="text-right mt-4 mb-4">
 					<span>
 						<button type="button" class="btn btn-primary"
@@ -471,21 +529,26 @@ function deleted(content_idx){
             <!-- End of Footer -->
 
     <!-- Bootstrap core JavaScript-->
-    <script src="${root}/resources/vendor/jquery/jquery.min.js"></script>
-    <script src="${root}/resources/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="${root}/resources/vendor/jquery/jquery.min.js"></script>
+	<script
+		src="${root}/resources/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Core plugin JavaScript-->
-    <script src="${root}/resources/vendor/jquery-easing/jquery.easing.min.js"></script>
+	<!-- Core plugin JavaScript-->
+	<script
+		src="${root}/resources/vendor/jquery-easing/jquery.easing.min.js"></script>
 
-    <!-- Custom scripts for all pages-->
-    <script src="${root}/resources/js/sb-admin-2.min.js"></script>
+	<!-- Custom scripts for all pages-->
+	<script src="${root}/resources/js/sb-admin-2.min.js"></script>
 
-    <!-- Page level plugins -->
-    <script src="${root}/resources/vendor/datatables/jquery.dataTables.min.js"></script>
-    <script src="${root}/resources/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+	<!-- Page level plugins -->
+	<script
+		src="${root}/resources/vendor/datatables/jquery.dataTables.min.js"></script>
+	<script
+		src="${root}/resources/vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
-    <!-- Page level custom scripts -->
-    <script src="${root}/resources/js/demo/datatables-demo.js"></script>
+	<!-- Page level custom scripts -->
+	<script src="${root}/resources/js/demo/datatables-demo.js"></script>
+
 
 </body>
 

@@ -71,7 +71,7 @@ public class BoardService {
 	public ContentBean getBoardInfo(int content_idx) { 
 		return boardDao.getBoardInfo(content_idx);
 	}
-
+	
 	//게시글 사진 조회 
 	public List<BoardFileBean> getBoardFileInfo(int content_idx){
 		return boardDao.getBoardFileInfo(content_idx);
@@ -82,7 +82,9 @@ public class BoardService {
 
 		return boardDao.getBoardInfoo(content_board_idx);
 	}
-
+	public List<ContentBean> getAllContentInfoYesORNo(int board_info_idx, String is_deleted){
+		return boardDao.getAllContentInfoYesORNo(board_info_idx, is_deleted);
+	}
 	// 게시글 리스트 페이징관련
 	public List<ContentBean> getBoardPageInfo(int content_board_idx, int page) {
 		int start = (page - 1) * page_listcnt;
@@ -103,8 +105,9 @@ public class BoardService {
 	}
 
 	// 게시글 수정
-	public void modifyBoardInfo(ContentBean modifyBoardInfo) { 
+	public int modifyBoardInfo(ContentBean modifyBoardInfo) { 
 		boardDao.modifyBoardInfo(modifyBoardInfo);
+		return modifyBoardInfo.getContent_idx(); 
 	}
 
 	// 사진 수정없는 게시글 수정
@@ -152,6 +155,22 @@ public class BoardService {
 	public void UpdateIsDeletedNo(int content_idx) {
 		boardDao.UpdateIsDeletedNo(content_idx);
 	}
+	
+	
+	//게시판 수정 시 파일 삭제 
+	public void deleteBoardFile(int board_file_idx) {
+		boardDao.deleteBoardFile(board_file_idx);
+	}
+	
+	//게시판 이름으로 검색
+	public List<BoardInfoBean> searchBoardNameInfo(String board_info_name){
+		return boardDao.searchBoardNameInfo(board_info_name);
+	}
+	
+	//게시판 이름과 사용여부로 검색 
+	public List<BoardInfoBean> searchBoardNameInfoYOrNo(String board_info_name, String is_usage){
+    	return boardDao.searchBoardNameInfoYOrNo(board_info_name, is_usage);
+    }
 
 	// 네이버
 	public void addNaverEditorBean(NaverEditorBean naverEditorBean, MultipartFile uploadFile) {

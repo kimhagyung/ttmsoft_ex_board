@@ -24,6 +24,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import kr.co.ttmsoft.beans.AdminBean;
 import kr.co.ttmsoft.beans.UserBean;
+import kr.co.ttmsoft.interceptor.AdminLoginInterceptor;
 import kr.co.ttmsoft.interceptor.LoginInterceptor;
 import kr.co.ttmsoft.interceptor.TopMenuInterceptor;
 import kr.co.ttmsoft.interceptor.TopMenuInterceptor2;
@@ -164,18 +165,20 @@ public class ServletAppContext implements WebMvcConfigurer {
 		TopMenuInterceptor topMenuInterceptor = new TopMenuInterceptor(topMenuService);
 		TopMenuInterceptor2 topMenuInterceptor2 = new TopMenuInterceptor2(loginUserBean);
 		TopMenuInterceptor3 topMenuInterceptor3= new TopMenuInterceptor3(loginAdminBean);
-		LoginInterceptor loginInterceptor=new LoginInterceptor(loginUserBean,loginAdminBean);
+		LoginInterceptor loginInterceptor=new LoginInterceptor(loginUserBean);
+		AdminLoginInterceptor adminLoginInterceptor=new AdminLoginInterceptor(loginAdminBean);
 		
 		InterceptorRegistration reg1 = registry.addInterceptor(topMenuInterceptor);
 		InterceptorRegistration reg2 = registry.addInterceptor(topMenuInterceptor2);
 		InterceptorRegistration reg3 = registry.addInterceptor(loginInterceptor);
-		InterceptorRegistration reg4 = registry.addInterceptor(topMenuInterceptor3);
+		InterceptorRegistration reg4 = registry.addInterceptor(topMenuInterceptor3); 
+		InterceptorRegistration reg5 = registry.addInterceptor(adminLoginInterceptor);
 		
 		reg1.addPathPatterns("/**"); // 모든 요청에서 동작
 		reg2.addPathPatterns("/**");
-		reg3.addPathPatterns("/board/modify","/board/delete", "/user/modify", "/board/write"); 
-		//reg4.addPathPatterns("/admin/**");
+		reg3.addPathPatterns("/board/modify","/board/delete", "/user/modify", "/board/write");  
 		reg4.addPathPatterns("/**");
+		reg5.addPathPatterns("/admin/m_admin_board","/admin/m_admin_content");
 	}
 
 	@Bean

@@ -31,50 +31,105 @@
             submitContents(this);
         }); 
     });
-</script>  
-<!-- <script>
-	$(function(){
-		$('#board_file').on('change', function(event){
-			const selectedImageDiv=$('.selected-image')
-			const receviedImagDiv=$('.recevied-img')  
-			
-			receviedImagDiv.remove(); //새로운 파일 선택 시 기존에 받아온 이미지 삭제 
-			selectedImageDiv.empty();
-			
-			const files=event.target.files;
-			
-			 for (const file of files) {
-		            const reader = new FileReader();
-
-		            reader.onload = function (e) {
-		                const img = $('<img>').attr('src', e.target.result).addClass('selected-image-item');
-		                selectedImageDiv.append(img); 
-		            }; 
-		            reader.readAsDataURL(file);
-		      }
-		})
-	});
-</script> -->
+</script>   
 <script>
 	let uploadedFiles = []; // 업로드된 파일들을 담을 배열 
-		
+
 	$(function(){
-		var isFile = ${boardAllInfo.is_file}; 
-	 
-	    // 숫자만큼 반복하여 "개" 출력
-	    for (var i = 0; i < isFile; i++) { 
-    	 $('.selected-image').append('<div class="form-inline">' 
-                 + '<input type="file" name="uploadFiles" class="border border-secondary" accept="${boardAllInfo.file_ext}"  multiple>'  
-                 + '</div>'); 
-	    }
-	    
-	    // 파일 선택 시 크기 체크
+		getFileInfo();
+		var isFile = ${boardAllInfo.is_file};  //첨부파일 개수 
+		
+		
+		
+	});
+	
+	
+	//파일 삭제 후 조회 & 로딩시 조회 함수
+	function getFileInfo(){
+		$.ajax({
+			url : '${root}/getFileInfo?content_idx=${param.content_idx}',
+			type : 'GET',
+			dataType:'Json',
+			success: function(response){
+				$('#fileList').empty(); 
+				$('.selected-image').empty(); 
+				console.log('파일조회 성공');
+				
+				var boardFiles = response;
+				if (boardFiles.length === 0) {
+		            $('#fileList').append('<h5>현재 첨부된 파일 없음</h5>');
+		        } else {
+		        	$('#fileList').append('<h5>현재 첨부된 파일</h5>');
+		            boardFiles.forEach(function(files) {
+		                $('#fileList').append(
+		                    '<div class="row border border-secondary p-2">' +
+		                        '<div class="col-8 mb-1 mt-2" id="filename' + files.board_file_idx + '">' +
+		                            files.file_name +
+		                        '</div>' +
+		                        '<div class="col-2 mb-2">' +
+		                            '<input type="button" value="수정" class="btn btn-link" onclick="modifyFile(' + files.board_file_idx + ')"/>' +
+		                        '</div>' +
+		                        '<div class="col-2 mb-2">' +
+		                            '<input type="button" value="삭제" onclick="deleteFile(' + files.board_file_idx + ')" class="btn btn-link"/>' +
+		                        '</div>' +
+		                        '<div style="display: none;">' +
+		                            '<input type="file" style="display: none;" name="uploadFiles" id="modifyFiles' + files.board_file_idx + '" class="border border-secondary" accept="${boardAllInfo.file_ext}"  multiple>' +
+		                        '</div>' +
+		                    '</div>'
+		                );
+		                console.log('순서대로 첨부된 파일 idx: ', files.board_file_idx);
+		            });
+		            console.log('첨부된 파일 총 개수: ', boardFiles.length);
+		        }
+				
+				var isFile = ${boardAllInfo.is_file}; //첨부파일 개수 
+		        if(boardFiles.length < isFile) {
+		            $('.selected-image').append('<label for="uploadFiles"> <h5>첨부파일(최대 ${boardAllInfo.is_file }개)<i class="bi bi-camera-fill mx-2" id="uploadFiles"></i></h5></label>');
+		            for (var i = boardFiles.length; i < isFile; i++) {
+		            	 $('.selected-image').append('<div class="form-inline">' 
+		                     + '<input type="file" name="uploadFiles" accept="${boardAllInfo.file_ext}" class="form-control" multiple>'  
+		                     + '</div>');
+		            } 
+		            // 파일 선택 시 크기 체크
+		            $('input[name="uploadFiles"]').change(function() {
+		                var maxFileSizeKB = ${boardAllInfo.file_size}; 
+
+		                var files = $(this)[0].files;
+		                for (var j = 0; j < files.length; j++) {
+		                    var fileSizeKB = files[j].size / 1024; // 파일 크기 kB
+		                    if (fileSizeKB > maxFileSizeKB) {
+		                        alert('파일 크기는'+ maxFileSizeKB +'KByte 이하여야 합니다.');
+		                        console.log("현재 업로드한 파일 크기", fileSizeKB);
+		                        $(this).val(''); // 파일 선택 취소
+		                        return false;
+		                    }else {
+		                        uploadedFiles.push(files[j]); // 배열에 파일 추가
+		                    }
+		                }
+		            }); 
+		        }
+			},
+			error: function(error){
+				console.error('파일 조회 오류 :', error)
+			} 
+		});
+	}
+
+  
+	// 파일 수정 함수 
+	function modifyFile(boardFileIdx) {
+	    // 수정할 파일의 id를 가지고 input file을 클릭합니다.
+	   	document.getElementById('modifyFiles' + boardFileIdx).click();
+	 	// 파일 선택 시 크기 체크
 	    $('input[name="uploadFiles"]').change(function() {
 	        var maxFileSizeKB = ${boardAllInfo.file_size}; 
-	
+			
 	        var files = $(this)[0].files;
 	        for (var j = 0; j < files.length; j++) {
 	            var fileSizeKB = files[j].size / 1024; // 파일 크기 kB
+	            var formData = new FormData();  
+	            
+	            formData.append('board_file_idx', boardFileIdx);
 	            if (fileSizeKB > maxFileSizeKB) {
 	                alert('파일 크기는'+ maxFileSizeKB +'KByte 이하여야 합니다.');
 	                console.log("현재 업로드한 파일 크기", fileSizeKB);
@@ -82,56 +137,39 @@
 	                return false;
 	            }else {
 	                uploadedFiles.push(files[j]); // 배열에 파일 추가
+	                formData.append('uploadFiles', uploadedFiles[j]);
+	                console.log('파일 이름:', uploadedFiles[j].name);
+	    	        console.log('파일 크기:', uploadedFiles[j].size / 1024, 'kB');
+	    	        // 파일 이름을 해당 요소에 표시
+	                $('#filename' + boardFileIdx).text(files[j].name);
+	    	        //파일 수정 ajax
+	                $.ajax({
+	    		        url: '${root }/board/modifyFile',
+	    		        type: 'POST',
+	    		        data: formData,
+	    		        processData: false, // 데이터 처리 방식 설정 (FormData 객체 사용시 false로 설정)
+	    		        contentType: false, // 컨텐츠 타입 설정 (FormData 객체 사용시 false로 설정)
+	    		        success: function(response) {
+	    		            console.log('수정완료:', response); 
+	    		            getFileInfo();
+	    		            uploadedFiles = [];
+	    		        },
+	    		        error: function(error) {
+	    		            console.error('업로드 오류:', error);
+	    		        }
+	    		    });
 	            }
 	        }
 	    });
-	});
-
-	$('#uploadForm').submit(function(event) {
-	   	//event.preventDefault(); // 폼 기본 동작 방지
-	
-	    var formData = new FormData(); 
-	    var fileCnt= ${boardAllInfo.is_file }; //파일 개수 
-	    
-	    for (var i = 0; i < uploadedFiles.length; i++) {
-	        formData.append('uploadFiles', uploadedFiles[i]);
-	        //formData.append('file_size', (uploadedFiles[i].size / 1024));
-	        console.log('파일 이름:', uploadedFiles[i].name);
-	        console.log('파일 크기:', uploadedFiles[i].size / 1024, 'kB'); 
-	    }
-	
-	    var board_subject = $('input[name="board_subject"]').val();
-	    var content_text = $('input[name="content_text"]').val();
-	
-	    formData.append('board_subject', board_subject);
-	    formData.append('content_text', content_text);
-	
-	    // 서버로 formData 전송
-	 	if (1 <= fileCnt && fileCnt <= 3) {
-		    $.ajax({
-		        url: '${root }/board/write_pro',
-		        type: 'POST',
-		        data: formData,
-		        processData: false, // 데이터 처리 방식 설정 (FormData 객체 사용시 false로 설정)
-		        contentType: false, // 컨텐츠 타입 설정 (FormData 객체 사용시 false로 설정)
-		        success: function(response) {
-		            console.log('업로드 완료:', response);
-		            // 성공적으로 업로드된 경우 처리할 로직
-		        },
-		        error: function(error) {
-		            console.error('업로드 오류:', error);
-		        }
-		    });
-		}
-	    // 업로드 후 배열 비우기
-	    uploadedFiles = [];
 	    
 	    
-	    
-	});
+	    console.log("수정버튼을 클릭한 파일아이디 : "+boardFileIdx) 
+	}
+	
+	//파일 삭제 함수 
 	function deleteFile(boardFileIdx) { 
 		
-		var isConfirmed=confirm('정말로 이 댓글을 삭제하시겠습니까?');
+		var isConfirmed=confirm('파일을 삭제하시겠습니까?');
 		
 		if(isConfirmed){
 	        $.ajax({
@@ -140,6 +178,8 @@
 	            data: { board_file_idx: boardFileIdx }, // 삭제할 파일의 인덱스 전달
 	            success: function(response) {
 	                console.log('파일 삭제 성공:', response); 
+	                alert('파일을 삭제 하였습니다.:'); 
+	               	getFileInfo();
 	            },
 	            error: function(error) {
 	                console.error('파일 삭제 오류:', error);
@@ -147,7 +187,53 @@
 	            }
 	        });
 		}
-    }
+  }	
+	
+  //업로드 함수  
+	$('#uploadForm').submit(function(event) {
+	   	//event.preventDefault(); // 폼 기본 동작 방지
+	
+	    var formData = new FormData(); 
+	    var fileCnt= ${boardAllInfo.is_file }; //파일 개수 
+	     
+	    for (var i = 0; i < uploadedFiles.length; i++) {
+	        formData.append('uploadFiles', uploadedFiles[i]);
+	        //formData.append('file_size', (uploadedFiles[i].size / 1024));
+	        console.log('파일 이름:', uploadedFiles[i].name);
+	        console.log('파일 크기:', uploadedFiles[i].size / 1024, 'kB'); 
+	    }
+	 
+	    var board_subject = $('input[name="board_subject"]').val();
+	    var content_text = $('input[name="content_text"]').val(); 
+	    formData.append('board_subject', board_subject);
+	    formData.append('content_text', content_text); 
+		console.log("번호",${param.content_idx});
+		
+	    // 서버로 formData 전송 
+		    $.ajax({
+		        url: '${root }/board/modify_pro',
+		        type: 'POST',
+		        data: formData,
+		        processData: false, // 데이터 처리 방식 설정 (FormData 객체 사용시 false로 설정)
+		        contentType: false, // 컨텐츠 타입 설정 (FormData 객체 사용시 false로 설정)
+		        success: function(response) {
+		            console.log('수정 완료:', response);
+		            // 성공적으로 업로드된 경우 처리할 로직
+		        },
+		        error: function(error) {
+		            console.error('업로드 오류:', error);
+		        }
+		    });  
+		  
+	    // 업로드 후 배열 비우기
+	    uploadedFiles = [];
+	    
+	    
+	    
+	});
+	
+	
+	
 </script>
 <style>
 .selected-image-item{
@@ -163,7 +249,9 @@
 			<div class="col-sm-6"></div> 
 			<div class="col-sm"> 
 						<form action="${root }/board/modify_pro" method="post" enctype="multipart/form-data" id="uploadForm" >
-							<input type="hidden" name="content_idx" value="${param.content_idx }"/>
+							<input type="hidden" name="content_idx" value="${param.content_idx }"/> 
+                			<%-- <input type="hidden" name="user_idx" value="${loginUserBean.user_idx}" />   --%>
+                			<input type="hidden" name="user_idx" value="${boardInfo.user_idx}" />  
 							<c:forEach var="obj" items="${ boardfileBean}">
 								<input type="hidden" name="existingFile" value="${obj.file_path }"/>
 							</c:forEach>
@@ -198,20 +286,9 @@
 							</div>
 							<c:if test="${boardAllInfo.file_checked==1 }">
 				                <div class="form-group">
-				                   <label for="uploadFiles"> <h5>첨부파일(최대 ${boardAllInfo.is_file }개)<i class="bi bi-camera-fill mx-2" id="uploadFiles"></i></h5></label>
-				                   <div class="selected-image mb-3"></div>
-				                   <h5>현재 첨부된 파일</h5>
-				                   <div class="border-dark p-3 mt-3 col-sm-6">
-					                   <c:forEach var="files" items="${boardfileBean }">
-					                  	 	<div class="row border border-secondary p-2">
-						                   		 <div class="col-8 mb-1 mt-2"> <!-- 기존에 저장된 파일들  -->
-						                   		  	${files.file_name } 
-						                   		 </div>		
-						                   		 <div class="col-2 mb-2">
-						                   		 	 <input type="button" value="삭제"  onclick="deleteFile(${files.board_file_idx})" class="btn btn-link"/> 
-						                   		 </div>	
-					                   		 </div>		                   	
-					                   </c:forEach> 
+				                  <div class="selected-image mb-3"></div>
+				                   <div class="border-dark p-3 mt-3 col-sm-6" id="showFiles">
+					                   <div id="fileList"></div>	 
 				                   </div> 
 				                   <div class="col-sm-6"></div>
 				                </div>     

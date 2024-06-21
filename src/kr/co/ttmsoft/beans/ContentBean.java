@@ -20,9 +20,16 @@ public class ContentBean {
 	private int board_info_idx;
 	private String user_name;
 	//private List<BoardFileBean> file_name;
+	private String modifyContent_date;
 	
 	
 	 
+	public String getModifyContent_date() {
+		return modifyContent_date;
+	}
+	public void setModifyContent_date(String modifyContent_date) {
+		this.modifyContent_date = modifyContent_date;
+	}
 	public String getUser_name() {
 		return user_name;
 	}

@@ -1,6 +1,8 @@
 package kr.co.ttmsoft.controller;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -16,10 +18,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import kr.co.ttmsoft.beans.AdminBean;
 import kr.co.ttmsoft.beans.BoardInfoBean;
-import kr.co.ttmsoft.beans.BoardInfoBean;
+import kr.co.ttmsoft.mapper.BoardMapper;
+import kr.co.ttmsoft.service.BoardService;
 import kr.co.ttmsoft.service.CreateBoardService;
 import kr.co.ttmsoft.service.UserService;
-import oracle.jdbc.proxy.annotation.Post;
 
 @Controller
 @RequestMapping("admin")
@@ -33,6 +35,12 @@ public class AdminController {
 
 	@Autowired
 	CreateBoardService createBoardService;
+	
+	@Autowired
+	BoardService boardService;
+	
+	@Autowired
+	BoardMapper boardMapper;
 
 	// 게시판 생성 페이지
 	@GetMapping("/m_admin_board")
@@ -40,8 +48,15 @@ public class AdminController {
 
 		List<BoardInfoBean> createBoard = createBoardService.showCreateBoardInfo();
 
+		List<Integer> contentCnt = new ArrayList<>();
+		for (BoardInfoBean getBoardIdx : createBoard) {
+		    contentCnt.add(boardMapper.getBoardPageInfoCnt(getBoardIdx.getBoard_info_idx()));
+		    System.out.println("게시글 개수 :"+ contentCnt);
+		}
+		
 		model.addAttribute("CreateBoard", createBoard);
 		model.addAttribute("createBoardSize", createBoard.size());
+		model.addAttribute("contentCnt", contentCnt); //게시판별 게시글 개수 
 		// System.out.println("사이즈" + createBoard.size());
 		return "admin/m_admin_board";
 	}
@@ -69,7 +84,8 @@ public class AdminController {
 
 		return "admin/admin_board_success";
 	}
-
+	
+	
 	// 게시판 수정
 	@PostMapping("/modifyBoardPro")
 	public String modifyBoardPro(@ModelAttribute("ModifyBoardInfoBean") BoardInfoBean ModifyBoardInfoBean) {
@@ -135,4 +151,12 @@ public class AdminController {
 
 		return "admin/admin_logout";
 	}
+	
+	 
+	@GetMapping("/not_login")
+	public String not_login() {
+		return "admin/not_login";
+	}
+	
+	
 }

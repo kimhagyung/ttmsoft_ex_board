@@ -163,12 +163,24 @@ public class BoardController {
 	}
 
 	@PostMapping("/modify_pro")
-	public String modify_pro(Model model, @ModelAttribute("modifyPostBean") ContentBean modifyPostBean,@ModelAttribute("modifyBoardFileBean") BoardFileBean modifyBoardFileBean, @RequestParam("uploadFiles") MultipartFile uploadFile) {
+	public String modify_pro(Model model, @ModelAttribute("modifyPostBean") ContentBean modifyPostBean,@ModelAttribute("modifyBoardFileBean") BoardFileBean modifyBoardFileBean, @RequestParam("uploadFiles") MultipartFile[] uploadFiles
+			, @RequestParam("content_idx") int content_idx) {
 		try { 
 		 if (loginUserBean.isUserLogin() == true) {  
-				//modifyBoardFileBean.setFile_path(modifyPostBean.getExistingFile()); 
-	            // boardService.modifyBoardFileBean(modifyBoardFileBean, uploadFile);
+			 	int contentIdx = boardService.modifyBoardInfo(modifyPostBean); 
 				 boardService.modifyBoardInfo(modifyPostBean);    
+	           
+	             if (contentIdx > 0) {
+		             if (modifyPostBean != null && uploadFiles != null) { // 파일 정보가 존재하고 파일이 업로드되었을 경우 파일 정보 저장
+		                    for (MultipartFile uploadFile : uploadFiles) {
+		                    	if (!uploadFile.isEmpty()) {
+		                            System.out.println("업로드된 파일 이름: " + uploadFile.getOriginalFilename());
+		                            System.out.println("업로드된 파일 크기: " + uploadFile.getSize() + " bytes");  
+		                            boardService.addBoardFileInfo(modifyBoardFileBean, uploadFile,contentIdx );
+		                        }
+		                    }
+		             	}
+	             }
 		 }
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -178,6 +190,22 @@ public class BoardController {
 
 		return "board/modify_success";
 	}
+	
+	@PostMapping("/modifyFile")
+	public String modifyFile(Model model, @ModelAttribute("modifyBoardFileBean") BoardFileBean modifyBoardFileBean, @RequestParam("uploadFiles") MultipartFile uploadFile) {
+		try { 
+		 if (loginUserBean.isUserLogin() == true) {   
+	             boardService.modifyBoardFileBean(modifyBoardFileBean, uploadFile); 
+		 }
+		}catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			model.addAttribute("content_idx", modifyBoardFileBean.getContent_idx());
+		}
+
+		return "board/modify_success";
+	}
+	
 	
 	@GetMapping("/delete")
 	public String delete(Model model, @RequestParam("content_idx") int content_idx) {

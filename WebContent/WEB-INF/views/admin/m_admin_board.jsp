@@ -48,8 +48,6 @@
 			var isChecked = $(this).is(":checked");
 			$(".CheckExt").prop("checked", isChecked);
 		});
-
-		
 	});
 </script>
 <script>
@@ -85,6 +83,56 @@
          </c:forEach> 
 	});
 </script> 
+<script>
+$(function(){
+	$("#SearchBoardInfo").click(function(){
+		var searchKeyword=$("#inputBoardName").val();
+		var is_Usage=$("#is_Usage").val();
+		console.log("검색 키워드 : ", searchKeyword);
+		console.log("사용여부 : ", is_Usage);
+		
+		$.ajax({
+			url : '${root}/SearchInfo?board_info_name='+searchKeyword+'&is_usage='+is_Usage,
+			type: 'GET',
+			dataType:'Json',
+			success: function(response){
+				console.log("검색 성공 " ,response); 
+				$("#board_Info").empty();
+				var SearchResult=response.searchResult;
+				var ContentCnt=response.contentCnt;
+				console.log("SearchResult : ",SearchResult)
+				console.log("ContentCnt", ContentCnt)
+				if (SearchResult.length > 0) {
+					for (var i = 0; i < SearchResult.length; i++) {
+						var item=SearchResult[i]; 
+						
+				            $("#board_Info").append(
+				                '<tr>' +
+				                '<td>' + i + '</td>' +
+				                '<td>' + item.board_info_idx + '</td>' +
+				                '<td>' + item.board_info_name + '</td>' +
+				                '<td>' + ContentCnt[i] + '</td>' +
+				                '<td>' + item.is_usage + '</td>' +
+				                '<td>' + item.board_date + '</td>' +
+				                '<td><input type="button" value="수정" ' +
+				                'data-bs-toggle="modal" ' +
+				                'data-bs-target="#BoardModifyModal_' + item.board_info_idx + '" ' +
+				                'class="btn btn-info" /></td>' +
+				                '</tr>'
+				            );
+					}
+				}else {
+					$("#board_Info").append('<tr><td> 검색 결과가 없습니다</td></tr>');
+				}
+			},
+			error : function(error){
+				console.log("검색 오류 발생 ", error)
+			}
+		});
+	});
+});
+	
+</script>
 </head>
 
 <body id="page-top">
@@ -103,7 +151,7 @@
 					<i class="fas fa-laugh-wink"></i>
 				</div>
 				<div class="sidebar-brand-text mx-3">
-					SB Admin <sup>2</sup>
+					TTMSoft
 				</div>
 			</a>
 			<!-- Divider -->
@@ -120,7 +168,7 @@
 			<!-- Heading -->
 			<div class="sidebar-heading">통합게시판관리</div>
 			<!-- Nav Item - Pages Collapse Menu -->
-			<li class="nav-item"><a class="nav-link"
+			<li class="nav-item"><a class="nav-link active"
 				href="${root }/admin/m_admin_board"> <i
 					class="fas fa-fw fa-chart-area"></i> <span>게시판관리</span></a></li>
 			<!-- Nav Item - Tables -->
@@ -189,31 +237,31 @@
 				<hr class="mb-3">
 				<span class="h5 mb-2 text-gray-800">게시판 관리 &nbsp</span> <span
 					class="mb-4">Board Management<a target="_blank"></span>
-				<p>
-				<div class="row g-3">
-					<div class="col-md-10">
-						<label for="inputCity" class="form-label">게시판명</label> <input
-							type="text" class="form-control" id="inputCity">
+				<p> 
+					<div class="row g-3">
+						<div class="col-md-10">
+							<label for="inputCity" class="form-label">게시판명</label> 
+							<input type="text" class="form-control" id="inputBoardName">
+						</div>
+						<div class="col-md-2">
+							<label for="is_Usage" class="form-label">사용여부</label> <select
+								class="form-select form-control" id="is_Usage" 
+								aria-label="Default select example">
+								<option value="All" selected>전체</option>
+								<option value="Y">사용</option>
+								<option value="N">미사용</option>
+							</select>
+						</div>
 					</div>
-					<div class="col-md-2">
-						<label for="inputState2" class="form-label">사용여부</label> <select
-							class="form-select form-control" id="inputState2"
-							aria-label="Default select example">
-							<option selected>전체</option>
-							<option value="Y">사용</option>
-							<option value="N">미사용</option>
-						</select>
-					</div>
-				</div>
-				<div class="text-right mt-4 mb-4">
-					<span>
-						<button type="button" class="btn btn-primary"
-							data-bs-toggle="modal" data-bs-target="#exampleModal">게시판
-							생성</button>
-					</span> <span>
-						<button type="submit" class="btn btn-primary">검색</button>
-					</span>
-				</div>
+					<div class="text-right mt-4 mb-4">
+						<span>
+							<button type="button" class="btn btn-primary"
+								data-bs-toggle="modal" data-bs-target="#exampleModal">게시판
+								생성</button>
+						</span> <span>
+							<button type="submit" class="btn btn-primary" id="SearchBoardInfo">검색</button>
+						</span>
+					</div> 
 				<!-- DataTales Example -->
 				<div class="card shadow mb-4">
 					<div class="card-header py-3">
@@ -245,21 +293,20 @@
 										<th>수정</th>
 									</tr>
 								</tfoot>
-								<tbody>
-									<c:forEach var="boardinfo" items="${CreateBoard }"
-										varStatus="var">
+								<tbody id="board_Info">
+									<c:forEach var="boardinfo" items="${CreateBoard }" varStatus="var">   
 										<tr>
 											<td>${(var.index+1)}</td>
 											<td>${boardinfo.board_info_idx }</td>
-											<td>${boardinfo.board_info_name }</td>
-											<td>총게시물</td>
+											<td>${boardinfo.board_info_name }</td> 
+											<td>${contentCnt[var.index] }</td>  
 											<td>${boardinfo.is_usage }</td>
 											<td>${boardinfo.board_date }</td>
 											<td><input type="button" value="수정"
 												data-bs-toggle="modal"
 												data-bs-target="#BoardModifyModal_${boardinfo.board_info_idx }"
 												class="btn btn-info" /></td>
-										</tr>
+										</tr>   
 									</c:forEach>
 								</tbody>
 							</table>

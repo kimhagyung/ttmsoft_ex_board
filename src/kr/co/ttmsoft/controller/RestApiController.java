@@ -1,24 +1,27 @@
 package kr.co.ttmsoft.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
 import kr.co.ttmsoft.beans.AdminAnswerBean;
 import kr.co.ttmsoft.beans.BoardFileBean;
+import kr.co.ttmsoft.beans.BoardInfoBean;
 import kr.co.ttmsoft.beans.CommentBean;
 import kr.co.ttmsoft.beans.ContentBean;
 import kr.co.ttmsoft.beans.ReplyBean;
+import kr.co.ttmsoft.mapper.BoardMapper;
 import kr.co.ttmsoft.service.AnswerService;
 import kr.co.ttmsoft.service.BoardService;
 import kr.co.ttmsoft.service.CommentService;
@@ -42,6 +45,8 @@ public class RestApiController {
 	@Autowired
 	private BoardService boardService;
 	
+	@Autowired
+	private BoardMapper boardMapper;
 	
 	
 	//아이디 중복 검사 
@@ -161,6 +166,7 @@ public class RestApiController {
 	}
 	
 	//관리자 페이지 게시판 검색 
+	/*
 	@GetMapping("/searchBoard")
 	public List<ContentBean> searchBoard(@RequestParam("board_info_idx") int board_info_idx) {
 		List<ContentBean> searchBoard= boardService.getAllContentInfo(board_info_idx);
@@ -174,7 +180,41 @@ public class RestApiController {
 
 		}
 		return searchBoard;
-	} 
+	} */
+	@GetMapping("/searchBoard")
+	public Map<String, Object> searchBoard(@RequestParam("board_info_idx") int board_info_idx, @RequestParam("isDeleted") String isDeleted) {
+	    List<ContentBean> searchBoard = new ArrayList<>();
+	    List<BoardFileBean> searchFileBoard = new ArrayList<>();
+
+	    System.out.println("받아온 게시판 번호 :" + board_info_idx);
+
+	    if(isDeleted.equals("All")) {
+	        searchBoard = boardService.getAllContentInfo(board_info_idx);
+	        for (ContentBean search : searchBoard) {
+	            System.out.println("게시글 내용 :" + search.getContent_text());
+	            System.out.println("게시글 번호 :" + search.getContent_idx());
+	            int contentIdx = search.getContent_idx();
+	            List<BoardFileBean> files = boardService.getBoardFileInfo(contentIdx);
+	            searchFileBoard.addAll(files);
+	        }
+	    } else if(isDeleted.equals("Y") || isDeleted.equals("N")) {
+	        searchBoard = boardService.getAllContentInfoYesORNo(board_info_idx, isDeleted);
+	        for (ContentBean search : searchBoard) {
+	            System.out.println("게시글 내용 :" + search.getContent_text());
+	            System.out.println("게시글 번호 :" + search.getContent_idx());
+	            int contentIdx = search.getContent_idx();
+	            List<BoardFileBean> files = boardService.getBoardFileInfo(contentIdx);
+	            searchFileBoard.addAll(files);
+	        }
+	    }
+
+	    Map<String, Object> result = new HashMap<>();
+	    result.put("searchBoard", searchBoard);
+	    result.put("searchFileBoard", searchFileBoard);
+
+	    return result;
+	}
+
 	
 	//관리자 페이지 게시글 삭제처리 
 	@GetMapping("/tempDeleted")
@@ -182,9 +222,58 @@ public class RestApiController {
 		boardService.UpdateIsDeletedYes(content_idx);
 	}
 	
+	
+	//관리자 페이지 게시글 삭제처리 
+	@GetMapping("/ClearDeleted")
+	public void ClearDeleted(@RequestParam("content_idx") int content_idx) {
+		boardService.UpdateIsDeletedNo(content_idx);
+	}
+	
 	//관리자 페이지 게시글 완전 삭제 
 	@GetMapping("/ComDeleted")
 	public void ComDeleted(@RequestParam("content_idx") int content_idx) {
 		boardService.deleteBoardInfo(content_idx);
 	}
+	
+	//게시글 수정 시 파일 삭제  
+	@GetMapping("/deleteFile")
+	public void deleteFile(@RequestParam("board_file_idx") int board_file_idx) {
+		System.out.println("받은 파일 번호:"+board_file_idx);
+		boardService.deleteBoardFile(board_file_idx);
+	}
+	
+	
+	//게시글 수정 시 파일 삭제 후 조회  
+	@GetMapping("/getFileInfo")
+	public List<BoardFileBean> getFileInfo(@RequestParam("content_idx") int content_idx){
+		List<BoardFileBean> files=boardService.getBoardFileInfo(content_idx);
+		 
+		return files;
+	}
+	 
+
+	//게시판 검색 Pro
+	@GetMapping("/SearchInfo")
+	public Map<String, Object> SearchInfo(@RequestParam("board_info_name") String board_info_name, @RequestParam("is_usage") String is_usage){
+		List<BoardInfoBean> Result=new ArrayList<BoardInfoBean>(); 
+		List<Integer> contentCnt = new ArrayList<>();
+		
+		if(is_usage.equals("All")) {
+			Result= boardService.searchBoardNameInfo(board_info_name);
+		}else if(is_usage.equals("Y") || is_usage.equals("N")){
+			Result=boardService.searchBoardNameInfoYOrNo(board_info_name,is_usage); 
+			
+		} 
+		 
+		for (BoardInfoBean getBoardIdx : Result) {
+		    contentCnt.add(boardMapper.getBoardPageInfoCnt(getBoardIdx.getBoard_info_idx()));
+		    System.out.println("게시글 개수 :"+ contentCnt);
+		}
+		
+		 Map<String, Object> result = new HashMap<>();
+	    result.put("searchResult", Result);
+	    result.put("contentCnt", contentCnt);
+		return result;
+	}
+	
 }
