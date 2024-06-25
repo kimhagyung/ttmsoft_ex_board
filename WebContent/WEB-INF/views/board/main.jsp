@@ -17,7 +17,7 @@
 </script>
 </head>
 <body> 
-	<c:import url="/WEB-INF/views/include/top_menu.jsp" />
+<c:import url="/WEB-INF/views/include/top_menu.jsp" />
 
 	<!-- 게시글 리스트 -->
 <div class="container" style="margin-top: 100px">

@@ -41,10 +41,10 @@
 	$(function() {
 		$('#CheckFile').change(
 			function() {
-				var isChecked = $(this).is(":checked");
-				$("#inputState, #fileSizeInput, .CheckExt").prop("disabled", !isChecked);
+				var isChecked = $(this).is(":checked"); //파일첨부 기능 체크 여부 
+				$("#inputState, #fileSizeInput, .CheckExt").prop("disabled", !isChecked); //체크했으면 확장자 선택과 첨부파일 수, 첨부파일 사이즈 활성화 
 			});
-		$('#allcheck').change(function() {
+		$('#allcheck').change(function() { //전체 선택 버튼 
 			var isChecked = $(this).is(":checked");
 			$(".CheckExt").prop("checked", isChecked);
 		});
@@ -55,7 +55,7 @@
         // 초기 로드 시 파일 확장자 체크박스들 초기화 
          <c:forEach var="boardinfo" items="${CreateBoard}">
              // 값 콘솔에 출력
-             console.log("board_info_idx: ${boardinfo.board_info_idx}, file_ext: ${boardinfo.file_ext}, ${boardinfo.is_public}");
+             //console.log("board_info_idx: ${boardinfo.board_info_idx}, file_ext: ${boardinfo.file_ext}, ${boardinfo.is_public}");
 
              var fileExts_${boardinfo.board_info_idx} = "${boardinfo.file_ext}".split(',');
 
@@ -131,6 +131,44 @@ $(function(){
 	});
 });
 	
+</script>
+<script>
+$(function(){
+	$('#SubmitForm').submit(function(event) { 
+		//event.preventDefault(); 
+		const checkboxes = document.querySelectorAll('.CheckExt');
+		// 체크된 체크박스들의 값을 배열 담는다.
+        const checkedValues = Array.from(checkboxes)
+            .filter(checkbox => checkbox.checked)
+            .map(checkbox => checkbox.value);
+        
+        // 콘솔에 체크된 값들을 출력합니다.
+		var inputState = $('#inputState').val();
+		var fileSizeInput = $('#fileSizeInput').val();
+		
+		var CheckFile= document.getElementById('CheckFile');
+		var isChecked = CheckFile.checked;
+		//var allcheck = $('#allcheck').val(); 
+
+        console.log('체크된 값들:', checkedValues);
+        console.log('파일첨부기능(isChecked):', isChecked);
+        console.log('첨부파일 수(inputState):', inputState);
+        console.log('첨부파일 사이즈(fileSizeInput):', fileSizeInput);
+        //console.log('전체체크여부:', allcheck);
+        
+        if (isChecked) {
+           if (checkedValues.length === 0 || inputState == 0 || fileSizeInput == 0) {
+                alert('파일 옵션을 설정해 주세요');
+                return false;
+            }else if(fileSizeInput > 8000){
+            	alert('첨부파일 사이즈는 8000Kbyte 이하로 입력해 주세요')
+            	return false;
+            }
+        }
+         
+	});
+});
+
 </script>
 </head>
 
@@ -331,7 +369,7 @@ $(function(){
 
 	<!-- 게시판 수정 모달 -->
 		<c:forEach var="boardinfo" items="${CreateBoard }" varStatus="var">
-			<form:form action="${root }/admin/modifyBoardPro" method="post" modelAttribute="ModifyCreateBoardBean">  
+			<form:form action="${root }/admin/modifyBoardPro" method="post" modelAttribute="ModifyCreateBoardBean" >  
 				<div class="modal fade"
 					id="BoardModifyModal_${boardinfo.board_info_idx }"
 					tabindex="-1" aria-labelledby="BoardModifyModalLabel"
@@ -541,7 +579,7 @@ $(function(){
 	
 		<!-- 게시판 생성 모달 -->
 		<form:form action="${root }/admin/admin_boardPro" method="post"
-			modelAttribute="CreateBoardBean">
+			modelAttribute="CreateBoardBean" id="SubmitForm">
 			<div class="modal fade" id="exampleModal" tabindex="-1"
 				aria-labelledby="exampleModalLabel" aria-hidden="true">
 				<div class="modal-dialog modal-xl">
@@ -584,7 +622,7 @@ $(function(){
 															for="IsPublic">비공개 여부 </label>
 													</div>
 													<div class="form-check">
-														<input class="form-check-input" type="checkbox" value="1"
+														<input class="form-check-input CheckFile" type="checkbox" value="1"
 															id="CheckFile" name="file_checked"> <label class="form-check-label"
 															for="CheckFile"> 파일 첨부기능 </label>
 													</div>
@@ -603,11 +641,11 @@ $(function(){
 													</div>
 													<div class="d-flex align-items-center  mt-2">
 														첨부파일 사이즈 : <input type="text" name="file_size"
-															id="fileSizeInput"  
+															id="fileSizeInput" value="0"
 														class="form-control mx-2" style="width: 25%;"
 														placeholder="8000" disabled /> KByte
 												</div>
-											</div>
+											</div> 
 										</div>
 										<div class="row-col12">
 											첨부파일 확장자(선택) <i class="bi bi-chevron-compact-down"></i>
@@ -696,8 +734,7 @@ $(function(){
 													<input class="form-check-input CheckExt" type="checkbox"
 														value="text/plain" id="txt" name="file_ext" disabled> <label
 														class="form-check-label" for="txt"> *.txt </label>
-												</div>
-
+												</div> 
 											</div>
 										</div>
 									</td>

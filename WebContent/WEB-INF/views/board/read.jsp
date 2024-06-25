@@ -526,8 +526,7 @@ function updateReply(replyIdx, editedText,commentIdx){
 				            <c:forEach var="file" items="${boardfileBean}" varStatus="loop">
 				                <c:if test="${file.board_file_idx != null}">
 				                    <c:set var="extension" value="${fn:substringAfter(file.file_name, '.')}"/> 
-			                        <c:if test="${extension eq 'jpg' or extension eq 'jpeg' or extension eq 'png' or extension eq 'gif' or extension eq 'bmp' or extension eq 'tiff' or extension eq 'tif'}">
-			                            <div class="carousel-item ${loop.index == 0 ? 'active' : ''}">
+			                        <c:if test="${extension eq 'jpg' or extension eq 'jpeg' or extension eq 'png' or extension eq 'bmp' or extension eq 'tiff' or extension eq 'tif' or extension eq 'svg'}">     <div class="carousel-item ${loop.index == 0 ? 'active' : ''}">
 			                                <img src="${root}/upload/${file.file_path}" class="d-block w-100" style="height: 500px; border-radius: 5px;" alt="pic">
 			                            </div>
 			                        </c:if> 
