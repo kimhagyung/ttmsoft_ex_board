@@ -47,12 +47,12 @@
 											        <a href="${root}/board/read?content_idx=${obj.content_idx}" onclick="confirm(${obj.content_is_public})">${obj.content_subject}</a>
 											    </c:when>
 											    <c:when test="${obj.content_is_public == 0}">
-											        <c:choose>
+											        <c:choose> 
+											            <c:when test="${loginUserBean.user_idx == obj.user_idx or loginAdminBean.admin_login==true}">
+											                <a href="${root}/board/read?content_idx=${obj.content_idx}">${obj.content_subject}</a>
+											            </c:when>
 											            <c:when test="${empty loginUserBean.user_idx or loginUserBean.user_idx != obj.user_idx}">
 											                <a href="${root}/board/read?content_idx=${obj.content_idx}" onclick="SecretWrite(); return false;">${obj.content_subject}</a>
-											            </c:when>
-											            <c:when test="${loginUserBean.user_idx == obj.user_idx}">
-											                <a href="${root}/board/read?content_idx=${obj.content_idx}">${obj.content_subject}</a>
 											            </c:when>
 											        </c:choose>
 											    </c:when>

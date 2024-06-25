@@ -104,8 +104,7 @@ $(function(){
 				console.log("ContentCnt", ContentCnt)
 				if (SearchResult.length > 0) {
 					for (var i = 0; i < SearchResult.length; i++) {
-						var item=SearchResult[i]; 
-						
+						var item=SearchResult[i];  
 				            $("#board_Info").append(
 				                '<tr>' +
 				                '<td>' + i + '</td>' +
@@ -122,7 +121,7 @@ $(function(){
 				            );
 					}
 				}else {
-					$("#board_Info").append('<tr><td> 검색 결과가 없습니다</td></tr>');
+					$("#board_Info").append('<tr><td colspan="7"> 검색 결과가 없습니다</td></tr>');
 				}
 			},
 			error : function(error){
@@ -413,10 +412,10 @@ $(function(){
 														 <div class="d-flex align-items-center  mt-2">
 		                                                첨부파일 사이즈 : <input type="text" name="file_size"
 		                                                                      id="fileSizeInput2_${boardinfo.board_info_idx}"
-		                                                                      value="${boardinfo.file_size}" min="0"
+		                                                                      value="${boardinfo.file_size}" 
 		                                                                      class="form-control mx-2"
 		                                                                      style="width: 15%;"
-		                                                                      placeholder="5000" disabled/> KByte
+		                                                                      placeholder="8000" disabled/> KByte
 		                                            </div>
 													</div>
 												</div>
@@ -434,8 +433,8 @@ $(function(){
 													<div class="col-3 ">
 														<div class="form-check">
 															<input class="form-check-input CheckExt2_${boardinfo.board_info_idx}" type="checkbox"
-																value="image/jpg" id="jpg2" name="file_ext" disabled> <label
-																class="form-check-label" for="jpg2"> *.jpg </label>
+																value="image/svg+xml" id="jpg2" name="file_ext" disabled> <label
+																class="form-check-label" for="jpg2"> *.svg </label>
 														</div>
 														<div class="form-check">
 															<input class="form-check-input CheckExt2_${boardinfo.board_info_idx}" type="checkbox"
@@ -604,9 +603,9 @@ $(function(){
 													</div>
 													<div class="d-flex align-items-center  mt-2">
 														첨부파일 사이즈 : <input type="text" name="file_size"
-															id="fileSizeInput" value="0" min="0"
-														class="form-control mx-2" style="width: 15%;"
-														placeholder="5000" disabled /> KByte
+															id="fileSizeInput"  
+														class="form-control mx-2" style="width: 25%;"
+														placeholder="8000" disabled /> KByte
 												</div>
 											</div>
 										</div>
@@ -624,8 +623,8 @@ $(function(){
 											<div class="col-3 ">
 												<div class="form-check">
 													<input class="form-check-input CheckExt" type="checkbox"
-														value="image/jpg"  id="jpg" name="file_ext" disabled> <label
-														class="form-check-label" for="jpg"> *.jpg </label>
+														value=" image/svg+xml"  id="jpg" name="file_ext" disabled> <label
+														class="form-check-label" for="jpg"> *.svg </label>
 												</div>
 												<div class="form-check">
 													<input class="form-check-input CheckExt" type="checkbox"
@@ -731,14 +730,12 @@ $(function(){
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
-					<button class="close" type="button" data-dismiss="modal"
-						aria-label="Close">
-						<span aria-hidden="true">×</span>
-					</button>
-				</div>
-				<div class="modal-body">Select "Logout" below if you are ready
-					to end your current session.</div>
+					 <h5 class="modal-title" id="exampleModalLabel">로그아웃</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">로그아웃 하시겠습니까?</div>
 				<div class="modal-footer">
 					<button class="btn btn-secondary" type="button"
 						data-dismiss="modal">Cancel</button>

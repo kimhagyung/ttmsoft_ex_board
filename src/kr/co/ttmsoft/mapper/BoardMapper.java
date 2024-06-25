@@ -17,11 +17,12 @@ import kr.co.ttmsoft.beans.NaverEditorBean;
 
 public interface BoardMapper {
 	
-	@Insert("insert into content_table(content_idx,content_subject,content_text,user_idx,content_board_idx,content_date,content_is_public,modifyContent_date) values(content_seq.nextval,#{content_subject, jdbcType=VARCHAR},#{content_text, jdbcType=VARCHAR},#{user_idx},#{content_board_idx},sysdate,#{content_is_public}, SYSDATE)")
+	@Insert("insert into content_table(content_idx,content_subject,content_text,user_idx,content_board_idx,content_date,content_is_public,modifyContent_date) values(content_seq.nextval,#{content_subject, jdbcType=VARCHAR},#{content_text, jdbcType=VARCHAR},#{user_idx, jdbcType=INTEGER, javaType=Integer},#{content_board_idx},sysdate,#{content_is_public}, SYSDATE)")
 	@SelectKey(statement="SELECT content_seq.currval FROM dual", keyProperty="content_idx", before=false, resultType=int.class)
 	void addBoardInfo(ContentBean boardPostBean); //컨텐츠 내용 추가 
+	 
 	
-	@Insert("insert into board_file values(board_file_seq.nextval,#{file_path},#{file_name},SYSDATE,#{content_idx},#{user_idx},#{file_size,jdbcType=VARCHAR}) ")
+	@Insert("insert into board_file values(board_file_seq.nextval,#{file_path},#{file_name},SYSDATE,#{content_idx},#{file_size,jdbcType=VARCHAR}) ")
 	void addBoardFileInfo(BoardFileBean boardFileBean); // 컨텐츠 사진 추가 
 	
 	@Select("select * from content_table where content_idx=#{content_idx} ")
@@ -106,14 +107,14 @@ public interface BoardMapper {
 	
     @Select("SELECT * " +
             "FROM board_info_table " +
-            "WHERE UPPER(board_info_name) LIKE '%' || UPPER(#{board_info_name}) || '%'")
+            "WHERE UPPER(board_info_name) LIKE '%' || UPPER(#{board_info_name}) || '%' order by board_info_idx desc")
     List<BoardInfoBean> searchBoardNameInfo(String board_info_name);  //게시판 이름 검색 
     
     @Select("SELECT * " +
     		"FROM board_info_table " +
-    		"WHERE UPPER(board_info_name) LIKE '%' || UPPER(#{board_info_name, jdbcType=VARCHAR}) || '%' and is_usage=#{is_usage, jdbcType=VARCHAR}")
+    		"WHERE UPPER(board_info_name) LIKE '%' || UPPER(#{board_info_name, jdbcType=VARCHAR}) || '%' and is_usage=#{is_usage, jdbcType=VARCHAR} order by board_info_idx desc")
     List<BoardInfoBean> searchBoardNameInfoYOrNo(@Param("board_info_name")String board_info_name, @Param("is_usage")String is_usage); //사용여부도 검색 
-	
+	 
 	//네이버 에디터 (테스트용)
 	@Insert("insert into naverEditor_table(naverEditor_idx,naverEditor_subject,naverEditor_text,naverEditor_file,naverEditor_date,is_publish,user_idx,board_info_idx) values(naverEditor_seq.nextval, #{naverEditor_subject},#{naverEditor_text},#{naverEditor_file, jdbcType=VARCHAR},sysdate,#{is_publish, jdbcType=INTEGER },#{user_idx},#{board_info_idx})")
 	void addNaverEditorBean(NaverEditorBean naverEditorBean);

@@ -34,47 +34,10 @@ $(function(){
 			return;
 		} 
 		
-		if(${boardAllInfo.is_comment==0}){
-			alert('관리자만 답글을 남길 수 있습니다.')
-			return;
-		}
-		
-		console.log("입력한 댓글:", replyText); 
-		console.log("게시글 번호:", ${param.content_idx}); 
-		console.log("현재 로그인 idx:", ${loginUserBean.user_idx});  
-			
-		//댓글 입력 
-		if(${loginUserBean.userLogin==true &&loginAdminBean.admin_login==false }){ 
-			$.ajax({
-				url:'${root}/comment',
-				type:'POST',
-				contentType: 'application/json', //전송하는 데이터 타입 지정 
-				data:JSON.stringify({
-					comments : replyText,
-					content_idx : ${param.content_idx},
-					user_idx : ${loginUserBean.user_idx}
-				}),
-				success: function(response){
-					var replyHtml = '<div class="card mt-2"><div class="card-body">' +
-	                '<p class="card-text">' + response.comments + '</p>' + '</div></div>';
-					$("#replySection").append(replyHtml);
-	                $("#replyText").val(''); 
-	                alert('댓글이 성공적으로 추가되었습니다.'); // 이거는 삭제하던가 ㅅ하셈 
-	                
-	             	// 댓글 목록 조회
-	                updateReplyList(); 
-	                getAdminAnswerList(); 
-				},
-				error:function(error){
-					console.log(error);
-					alert('댓글 추가에 실패했습니다.')
-				}
-			});
-		}else if(${loginUserBean.userLogin==false && loginAdminBean.admin_login==false} ){
-				alert("로그인 해주세요"); 
-				location.href='${root}/user/login' 	
-			 
-		}
+		 if (${boardAllInfo.is_comment == 0} && !${loginAdminBean.admin_login}) {
+	            alert('관리자만 답글을 남길 수 있습니다.');
+	            return;
+	        }
 		
 		//관리자 답글 입력 
 		if(${loginAdminBean.admin_login==true && loginUserBean.userLogin==false}){ 
@@ -104,9 +67,45 @@ $(function(){
 				}
 			});
 		}
+		  
 		
+		console.log("입력한 댓글:", replyText); 
+		console.log("게시글 번호:", ${param.content_idx}); 
+		console.log("현재 로그인 idx:", ${loginUserBean.user_idx});  
+			
+		//댓글 입력 
+		if(${loginUserBean.userLogin==true && loginAdminBean.admin_login==false}){ 
+			$.ajax({
+				url:'${root}/comment',
+				type:'POST',
+				contentType: 'application/json', //전송하는 데이터 타입 지정 
+				data:JSON.stringify({
+					comments : replyText,
+					content_idx : ${param.content_idx},
+					user_idx : ${loginUserBean.user_idx}
+				}),
+				success: function(response){
+					var replyHtml = '<div class="card mt-2"><div class="card-body">' +
+	                '<p class="card-text">' + response.comments + '</p>' + '</div></div>';
+					$("#replySection").append(replyHtml);
+	                $("#replyText").val(''); 
+	                alert('댓글이 성공적으로 추가되었습니다.'); 
+	                
+	             	// 댓글 목록 조회
+	                updateReplyList(); 
+	                getAdminAnswerList(); 
+				},
+				error:function(error){
+					console.log(error);
+					alert('댓글 추가에 실패했습니다.')
+				}
+			});
+		}else if(${loginUserBean.userLogin==false && loginAdminBean.admin_login==false} ){
+				alert("로그인 해주세요"); 
+				location.href='${root}/user/login' 	
+			 
+		} 
 	});
-	
 	
 });
 
@@ -190,11 +189,11 @@ function updateReReplyList(commentIdx){
 				 console.log("reply.user_idx",reply.user_idx);
 				 console.log("loginUserBean.user_idx",${loginUserBean.user_idx}); 
 				 var replyHtml = '<hr><div class="row" style="margin-bottom: 20px;">';
-				 replyHtml += '<span><i class="bi bi-arrow-return-right "></i></span><div class="col-sm-5"><i class="bi bi-person-circle" style="font-size:25px;"></i> ' + reply.user_name + '</div>'; //댓글 단 사람 이름
-				 replyHtml += '<div class="col-sm-4"></div>' 
+				 replyHtml += '<span><i class="bi bi-arrow-return-right col-sm-7 "></i> <i class="bi bi-person-circle" style="font-size:25px;"></i> ' + reply.user_name + '</span>'; //댓글 단 사람 이름
+				 replyHtml += '<div class="col-sm-8"></div>' 
 				 if (${loginUserBean.user_idx} == reply.user_idx) {
-					 replyHtml += '<input type="button" class="col-sm-1 btn btn-link" onclick="editReply(' + reply.reply_idx + ', ' + reply.comment_idx + ')" value="답글수정"/>';
-				      replyHtml += '<input type="button" class="col-sm-1 btn btn-link" onclick="deleteReply(' + reply.reply_idx + ', ' + reply.comment_idx + ')" id="deleteBtn' + reply.reply_idx + '" value="답글삭제"/>';
+					  replyHtml += '<input type="button" class="col-1 btn btn-link" onclick="editReply(' + reply.reply_idx + ', ' + reply.comment_idx + ')" value="답글수정"/>';
+				      replyHtml += '<input type="button" class="col-1 btn btn-link" onclick="deleteReply(' + reply.reply_idx + ', ' + reply.comment_idx + ')" id="deleteBtn' + reply.reply_idx + '" value="답글삭제"/>';
 				    } 
 				 replyHtml += '</div>'; 
 				 replyHtml += '<div style="width:90%" id="commentContent_'+reply.reply_idx + '">' + reply.reply + '</div>' //댓글 내용   
@@ -239,13 +238,15 @@ function submitReply(comment_idx){
     if(replyText.trim() === "") {
         alert("답글을 입력하세요.");
         return;
-    } 
+    }  
     
-    if(${loginUserBean.userLogin==false}){
-		alert("로그인 해주세요"); 
-		location.href='${root}/user/login' 
+	if(${boardAllInfo.is_comment==0}){
+		alert('관리자만 답글을 남길 수 있습니다.')
+		return;
 	}
-    
+	
+	
+if(${loginUserBean.userLogin==true &&loginAdminBean.admin_login==false }){ 
     $.ajax({
         url: '${root}/submitReply',
         type: 'POST',
@@ -269,6 +270,11 @@ function submitReply(comment_idx){
 			alert('답글 추가에 실패했습니다.')
 		}
     });
+}else if(${loginUserBean.userLogin==false && loginAdminBean.admin_login==false} ){
+	alert("로그인 해주세요"); 
+	location.href='${root}/user/login' 	
+ 
+}//댓글 입력 
 }
   
  
@@ -540,17 +546,14 @@ function updateReply(replyIdx, editedText,commentIdx){
 				
 				    <%-- 첨부된 파일 목록 --%>
 				    <c:forEach var="file" items="${boardfileBean}" varStatus="loop">
-				        <c:if test="${file.board_file_idx != null}">
-				            <c:set var="extension" value="${fn:substringAfter(file.file_name, '.')}"/> 
-				                <c:if test="${not (extension eq 'jpg' or extension eq 'jpeg' or extension eq 'png' or extension eq 'gif' or extension eq 'bmp' or extension eq 'tiff' or extension eq 'tif')}">
-				                    <div>
-				                        파일: &nbsp;
-				                        <a href="<c:url value='/resources/upload/${file.file_path}' />" download="${file.file_name}"><i class="bi bi-download"></i>
-				                            <span class="glyphicon glyphicon-save" aria-hidden="true"></span> ${file.file_name}
-				                        </a> 
-				                        &nbsp; &nbsp; Size: ${file.file_size} KByte
-				                    </div>
-				                </c:if> 
+				        <c:if test="${file.board_file_idx != null}"> 
+		                   <div>
+		                        파일: ${loop.index+1} &nbsp;
+		                        <a href="<c:url value='/resources/upload/${file.file_path}' />" download="${file.file_name}"><i class="bi bi-download"></i>
+		                            <span class="glyphicon glyphicon-save" aria-hidden="true"></span> ${file.file_name}
+		                        </a> 
+		                        &nbsp; &nbsp; Size: ${file.file_size} KByte
+		                    </div>
 				        </c:if>
 				    </c:forEach>
 				</div>

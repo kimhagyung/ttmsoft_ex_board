@@ -75,6 +75,7 @@ public class UserService {
 	 		loginAdminBean.setAdmin_pw(ab.getAdmin_pw());
 	 		loginAdminBean.setAdmin_name(ab.getAdmin_name());
 	 		loginAdminBean.setAdmin_login(true);
+	 		System.out.println("현재 관리자 로그인 상태 : "+loginAdminBean.isAdmin_login());
 	 	}else {
 	 		System.out.println("로그인 사용자 정보 없음 ");
 	 	}

@@ -117,19 +117,21 @@ let uploadedFiles = []; // 업로드된 파일들을 담을 배열
        	//event.preventDefault(); // 폼 기본 동작 방지
 
         var formData = new FormData(); 
-        
-        for (var i = 0; i < uploadedFiles.length; i++) {
-            formData.append('uploadFiles', uploadedFiles[i]);
-            //formData.append('file_size', (uploadedFiles[i].size / 1024));
-            console.log('파일 이름:', uploadedFiles[i].name);
-            console.log('파일 크기:', uploadedFiles[i].size / 1024, 'kB'); 
-        }
+       	 
+	        for (var i = 0; i < uploadedFiles.length; i++) {
+	            formData.append('uploadFiles', uploadedFiles[i]);
+	            //formData.append('file_size', (uploadedFiles[i].size / 1024));
+	            console.log('파일 이름:', uploadedFiles[i].name);
+	            console.log('파일 크기:', uploadedFiles[i].size / 1024, 'kB'); 
+	        }
+         
 
         var board_subject = $('input[name="board_subject"]').val();
         var content_text = $('input[name="content_text"]').val();
 
         formData.append('board_subject', board_subject);
-        formData.append('content_text', content_text);
+        formData.append('content_text', content_text);/* 
+        formData.append('content_board_idx', ${param.index}); */
 
         // 서버로 formData 전송
         $.ajax({
@@ -165,7 +167,7 @@ let uploadedFiles = []; // 업로드된 파일들을 담을 배열
         <div class="col-sm-3"></div>
         <div class="col-sm"> 
             <form action="${root }/board/write_pro" method="post" enctype="multipart/form-data" id="uploadForm">
-                <input type="hidden" name="content_board_idx" value="${param.index}" />
+              	<input type="hidden" name="content_board_idx" value="${param.index}" /> 
                 <input type="hidden" name="user_idx" value="${loginUserBean.user_idx}" /> 
                 <div class="form-group">
                     <label for="board_subject"><h4>제목</h4></label> 

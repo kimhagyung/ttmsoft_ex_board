@@ -33,7 +33,7 @@ function SecretWrite(){
 									<th class="text-center w-25 d-none d-xl-table-cell">작성날짜</th>
 								</tr>
 							</thead>
-							<tbody> 
+							<tbody>  
 								<c:forEach var="info" items="${MainBoardInfo}">
 									<c:if test="${info.content_board_idx == obj.board_info_idx}">   
 		                                <tr>
@@ -44,12 +44,12 @@ function SecretWrite(){
 												        <a href="${root}/board/read?content_idx=${info.content_idx}">${info.content_subject}</a>
 												    </c:when>
 												    <c:when test="${info.content_is_public == 0}">
-												        <c:choose>
+												        <c:choose> 
+												            <c:when test="${loginUserBean.user_idx == info.user_idx or loginAdminBean.admin_login==true}">
+												                <a href="${root}/board/read?content_idx=${info.content_idx}">${info.content_subject}</a>
+												            </c:when>
 												            <c:when test="${empty loginUserBean.user_idx or loginUserBean.user_idx != info.user_idx}">
 												                <a href="${root}/board/read?content_idx=${info.content_idx}" onclick="SecretWrite(); return false;">${info.content_subject}</a>
-												            </c:when>
-												            <c:when test="${loginUserBean.user_idx == info.user_idx}">
-												                <a href="${root}/board/read?content_idx=${info.content_idx}">${info.content_subject}</a>
 												            </c:when>
 												        </c:choose>
 												    </c:when>

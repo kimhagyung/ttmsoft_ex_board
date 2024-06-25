@@ -107,7 +107,7 @@ function handleSearchButtonClick() {
 						replyHtml += '</tr>'
                       	
 						
-						 // 자세히 보기 모달의 HTML 생성
+						// 자세히 보기 모달의 HTML 생성
 		                var modalHtml = '<div class="modal fade" id="ContentManage_' + board.content_idx + '" tabindex="-1" aria-labelledby="ContentManage_' + board.content_idx + 'Label" aria-hidden="true">';
 		                modalHtml += '		<div class="modal-dialog modal-lg">';
 		                modalHtml += '			<div class="modal-content">';
@@ -244,7 +244,9 @@ function handleSearchButtonClick() {
 		                }); 
                 	}
                 } else {
-                	$("#searchResults").append('<tr><td colspan="7">검색 결과가 없습니다.</td></tr>');
+                	$("#searchResults").append('<tr>' +
+                									'<td colspan="7">검색 결과가 없습니다.</td>'+
+                								'</tr>');
                 }
             },
             error: function(error) {
@@ -284,8 +286,8 @@ var isConfirmed=confirm('삭제처리를 해제 하시겠습니까?')
 			type : 'GET',
 			data : {content_idx:content_idx},
 			success : function(response){
-				alert('게시글이 삭제처리 되었습니다.')  
-				$('#ContentManage_' + content_idx).modal('hide');
+				alert('게시글 삭제처리가 해제 되었습니다. 되었습니다.')  
+				$('#ContentManage_' + content_idx).modal('hide'); 
 				handleSearchButtonClick();
 			}
 		});
@@ -313,6 +315,7 @@ function deleted(content_idx){
 		alert('취소하셨습니다. ')
 	}
 }
+ 
 </script>
 </head>
 
@@ -436,12 +439,8 @@ function deleted(content_idx){
 						</select>
 					</div>
 				</div>
-				<div class="text-right mt-4 mb-4">
+				<div class="text-right mt-4 mb-4"> 
 					<span>
-						<button type="button" class="btn btn-primary"
-							data-bs-toggle="modal" data-bs-target="#exampleModal">게시물 등록
-							</button>
-					</span> <span>
 						<button type="submit" class="btn btn-primary" id="searchButton">검색</button>
 					</span>
 				</div>
@@ -498,6 +497,8 @@ function deleted(content_idx){
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
+	
+
 
     <!-- Logout Modal-->
     <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -505,12 +506,12 @@ function deleted(content_idx){
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">로그아웃</h5>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
-                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-body">로그아웃 하시겠습니까?</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
                     <a class="btn btn-primary" href="${root }/admin/admin_logout">Logout</a>

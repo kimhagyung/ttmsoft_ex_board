@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import kr.co.ttmsoft.beans.AdminBean;
 import kr.co.ttmsoft.beans.BoardFileBean;
 import kr.co.ttmsoft.beans.BoardInfoBean;
 import kr.co.ttmsoft.beans.ContentBean;
@@ -29,7 +30,8 @@ public class BoardController {
 
 	@Resource(name = "loginUserBean")
 	private UserBean loginUserBean;
-
+	@Resource(name="loginAdminBean")
+	private AdminBean loginAdminBean;
 	@Autowired
 	private BoardService boardService;
 
@@ -104,9 +106,9 @@ public class BoardController {
 	public String write_pro(@ModelAttribute("boardPostBean") ContentBean boardPostBean,
 	                        @ModelAttribute("boardFilePostBean") BoardFileBean boardFilePostBean,
 	                        Model model,
-	                        @RequestParam("uploadFiles") MultipartFile[] uploadFiles) {
-
-	    System.out.println("받아온 카테고리값은?" + boardPostBean.getContent_idx());
+	                        @RequestParam(value = "uploadFiles", required = false) MultipartFile[] uploadFiles)
+	                          { 
+	    System.out.println("받아온 카테고리값은?" + boardPostBean.getContent_board_idx());
 	    System.out.println("받아온 사용자 아이디는?" + boardPostBean.getUser_idx());
 	    System.out.println("받아온 글내용은?" + boardPostBean.getContent_text());
 	    System.out.println("받아온 제목은?" + boardPostBean.getContent_subject());
@@ -114,8 +116,8 @@ public class BoardController {
 	    System.out.println("공개여부는?" + boardPostBean.getContent_is_public());
 	    
 	    try {
-	        if (loginUserBean.isUserLogin()) { // 로그인 여부 확인
-	            int contentIdx = boardService.addBoardInfo(boardPostBean); // 내용 저장 및 게시글 번호 반환 
+	        if (loginUserBean.isUserLogin() || loginAdminBean.isAdmin_login()) { // 로그인 여부 확인
+	            int contentIdx = boardService.addBoardInfo(boardPostBean); // 내용 저장 및 게시글 번호 반환  
 	            if (contentIdx > 0) { // 내용이 성공적으로 저장된 경우에만 파일 저장
 	                if (boardFilePostBean != null && uploadFiles != null) { // 파일 정보가 존재하고 파일이 업로드되었을 경우 파일 정보 저장
 	                    for (MultipartFile uploadFile : uploadFiles) {
@@ -125,12 +127,14 @@ public class BoardController {
 	                            // 파일 저장 로직(boardService.addBoardFileInfo() 호출 등)을 추가해야 합니다.
 	                            boardService.addBoardFileInfo(boardFilePostBean, uploadFile, contentIdx);
 	                        }
+	                    	else{
+	                    		System.out.println("업로드 이미지 없음");
+	                    		return "board/write_success";
+	                    	}
 	                    }
 	                }
-	                model.addAttribute("content_board_idx", boardPostBean.getContent_board_idx());
-	            } else {
-	                System.out.println("게시물 정보 저장에 실패했습니다.");
-	                // 저장 실패 시 처리 로직 추가 가능
+	                
+	                System.out.println("게시물 정보 저장에 실패했습니다.");  
 	            }
 	        } else {
 	            System.out.println("로그인이 되어있지 않습니다.");
@@ -138,7 +142,9 @@ public class BoardController {
 	        }
 	    } catch (Exception e) {
 	        e.printStackTrace();
-	    }
+	    }finally {
+	    	model.addAttribute("content_board_idx", boardPostBean.getContent_board_idx()); 
+		}
 
 	    return "board/write_success";
 	}

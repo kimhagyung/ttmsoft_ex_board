@@ -1,0 +1,129 @@
+--게시판 카테고리 테이블-----------------------------------------------------------------------------------------------------1
+create sequence board_info_seq
+start with 1
+increment by 1
+minvalue 1;
+create table board_info_table(
+	board_info_idx number constraint BOARD_INFO_PK primary key,
+	board_info_name varchar2(500) not null,
+    board_explanation CLOB, 
+    is_comment number(1) default 0 check(is_comment in(0,1)),
+    is_file number(1) default 0 check(is_file in(0,1,2,3)),
+    is_usage varchar2(1) default 'Y' check(is_usage in('N','Y')),
+    file_checked number(1) default 0 check(file_checked in(0,1)),
+    file_size number default 0,
+    file_ext varchar2(500),
+    board_date date, 
+    is_public number(1) default 0 check(is_public in(0,1)) 
+);      
+select *from board_info_table;
+commit; 
+--댓글 테이블 -----------------------------------------------------------------------------------------------------2
+--댓글 번호(시퀀스)
+create sequence comment_seq
+start with 0
+increment by 1
+minvalue 0;
+create table comment_table(
+	comment_idx number constraint COMMENT_PK primary key,
+    comments varchar(500) not null,
+    comment_date date not null,
+	content_idx number not null constraint COMMENT_FK1 references content_table(content_idx) on delete cascade,
+    user_idx number not null constraint COMMENT_FK2 references user_table(user_idx) on delete cascade
+); 
+ select *from comment_table;
+ alter table comment_
+--대댓글 테이블 -----------------------------------------------------------------------------------------------------3
+--대댓글 번호(시퀀스)
+create sequence reply_seq
+start with 1
+increment by 1
+minvalue 0;
+create table reply_table(
+    reply_idx number constraint REPLY_PK primary key, 
+    reply varchar(500) not null, 
+    reply_date date not null, 
+    comment_idx number not null constraint REPLY_FK1 references comment_table(comment_idx) on delete cascade,
+    user_idx number not null constraint REPLY_FK2 references user_table(user_idx) on delete cascade
+);  
+select *from board_file where content_idx=681;
+-----------------------------------------------------------------------------------------------------
+--게시글 테이블 -----------------------------------------------------------------------------------------------------4
+--게시글 번호(시퀀스)
+create sequence content_seq
+start with 0
+increment by 1
+minvalue 0;
+create table content_table(
+	content_idx number constraint CONTENT_PK primary key,
+	content_subject varchar2(500),
+	content_text CLOB, 
+	user_idx number not null
+	                   constraint CONTENT_FK1 references user_table(user_idx) on delete cascade,
+	content_board_idx number not null
+	                  constraint CONTENT_FK2 references board_info_table(board_info_idx) on delete cascade,
+	content_date date not null,
+    content_is_public number(1) default 1 check(is_public in(0,1)),
+    is_deleted varchar(1) default 'N' check(is_deleted in('Y','N')),
+    modifyContent_date date,
+    admin_idx constraint CONTENT_FK3 references admin_table(admin_idx) on delete cascade
+);  
+--게시판 파일 시퀀스-------------------------------------------------------------------------------------------------------5
+create sequence board_file_seq
+start with 1
+increment by 1
+minvalue 0;
+-- 게시판 파일 테이블 
+create table board_file(
+    board_file_idx number constraint BOARD_FILE primary key, 
+    file_path varchar(255) not null, 
+    file_name varchar(255) not null,
+    uploaded_at date,
+    content_idx number not null constraint BOARD_FK1 references content_table(content_idx) on delete cascade,
+    user_idx number not null constraint BOARD_FK2 references user_table(user_idx) on delete cascade,
+    file_size varchar(100)
+);       
+--회원 번호(시퀀스) -----------------------------------------------------------------------------------------------------6
+create sequence user_seq
+start with 0
+increment by 1
+minvalue 0;
+--회원 테이블
+create table user_table(
+	user_idx number constraint USER_PK primary key,
+	user_name varchar2(50) not null,
+	user_id varchar2(100) not null,
+	user_pw varchar2(100) not null
+); 
+
+--관리자 시퀀스 
+create sequence admin_seq
+start with 1
+increment by 1
+minvalue 0;
+--관리자 테이블 ------------------------------------------------------------------------------------------------ 7
+create table admin_table(
+    admin_idx number constraint ADMIN_PK primary key, 
+    admin_id varchar2(50) not null,
+    admin_pw varchar2(50) not null, 
+    admin_name varchar2(50) not null
+);
+
+insert into admin_table values(admin_seq.nextval , 'admin',1234,'TTM');
+commit;
+select *from admin_table;
+----------------------------------------------------------------------------------------------------------------------- 8
+--관리자 답변 시퀀스 
+create sequence admin_answer_seq
+start with 1
+increment by 1
+minvalue 1;
+--관리자 답변 테이블
+create table admin_answer_table(
+    admin_answer_idx number constraint ADMIN_ANSWER_PK primary key,
+    amdin_answer CLOB not null,
+    admin_answer_date date not null,
+    admin_idx number not null constraint ADMIN_ANSWER_FK1 references admin_table(admin_idx) on delete cascade,
+    content_idx number not null constraint ADMIN_ANSWER_FK2 references content_table(content_idx) on delete cascade
+);  
+ 
