@@ -9,7 +9,9 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="${root}/resources/se2/js/service/HuskyEZCreator.js"></script>
 <script>
-	let oEditors = [];
+	let oEditors = []; 
+
+    
 	smartEditor=function(){
 	    nhn.husky.EZCreator.createInIFrame({
 	        oAppRef: oEditors,
@@ -19,145 +21,126 @@
 	    })
 	}
 	$(document).ready(function() {
-	
+	    let filesArr = [];
+		 //파일태그 추가 
+        $('.selected-image').append( '<input type="file" id="uploadFiles" name="uploadFiles" style="display: none;"   class="form-control" accept="${boardAllInfo.file_ext}" multiple  />'
+        +'<label for="uploadFiles"> <h5>첨부파일(최대 ${boardAllInfo.is_file }개)<i class="bi bi-camera-fill mx-2" id="uploadFiles"></i></h5></label>');
+       
 		smartEditor();
         function submitContents(elClickedObj) {
             oEditors.getById["editor"].exec("UPDATE_CONTENTS_FIELD", []); // 에디터의 내용이 html형식으로 저장되도록 하는거??.
             // 에디터의 내용을 출력합니다.
             //alert(document.getElementById("editor").value);
-        } 
-        // 전송 버튼 클릭 이벤트 핸들러 추가
-        $('#submit').on('click', function() {
-            submitContents(this);
-        }); 
-    });
-</script>  
-<script>
-$(function() {
-    
-/*
-    $('#uploadFiles').on('change', function (event) {
-        const selectedImageDiv = $('.selected-image');
-
-        // Count only images, not remove buttons
-        if (selectedImageDiv.find('.selected-image-item:not(.remove-button)').length + uploadedFiles.length >= 3) {
-            alert('최대 5개의 이미지까지만 선택할 수 있습니다.');
-            return;
-        }
-
-        const files = Array.from(event.target.files); // FileList를 배열로 변환
-
-        for (const file of files) {
-            const reader = new FileReader();
-
-            reader.onload = function (e) {
-                const img = $('<img>').attr('src', e.target.result).addClass('selected-image-item');
-                selectedImageDiv.append(img);
-
-                const removeButton = $('<button>').text('삭제').addClass('remove-button');
-                removeButton.on('click', function () {
-                    const index = uploadedFiles.indexOf(file);
-                    if (index !== -1) {
-                        uploadedFiles.splice(index, 1); // 배열에서 제거
-                    }
-                    img.remove();
-                    removeButton.remove();
-                });
-
-                img.after(removeButton);
-            };
-
-            reader.readAsDataURL(file);
-            uploadedFiles.push(file); // 배열에 추가
-        }
-    });
-*/
-
-let uploadedFiles = []; // 업로드된 파일들을 담을 배열
-
-	/* $('#uploadFiles').click(function(){  //업로드 파일 클릭 ! 
-		$('.selected-image').append('<div class="form-inline">' 
-		+ '<input type="file" name="uploadFiles" accept="${boardAllInfo.file_ext}" class="form-control" multiple>' 
-		+ ' <button type="button" class="btn_delete btn btn-sm">삭제</button>' + '</div>'); 
-		}); */ 
-		
-	$(function(){
-		var isFile = ${boardAllInfo.is_file};
-
-        // 숫자만큼 반복하여 "개" 출력
-        for (var i = 0; i < isFile; i++) {
-        	 $('.selected-image').append('<div class="form-inline">' 
-                     + '<input type="file" name="uploadFiles" accept="${boardAllInfo.file_ext}" class="form-control" multiple>'  
-                     + '</div>');
-        }
-        
-        // 파일 선택 시 크기 체크
+        }  
         $('input[name="uploadFiles"]').change(function() {
-            var maxFileSizeKB = ${boardAllInfo.file_size}; 
-
+            var maxFileSizeKB = ${boardAllInfo.file_size};
+            var attFileCnt = document.querySelectorAll('.filebox').length;
             var files = $(this)[0].files;
+
             for (var j = 0; j < files.length; j++) {
                 var fileSizeKB = files[j].size / 1024; // 파일 크기 kB
                 if (fileSizeKB > maxFileSizeKB) {
-                    alert('파일 크기는'+ maxFileSizeKB +'KByte 이하여야 합니다.');
+                    alert('파일 크기는 ' + maxFileSizeKB + 'KByte 이하여야 합니다.');
                     console.log("현재 업로드한 파일 크기", fileSizeKB);
                     $(this).val(''); // 파일 선택 취소
                     return false;
-                }else {
-                    uploadedFiles.push(files[j]); // 배열에 파일 추가
+                } else {
+                    // 목록 추가
+                    let htmlData = '';
+                    htmlData += '<div id="file' + j + '" class="filebox">';
+                    htmlData += '   <p class="name">' + files[j].name + '</p>'; // files.name -> files[j].name 수정
+                    htmlData += '   <a class="delete" onclick="deleteFile(' + j + ');"><i class="bi bi-dash"></i></a>';
+                    htmlData += '</div>';
+                    $('.file-list').append(htmlData); 
+
+                    // 파일 배열에 담기
+                    filesArr.push(files[j]);
+                }
+            } 
+            // 초기화
+            $(this).val(''); // 모든 파일 선택 취소
+        });
+
+        
+        
+        $('#uploadForm').submit(function(event) {
+            var formData = new FormData(); 
+         // event.preventDefault(); // 폼 기본 동작 방지
+            for (var i = 0; i < filesArr.length; i++) {
+                // 삭제되지 않은 파일만 폼데이터에 담기
+                if (!filesArr[i].is_delete) {
+                    formData.append('uploadFiles', filesArr[i]);
+                    console.log("filesArr[i] :", filesArr[i])
+                    console.log('파일 이름:', filesArr[i].name);
+                    console.log('파일 크기:', filesArr[i].size / 1024, 'kB'); 
                 }
             }
-        });
-	});
-/* 		// 파일 입력 필드 삭제 버튼에 대한 이벤트 핸들러
-        $(document).on('click', '.btn_delete', function() {
-            $(this).closest('.form-inline').remove();
-        }); */
-    $('#uploadForm').submit(function(event) {
-       	//event.preventDefault(); // 폼 기본 동작 방지
 
-        var formData = new FormData(); 
-       	 
-	        for (var i = 0; i < uploadedFiles.length; i++) {
-	            formData.append('uploadFiles', uploadedFiles[i]);
-	            //formData.append('file_size', (uploadedFiles[i].size / 1024));
-	            console.log('파일 이름:', uploadedFiles[i].name);
-	            console.log('파일 크기:', uploadedFiles[i].size / 1024, 'kB'); 
-	        }
-         
+            var board_subject = $('#board_subject').val();
+            var content_text = $('.content_text').val();
 
-        var board_subject = $('input[name="board_subject"]').val();
-        var content_text = $('input[name="content_text"]').val();
+            formData.append('content_subject', board_subject);
+            formData.append('content_text', content_text); 
+            //formData.append('content_board_idx', ${param.index}); 
+            //formData.append('user_idx', ${loginUserBean.user_idx}); 
 
-        formData.append('board_subject', board_subject);
-        formData.append('content_text', content_text);/* 
-        formData.append('content_board_idx', ${param.index}); */
-
-        // 서버로 formData 전송
-        $.ajax({
-            url: '${root }/board/write_pro',
-            type: 'POST',
-            data: formData,
-            processData: false, // 데이터 처리 방식 설정 (FormData 객체 사용시 false로 설정)
-            contentType: false, // 컨텐츠 타입 설정 (FormData 객체 사용시 false로 설정)
-            success: function(response) {
-                console.log('업로드 완료:', response);
-                // 성공적으로 업로드된 경우 처리할 로직
-            },
-            error: function(error) {
-                console.error('업로드 오류:', error);
-            }
-        });
-
-        // 업로드 후 배열 비우기
-        uploadedFiles = [];
+            console.log("board_subject : ", board_subject)
+            console.log("content_text : ", content_text)
+            console.log("content_info_idx : ", ${param.index})
+            console.log("user_idx : ", ${loginUserBean.user_idx})
+ 			submitContents(this); //스마트 에디터 
+            // 서버로 formData 전송
+            $.ajax({
+                url: '${root }/board/write_pro',
+                type: 'POST',
+                data: formData,
+                processData: false, // 데이터 처리 방식 설정 (FormData 객체 사용시 false로 설정)
+                contentType: false, // 컨텐츠 타입 설정 (FormData 객체 사용시 false로 설정)
+                success: function(response) {
+                    console.log('업로드 완료:', response);
+                    // 성공적으로 업로드된 경우 처리할 로직
+                },
+                error: function(error) {
+                    console.error('업로드 오류:', error);
+                }
+            });
+            // 업로드 후 배열 비우기
+            filesArr = [];
+        }); 
     });
-});
+	
+	function deleteFile(num) {
+        document.querySelector("#file" + num).remove();
+        filesArr[num].is_delete = true;
+    } 
 </script>
+
 <style>
-.selected-image-item{
-	width:200px;
-	height:200px;
+ .insert {
+   padding: 20px 30px;
+   display: block;
+   width: 600px;
+   margin: 5vh auto;
+   height: 90vh;
+   border: 1px solid #dbdbdb;
+   -webkit-box-sizing: border-box;
+   -moz-box-sizing: border-box;
+   box-sizing: border-box;
+}
+.insert .file-list {
+    height: 200px;
+    overflow: auto;
+    border: 1px solid #989898;
+    padding: 10px;
+}
+.insert .file-list .filebox p {
+    font-size: 14px;
+    margin-top: 10px;
+    display: inline-block;
+}
+.insert .file-list .filebox .delete i{
+    color: #ff5353;
+    margin-left: 5px;
 }
 </style>
 </head>
@@ -167,8 +150,8 @@ let uploadedFiles = []; // 업로드된 파일들을 담을 배열
         <div class="col-sm-3"></div>
         <div class="col-sm"> 
             <form action="${root }/board/write_pro" method="post" enctype="multipart/form-data" id="uploadForm">
-              	<input type="hidden" name="content_board_idx" value="${param.index}" /> 
-                <input type="hidden" name="user_idx" value="${loginUserBean.user_idx}" /> 
+               	<input type="hidden" name="content_board_idx" value="${param.index}" />      
+               	<input type="hidden" name="user_idx" value="${loginUserBean.user_idx}" />  
                 <div class="form-group">
                     <label for="board_subject"><h4>제목</h4></label> 
                     <input name="content_subject" type="text" id="board_subject" name="board_subject" class="form-control" placeholder="제목을 입력해 주세요" />
@@ -188,18 +171,19 @@ let uploadedFiles = []; // 업로드된 파일들을 담을 배열
                 </c:if>
                 <div class="form-group">
                     <label for="editor"><h4>내용</h4></label>
-                    <textarea id="editor" name="content_text" placeholder="내용을 입력해주세요" rows="10" style="resize: none" class="form-control"></textarea> 
+                    <textarea id="editor" name="content_text" placeholder="내용을 입력해주세요" rows="10" style="resize: none" class="form-control content_text"></textarea> 
                 </div>
                 <c:if test="${boardAllInfo.file_checked==1 }">
-	                <div class="form-group">
-	                  <!--   <input type="file" id="uploadFiles" name="uploadFiles" style="display: none;"class="form-control" accept="image/*" multiple  /> -->
-	                    <label for="uploadFiles"> <h5>첨부파일(최대 ${boardAllInfo.is_file }개)<i class="bi bi-camera-fill mx-2" id="uploadFiles"></i></h5></label> 
-	                    <div class="selected-image"></div>
+	                <div class="form-group insert">
+	                  	<%-- <input type="file" id="uploadFiles" name="uploadFiles" style="display: none;"   class="form-control" accept="${boardAllInfo.file_ext}" multiple  /> --%>
+	                   <%--  <label for="uploadFiles"> <h5>첨부파일(최대 ${boardAllInfo.is_file }개)<i class="bi bi-camera-fill mx-2" id="uploadFiles"></i></h5></label>
+	                    --%> <div class="selected-image"></div> 
+	                    <div class="file-list"></div> 
 	                </div>     
                 </c:if>                        
                 <div class="form-group">
                     <div class="text-right">
-                        <button type="submit" id="submit" class="btn btn-primary">작성하기</button>
+                        <button type="submit" class="btn btn-primary">작성하기</button>
                     </div>
                 </div>                  
                 <div class="col-sm-3"></div> 

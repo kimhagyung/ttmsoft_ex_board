@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import kr.co.ttmsoft.beans.BoardInfoBean;
 import kr.co.ttmsoft.beans.ContentBean;
 import kr.co.ttmsoft.beans.NaverEditorBean;
 import kr.co.ttmsoft.beans.PageBean;
+import kr.co.ttmsoft.beans.UserBean;
 import kr.co.ttmsoft.dao.BoardDao;
 
 @Service
@@ -35,7 +38,8 @@ public class BoardService {
 
 	@Value("${page.paginationcnt}")
 	private int page_paginationcnt;
-
+	@Resource(name = "loginUserBean")
+	private UserBean loginUserBean;
 	// 게시글 작성
 	public int addBoardInfo(ContentBean addBoardInfo) {  
 		boardDao.addBoardInfo(addBoardInfo);

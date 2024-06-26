@@ -46,6 +46,7 @@ public class BoardController {
 		
 		for (ContentBean main : getPostPageInfo) {
 			boardWriterName.add(boardService.getContentUserName(main.getContent_idx()));
+			/*
 			System.out.println(main.getContent_subject());
 			System.out.println(main.getContent_idx());
 			System.out.println(main.getContent_subject());
@@ -54,6 +55,7 @@ public class BoardController {
 			System.out.println(main.getContent_board_idx()); 
 			System.out.println(main.getContent_is_public());
 			System.out.println(main.getIs_deleted());
+			*/
 		}
 		//model.addAttribute("MainBoardInfo", MainBoardInfo);
 		model.addAttribute("boardWriterName", boardWriterName);
@@ -106,25 +108,27 @@ public class BoardController {
 	public String write_pro(@ModelAttribute("boardPostBean") ContentBean boardPostBean,
 	                        @ModelAttribute("boardFilePostBean") BoardFileBean boardFilePostBean,
 	                        Model model,
-	                        @RequestParam(value = "uploadFiles", required = false) MultipartFile[] uploadFiles)
-	                          { 
+	                        @RequestParam("uploadFiles") MultipartFile[] uploadFiles){
+		//@RequestParam(value = "uploadFiles", required = false) MultipartFile[] uploadFiles
+		/*
 	    System.out.println("받아온 카테고리값은?" + boardPostBean.getContent_board_idx());
 	    System.out.println("받아온 사용자 아이디는?" + boardPostBean.getUser_idx());
 	    System.out.println("받아온 글내용은?" + boardPostBean.getContent_text());
 	    System.out.println("받아온 제목은?" + boardPostBean.getContent_subject());
 	    System.out.println("받아온 파일 사이즈는?" + boardFilePostBean.getFile_size());
 	    System.out.println("공개여부는?" + boardPostBean.getContent_is_public());
-	    
+	    */
+
 	    try {
 	        if (loginUserBean.isUserLogin() || loginAdminBean.isAdmin_login()) { // 로그인 여부 확인
 	            int contentIdx = boardService.addBoardInfo(boardPostBean); // 내용 저장 및 게시글 번호 반환  
+	            System.out.println("contentIdx????"+contentIdx);
 	            if (contentIdx > 0) { // 내용이 성공적으로 저장된 경우에만 파일 저장
 	                if (boardFilePostBean != null && uploadFiles != null) { // 파일 정보가 존재하고 파일이 업로드되었을 경우 파일 정보 저장
 	                    for (MultipartFile uploadFile : uploadFiles) {
 	                    	if (!uploadFile.isEmpty()) {
-	                            System.out.println("업로드된 파일 이름: " + uploadFile.getOriginalFilename());
-	                            System.out.println("업로드된 파일 크기: " + uploadFile.getSize() + " bytes"); 
-	                            // 파일 저장 로직(boardService.addBoardFileInfo() 호출 등)을 추가해야 합니다.
+	                            System.out.println("write_pro 업로드된 파일 이름: " + uploadFile.getOriginalFilename());
+	                            System.out.println("write_pro 업로드된 파일 크기: " + uploadFile.getSize() + " bytes");  
 	                            boardService.addBoardFileInfo(boardFilePostBean, uploadFile, contentIdx);
 	                        }
 	                    	else{
@@ -132,8 +136,7 @@ public class BoardController {
 	                    		return "board/write_success";
 	                    	}
 	                    }
-	                }
-	                
+	                } 
 	                System.out.println("게시물 정보 저장에 실패했습니다.");  
 	            }
 	        } else {
