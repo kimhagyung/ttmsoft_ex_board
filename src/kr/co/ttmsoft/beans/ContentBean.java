@@ -21,8 +21,23 @@ public class ContentBean {
 	private String user_name;
 	//private List<BoardFileBean> file_name;
 	private String modifyContent_date; 
+	private String file_ext;
+	private String file_size;
 	
 	 
+	 
+	public String getFile_size() {
+		return file_size;
+	}
+	public void setFile_size(String file_size) {
+		this.file_size = file_size;
+	}
+	public String getFile_ext() {
+		return file_ext;
+	}
+	public void setFile_ext(String file_ext) {
+		this.file_ext = file_ext;
+	}
 	public String getModifyContent_date() {
 		return modifyContent_date;
 	}

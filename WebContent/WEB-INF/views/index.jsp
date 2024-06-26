@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
 <c:set var="root" value="${pageContext.request.contextPath }" />
 <!DOCTYPE html>
 <html>
@@ -20,11 +21,13 @@ function SecretWrite(){
 		<c:forEach var="obj" items="${topMenuList }" varStatus="status">
 			<c:if test="${status.index % 2 == 0}">
 				<div class="row">
-			</c:if>
+			</c:if> 
+			<c:if test="${topMenuList[status.index].is_usage == 'Y' }">
 			<div class="col-lg-6" style="margin-top: 20px">
 				<div class="card shadow">
+				
 					<div class="card-body">
-						<h4 class="card-title">${obj.board_info_name}</h4>
+						<h4 class="card-title">${obj.board_info_name}</h4> 
 						<table class="table table-hover" id='board_list'>
 							<thead>
 								<tr>
@@ -64,8 +67,9 @@ function SecretWrite(){
 						<a href="${root }/board/main?index=${obj.board_info_idx}"
 							class="btn btn-primary">더보기</a>
 					</div>
-				</div>
-			</div>
+				</div> 
+			</div> 
+			</c:if>
 			<c:if test="${status.index % 2 == 1 || status.last}">
 		</div>
 			</c:if>

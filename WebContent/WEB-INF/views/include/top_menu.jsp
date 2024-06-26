@@ -34,7 +34,7 @@
 				 <c:if test="${obj.is_usage=='Y' }">
 					 <li class="nav-item">
 	                    <a href="${root}board/main?index=${obj.board_info_idx }"
-	                       class="nav-link <c:if test='${param.index == obj.board_info_idx}'>active</c:if>">${obj.board_info_name }</a>
+	                       class="nav-link <c:if test='${param.index == obj.board_info_idx || getBoardTopMenu== obj.board_info_idx}'>active</c:if>">${obj.board_info_name }</a>
 	                </li>
                 </c:if> 
 			</c:forEach>

@@ -18,4 +18,12 @@ public class TopMenuDao {
 		List<BoardInfoBean> topMenuList = topMenuMapper.getTopMenuList();
 		return topMenuList;
 	}
+	
+	public BoardInfoBean getReqboardInfo(int content_idx,int board_file_idx) {
+		return topMenuMapper.getReqboardInfo(content_idx,board_file_idx);
+	}
+	
+	public int getBoardTopMenu(int content_idx) {
+		return topMenuMapper.getBoardTopMenu(content_idx);
+	}
 }

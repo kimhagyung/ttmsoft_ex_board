@@ -169,7 +169,7 @@ public class BoardController {
 	}
 
 	@PostMapping("/modify_pro")
-	public String modify_pro(Model model, @ModelAttribute("modifyPostBean") ContentBean modifyPostBean,@ModelAttribute("modifyBoardFileBean") BoardFileBean modifyBoardFileBean, @RequestParam("uploadFiles") MultipartFile[] uploadFiles
+	public String modify_pro(Model model, @ModelAttribute("modifyPostBean") ContentBean modifyPostBean,@ModelAttribute("modifyBoardFileBean") BoardFileBean modifyBoardFileBean,  @RequestParam(value = "uploadFiles", required = false) MultipartFile[] uploadFiles
 			, @RequestParam("content_idx") int content_idx) {
 		try { 
 		 if (loginUserBean.isUserLogin() == true) {  
@@ -200,7 +200,7 @@ public class BoardController {
 	@PostMapping("/modifyFile")
 	public String modifyFile(Model model, @ModelAttribute("modifyBoardFileBean") BoardFileBean modifyBoardFileBean, @RequestParam("uploadFiles") MultipartFile uploadFile) {
 		try { 
-		 if (loginUserBean.isUserLogin() == true) {   
+		 if (loginUserBean.isUserLogin() == true || loginAdminBean.isAdmin_login() == true ) {   
 	             boardService.modifyBoardFileBean(modifyBoardFileBean, uploadFile); 
 		 }
 		}catch (Exception e) {
@@ -254,4 +254,7 @@ public class BoardController {
 		}
 		return "board/write_success";
 	}
+	
+	
+	
 }

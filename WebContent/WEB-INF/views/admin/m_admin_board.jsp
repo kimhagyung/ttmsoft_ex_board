@@ -107,7 +107,7 @@ $(function(){
 						var item=SearchResult[i];  
 				            $("#board_Info").append(
 				                '<tr>' +
-				                '<td>' + i + '</td>' +
+				                '<td>' + (i+1) + '</td>' +
 				                '<td>' + item.board_info_idx + '</td>' +
 				                '<td>' + item.board_info_name + '</td>' +
 				                '<td>' + ContentCnt[i] + '</td>' +
@@ -369,7 +369,7 @@ $(function(){
 
 	<!-- 게시판 수정 모달 -->
 		<c:forEach var="boardinfo" items="${CreateBoard }" varStatus="var">
-			<form:form action="${root }/admin/modifyBoardPro" method="post" modelAttribute="ModifyCreateBoardBean" >  
+			<form:form action="${root }/admin/modifyBoardPro" method="post" modelAttribute="ModifyCreateBoardBean">  
 				<div class="modal fade"
 					id="BoardModifyModal_${boardinfo.board_info_idx }"
 					tabindex="-1" aria-labelledby="BoardModifyModalLabel"
@@ -790,6 +790,7 @@ $(function(){
 		</div>
 	</footer>
 	<!-- End of Footer --> 
+ 
 	<!-- Bootstrap core JavaScript-->
 	<script src="${root}/resources/vendor/jquery/jquery.min.js"></script>
 	<script
@@ -810,7 +811,22 @@ $(function(){
 
 	<!-- Page level custom scripts -->
 	<script src="${root}/resources/js/demo/datatables-demo.js"></script>
-
+ <script>
+ $(document).ready(function() {
+	    // DataTable 초기화 확인 후 초기화
+	    if (!$.fn.DataTable.isDataTable('#dataTable')) {
+	        $('#dataTable').DataTable({
+	            "paging": true,
+	            "searching": true,
+	            "ordering": true,
+	            "info": true,
+	            "lengthChange": true,
+	            "pageLength": 10,
+	            "lengthMenu": [5, 10, 25, 50, 75, 100]
+	        });
+	    }
+	});
+</script>
 </body>
 
 </html>

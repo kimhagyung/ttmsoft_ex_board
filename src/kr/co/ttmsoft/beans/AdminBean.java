@@ -9,7 +9,7 @@ public class AdminBean {
 	private String admin_pw;
 	private String admin_name;
 	private boolean admin_login; 
-	
+ 
 	
 	public AdminBean() {
 		this.admin_login=false;

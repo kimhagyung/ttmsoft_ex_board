@@ -26,6 +26,7 @@ import kr.co.ttmsoft.service.AnswerService;
 import kr.co.ttmsoft.service.BoardService;
 import kr.co.ttmsoft.service.CommentService;
 import kr.co.ttmsoft.service.ReplyService;
+import kr.co.ttmsoft.service.TopMenuService;
 import kr.co.ttmsoft.service.UserService;
 
 @RestController 
@@ -48,6 +49,8 @@ public class RestApiController {
 	@Autowired
 	private BoardMapper boardMapper;
 	
+	@Autowired
+	private TopMenuService topMenuService;
 	
 	//아이디 중복 검사 
 	@GetMapping("/user/checkUserIdExist/{user_id:.+}")
@@ -192,7 +195,7 @@ public class RestApiController {
 	        searchBoard = boardService.getAllContentInfo(board_info_idx);
 	        for (ContentBean search : searchBoard) {
 	            System.out.println("게시글 내용 :" + search.getContent_text());
-	            System.out.println("게시글 번호 :" + search.getContent_idx());
+	            System.out.println("게시글 번호 :" + search.getContent_idx()); 
 	            int contentIdx = search.getContent_idx();
 	            List<BoardFileBean> files = boardService.getBoardFileInfo(contentIdx);
 	            searchFileBoard.addAll(files);
@@ -274,6 +277,17 @@ public class RestApiController {
 	    result.put("searchResult", Result);
 	    result.put("contentCnt", contentCnt);
 		return result;
+	}
+	
+	
+	//관리자 페이지 게시판 정보 요청 ReqboardInfo
+	@GetMapping("/ReqboardInfo") 
+	public BoardInfoBean ReqboardInfo(@RequestParam("board_file_idx") int board_file_idx,
+									@RequestParam("content_idx")int content_idx){
+		
+		BoardInfoBean req=topMenuService.getReqboardInfo(content_idx,board_file_idx);
+		System.out.println("req의 게시판 값");
+		return req;
 	}
 	
 }

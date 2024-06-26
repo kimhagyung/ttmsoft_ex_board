@@ -73,9 +73,11 @@
 	$(document).ready(function() {
 	
     // 검색 버튼 클릭 시 이동
-    $('#searchButton').on('click', handleSearchButtonClick);
+   $('#searchButton').on('click', handleSearchButtonClick);
 
-	});
+});
+	 
+let uploadedFiles = []; 
 function handleSearchButtonClick() {
         const selectedOption = $('#inputState2').val(); // board_info_idx인듯
         const selectedOption2 = $('#inputState3').val(); // 임시 삭제 여부 검색
@@ -97,7 +99,7 @@ function handleSearchButtonClick() {
                 	for (var i = 0; i < response.searchBoard.length; i++) {
                 		var board=response.searchBoard[i]; 
                     	var replyHtml = '<tr>'
-                      	replyHtml += '<td>'+ i + '</td>'
+                      	replyHtml += '<td>'+ (i+1) + '</td>'
                       	replyHtml += '<td>'+ board.content_idx + '</td>'
                       	replyHtml += '<td>'+ board.board_info_name + '</td>'
                       	replyHtml += '<td>'+ board.content_subject + '</td>'
@@ -181,6 +183,8 @@ function handleSearchButtonClick() {
 		             	modifyModal += '        <h5 class="modal-title fs-5" id="ModifyModalToggle_' + board.content_idx + '">게시글 수정하기</h5>';
 		             	modifyModal += '        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>';
 		             	modifyModal += '      </div>';
+		             	modifyModal += '      <form action="${root }/board/modify_pro" method="post" enctype="multipart/form-data" id="uploadForm" >' // 여기에 form 태그 추가
+		             	modifyModal += '	  <input type="hidden" name="content_idx" value="'+ board.content_idx +'" />'
 		             	modifyModal += '      <div class="modal-body">'; 
 		             	modifyModal += '					<table class="table table-bordered">'
 		             	modifyModal += '						<tbody>';
@@ -206,19 +210,61 @@ function handleSearchButtonClick() {
 		                modifyModal += '								<th scope="row">첨부</th>'; 
 		                modifyModal += '									<td colspan="3">';
 			             // 파일 리스트 추가 
-	                        for (var k = 0; k < relatedFiles.length; k++) { 
-	                        	modifyModal += '<div>'+ relatedFiles[k].file_name + '</div>'
-	                        }
-	 
+                       for (var k = 0; k < relatedFiles.length; k++) {
+                    	  
+                    		    modifyModal += '<div class="row">';
+	   						    modifyModal += '    <div class="col-8" id="filename' + relatedFiles[k].board_file_idx + '">' + relatedFiles[k].file_name + '</div>';
+	   						    modifyModal += '    <div class="col-2">';
+	   						    modifyModal += '        <input type="button" value="수정" class="btn btn-link" onclick="modifyFile(' + relatedFiles[k].board_file_idx + ', ' + relatedFiles[k].content_idx + ')"/>';
+	   						    modifyModal += '    </div>';
+	   						    modifyModal += '    <div class="col-2">';
+	   						    modifyModal += '        <input type="button" value="삭제" onclick="deleteFile(' + relatedFiles[k].board_file_idx + ')" class="btn btn-link"/>';
+	   						    modifyModal += '    </div>';
+	   						    modifyModal += '    <div style="display: none;">';
+	   						    modifyModal += '        <input type="file" style="display: none;" name="uploadFiles" id="modifyFiles' + relatedFiles[k].board_file_idx + '" class="border border-secondary" accept="'+board.file_ext + '"  multiple>';
+	   						    modifyModal += '    </div>';
+	   						    modifyModal += '</div>';
+                    	  
+						   
+						}
+			             
+                       var isFile = board.file_size; //첨부파일 개수 
+	       		        if(board.length < isFile) {
+	       		        	modifyModal +='<label for="uploadFiles"> <h5>첨부파일(최대 ${boardAllInfo.is_file }개)<i class="bi bi-camera-fill mx-2" id="uploadFiles"></i></h5></label>';
+	       		            for (var i = board.length; i < isFile; i++) {
+	       		            	modifyModal += '<div class="form-inline">' ;
+	       		            	modifyModal += '<input type="file" name="uploadFiles" accept="' + board.file_ext +'" class="form-control" multiple>';
+	       		            	modifyModal += '</div>' ;
+	       		            } 
+	       		            // 파일 선택 시 크기 체크
+	       		           $('input[name="uploadFiles"]').on('change', function() {
+	       		                var maxFileSizeKB = board.file_size; 
+	
+	       		                var files = $(this)[0].files;
+	       		                for (var j = 0; j < files.length; j++) {
+	       		                    var fileSizeKB = files[j].size / 1024; // 파일 크기 kB
+	       		                    if (fileSizeKB > maxFileSizeKB) {
+	       		                        alert('파일 크기는'+ maxFileSizeKB +'KByte 이하여야 합니다.');
+	       		                        console.log("현재 업로드한 파일 크기", fileSizeKB);
+	       		                        $(this).val(''); // 파일 선택 취소
+	       		                        return false;
+	       		                    }else {
+	       		                        uploadedFiles.push(files[j]); // 배열에 파일 추가
+	       		                    }
+	       		                }
+	       		            }); 
+	       		        }
+ 
 	                    modifyModal += '									</td>';
 		                modifyModal += '							</tr>';
 		                modifyModal += '						</tbody>';     
 		                modifyModal += '					</table>';     
 		                modifyModal += '	   			</div>';     
 		             	modifyModal += '      			<div class="modal-footer">';
-		             	modifyModal += '       			 	<input type="button" value="수정완료" id="CompletedModify" class="btn btn-link"></button>';
-		             	modifyModal += '        			<button class="btn btn-link" data-bs-target="#ContentManage_' + board.content_idx + '" data-bs-toggle="modal">취소</button>';
+		             	modifyModal += '       			 	<button type="submit" class="btn btn-link"/>수정완료</button>';
+		             	modifyModal += '        			<button type="button" class="btn btn-link" data-bs-target="#ContentManage_' + board.content_idx + '" data-bs-toggle="modal">취소</button>';
 		             	modifyModal += '      			</div>';
+		             	modifyModal += '      		</form>'; //form끝
 		             	modifyModal += '    		</div>';
 		             	modifyModal += ' 	 </div>';
 		             	modifyModal += '</div>'; 
@@ -292,7 +338,7 @@ var isConfirmed=confirm('삭제처리를 해제 하시겠습니까?')
 			}
 		});
 	}else{
-		alert('취소하셨습니다. ')
+		alert('취소하셨습니다.')
 	}
 }
 
@@ -315,6 +361,134 @@ function deleted(content_idx){
 		alert('취소하셨습니다. ')
 	}
 }
+ 
+
+
+// 파일 수정 함수 
+function modifyFile(boardFileIdx,content_idx) {
+    // 수정할 파일의 id를 가지고 input file을 클릭합니다.
+   	document.getElementById('modifyFiles' + boardFileIdx).click(); 
+ 	// 파일 선택 시 크기 체크
+ 	
+	  $.ajax({
+           url: '${root}/ReqboardInfo?board_file_idx='+boardFileIdx +'&content_idx='+content_idx,  
+           type: 'GET',
+   		   dataType:'Json',   
+           success: function(response) {
+               //console.log('해당 게시판 정보 가져오기 성공:', response);  
+              $('input[name="uploadFiles"]').off('change').on('change', function() {
+                   var maxFileSizeKB = response.file_size; //최대 파일 사이즈 
+                   console.log("maxFileSizeKB :",maxFileSizeKB)
+                   console.log("boardFileIdx :",boardFileIdx)
+                   var files = $(this)[0].files;
+			        for (var j = 0; j < files.length; j++) {
+			            var fileSizeKB = files[j].size / 1024; // 파일 크기 kB
+			            var formData = new FormData();  
+			            
+			            formData.append('board_file_idx', boardFileIdx);
+			            formData.append('content_idx', content_idx);
+			            if (fileSizeKB > maxFileSizeKB) {
+			                alert('파일 크기는'+ maxFileSizeKB +'KByte 이하여야 합니다.');
+			                console.log("현재 업로드한 파일 크기", fileSizeKB);
+			                $(this).val(''); // 파일 선택 취소
+			                return false;
+			            }else {
+			                uploadedFiles.push(files[j]); // 배열에 파일 추가
+			                formData.append('uploadFiles', uploadedFiles[j]);
+			                console.log('파일 이름:', uploadedFiles[j].name);
+			    	        console.log('파일 크기:', uploadedFiles[j].size / 1024, 'kB');
+			    	        // 파일 이름을 해당 요소에 표시
+			                $('#filename' + boardFileIdx).text(files[j].name);
+			    	        //파일 수정 ajax
+			                $.ajax({
+			    		        url: '${root }/board/modifyFile',
+			    		        type: 'POST',
+			    		        data: formData,
+			    		        processData: false, // 데이터 처리 방식 설정 (FormData 객체 사용시 false로 설정)
+			    		        contentType: false, // 컨텐츠 타입 설정 (FormData 객체 사용시 false로 설정)
+			    		        success: function(response) {
+			    		            console.log('수정완료:', response);  
+			    		            uploadedFiles = []; 
+			    		            handleSearchButtonClick();
+			    		        },
+			    		        error: function(error) {
+			    		            console.error('업로드 오류:', error);
+			    		        }
+			    		    });
+			            }
+			        }
+               });
+           },
+           error: function(error) {
+               console.error('조회 오류:', error); 
+           }
+       });
+ 	  
+    console.log("수정버튼을 클릭한 파일아이디 : "+boardFileIdx) 
+}
+
+//파일 삭제 함수 
+function deleteFile(boardFileIdx) { 
+	
+	var isConfirmed=confirm('파일을 삭제하시겠습니까?');
+	
+	if(isConfirmed){
+        $.ajax({
+            url: '${root}/deleteFile',  
+            type: 'GET',  
+            data: { board_file_idx: boardFileIdx }, // 삭제할 파일의 인덱스 전달
+            success: function(response) {
+                console.log('파일 삭제 성공:', response); 
+                alert('파일을 삭제 하였습니다.:'); 
+                handleSearchButtonClick();
+            },
+            error: function(error) {
+                console.error('파일 삭제 오류:', error);
+                // 파일 삭제 오류 시 필요한 로직 추가
+            }
+        });
+	}
+}	
+
+ 
+
+//업로드 함수  
+$('#uploadForm').submit(function(event) {
+   	event.preventDefault(); // 폼 기본 동작 방지
+
+    var formData = new FormData(); 
+     
+ 
+    var board_subject = $('input[name="content_subject"]').val();
+    var content_text = $('input[name="content_text"]').val(); 
+    formData.append('content_subject', board_subject);
+    formData.append('content_text', content_text);   
+	console.log("번호 : ",board_subject);
+	console.log("번호 : ",content_text);
+	
+    // 서버로 formData 전송 
+	    $.ajax({
+	        url: '${root }/board/modify_pro',
+	        type: 'POST',
+	        data: formData,
+	        processData: false, // 데이터 처리 방식 설정 (FormData 객체 사용시 false로 설정)
+	        contentType: false, // 컨텐츠 타입 설정 (FormData 객체 사용시 false로 설정)
+	        success: function(response) {
+	            console.log('수정 완료:', response);
+	            // 성공적으로 업로드된 경우 처리할 로직
+	        },
+	        error: function(error) {
+	            console.error('업로드 오류:', error);
+	        }
+	    });  
+	  
+    // 업로드 후 배열 비우기
+    //uploadedFiles = [];
+    
+    
+    
+}); 
+ 
  
 </script>
 </head>
@@ -550,7 +724,22 @@ function deleted(content_idx){
 	<!-- Page level custom scripts -->
 	<script src="${root}/resources/js/demo/datatables-demo.js"></script>
 
-
+ <script>
+ $(document).ready(function() {
+	    // DataTable 초기화 확인 후 초기화
+	    if (!$.fn.DataTable.isDataTable('#dataTable')) {
+	        $('#dataTable').DataTable({
+	            "paging": true,
+	            "searching": true,
+	            "ordering": true,
+	            "info": true,
+	            "lengthChange": true,
+	            "pageLength": 10,
+	            "lengthMenu": [5, 10, 25, 50, 75, 100]
+	        });
+	    }
+	});
+</script>
 </body>
 
 </html>

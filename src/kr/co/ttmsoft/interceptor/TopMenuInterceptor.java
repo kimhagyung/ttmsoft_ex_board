@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import kr.co.ttmsoft.beans.BoardInfoBean;
@@ -22,12 +23,21 @@ public class TopMenuInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
+		
+		// 요청 매개변수에서 content_idx를 가져옵니다.
+        String contentIdxStr = request.getParameter("content_idx");
+        if (contentIdxStr != null) {
+            int content_idx = Integer.parseInt(contentIdxStr);
 
-		List<BoardInfoBean> topMenuList = topMenuService.getTopMenuList();  
-		 
-		request.setAttribute("topMenuList", topMenuList); 
+            int getBoardTopMenu = topMenuService.getBoardTopMenu(content_idx);  
 
-		return true;
-	}
+            request.setAttribute("getBoardTopMenu", getBoardTopMenu);
+        }
+
+        List<BoardInfoBean> topMenuList = topMenuService.getTopMenuList();  
+
+        request.setAttribute("topMenuList", topMenuList); 
+        return true;
+    }
 
 }
