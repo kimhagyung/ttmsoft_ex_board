@@ -107,46 +107,47 @@ public class BoardController {
 	@PostMapping("/write_pro")
 	public String write_pro(@ModelAttribute("boardPostBean") ContentBean boardPostBean,
 	                        @ModelAttribute("boardFilePostBean") BoardFileBean boardFilePostBean,
-	                        Model model,
-	                        @RequestParam("uploadFiles") MultipartFile[] uploadFiles){
+	                        Model model,@RequestParam(value = "uploadFiles[]", required = false) List<MultipartFile> uploadFiles)
+	                       {
 		//@RequestParam(value = "uploadFiles", required = false) MultipartFile[] uploadFiles
-		/*
+//		/@RequestParam("uploadFiles[]") MultipartFile[] uploadFiles)
+		/* 
 	    System.out.println("받아온 카테고리값은?" + boardPostBean.getContent_board_idx());
 	    System.out.println("받아온 사용자 아이디는?" + boardPostBean.getUser_idx());
 	    System.out.println("받아온 글내용은?" + boardPostBean.getContent_text());
 	    System.out.println("받아온 제목은?" + boardPostBean.getContent_subject());
 	    System.out.println("받아온 파일 사이즈는?" + boardFilePostBean.getFile_size());
 	    System.out.println("공개여부는?" + boardPostBean.getContent_is_public());
-	    */
-
-	    try {
-	        if (loginUserBean.isUserLogin() || loginAdminBean.isAdmin_login()) { // 로그인 여부 확인
-	            int contentIdx = boardService.addBoardInfo(boardPostBean); // 내용 저장 및 게시글 번호 반환  
-	            System.out.println("contentIdx????"+contentIdx);
-	            if (contentIdx > 0) { // 내용이 성공적으로 저장된 경우에만 파일 저장
-	                if (boardFilePostBean != null && uploadFiles != null) { // 파일 정보가 존재하고 파일이 업로드되었을 경우 파일 정보 저장
-	                    for (MultipartFile uploadFile : uploadFiles) {
-	                    	if (!uploadFile.isEmpty()) {
-	                            System.out.println("write_pro 업로드된 파일 이름: " + uploadFile.getOriginalFilename());
-	                            System.out.println("write_pro 업로드된 파일 크기: " + uploadFile.getSize() + " bytes");  
-	                            boardService.addBoardFileInfo(boardFilePostBean, uploadFile, contentIdx);
-	                        }
-	                    	else{
-	                    		System.out.println("업로드 이미지 없음");
-	                    		return "board/write_success";
-	                    	}
-	                    }
-	                } 
-	                System.out.println("게시물 정보 저장에 실패했습니다.");  
-	            }
+	    */  
+		 try {
+		        if (loginUserBean.isUserLogin() || loginAdminBean.isAdmin_login()) { // 로그인 여부 확인
+		            int contentIdx = boardService.addBoardInfo(boardPostBean); // 내용 저장 및 게시글 번호 반환  
+		            System.out.println("contentIdx????"+contentIdx);
+		            if (contentIdx > 0) { // 내용이 성공적으로 저장된 경우에만 파일 저장
+		                if (boardFilePostBean != null && uploadFiles != null) { // 파일 정보가 존재하고 파일이 업로드되었을 경우 파일 정보 저장
+		                    for (MultipartFile uploadFile : uploadFiles) {
+		                    	if (!uploadFile.isEmpty()) {
+		                            System.out.println("write_pro 업로드된 파일 이름: " + uploadFile.getOriginalFilename());
+		                            System.out.println("write_pro 업로드된 파일 크기: " + uploadFile.getSize() + " bytes");  
+		                            boardService.addBoardFileInfo(boardFilePostBean, uploadFile, contentIdx);
+		                        }
+		                    	else{
+		                    		System.out.println("업로드 이미지 없음");
+		                    		return "board/write_success";
+		                    	}
+		                    }
+		                } 
+		                System.out.println("게시물 정보 저장에 실패했습니다.");  
+		            }
 	        } else {
 	            System.out.println("로그인이 되어있지 않습니다.");
 	            return "user/not_login";
-	        }
+	        } 
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    }finally {
-	    	model.addAttribute("content_board_idx", boardPostBean.getContent_board_idx()); 
+	    	model.addAttribute("content_board_idx", boardService.LetestContent_idx());
+	    	System.out.println(" boardPostBean.getContent_board_idx()???"+ boardService.LetestContent_idx());
 		}
 
 	    return "board/write_success";
@@ -172,8 +173,8 @@ public class BoardController {
 	}
 
 	@PostMapping("/modify_pro")
-	public String modify_pro(Model model, @ModelAttribute("modifyPostBean") ContentBean modifyPostBean,@ModelAttribute("modifyBoardFileBean") BoardFileBean modifyBoardFileBean,  @RequestParam(value = "uploadFiles", required = false) MultipartFile[] uploadFiles
-			, @RequestParam("content_idx") int content_idx) {
+	public String modify_pro(Model model, @ModelAttribute("modifyPostBean") ContentBean modifyPostBean,@ModelAttribute("modifyBoardFileBean") BoardFileBean modifyBoardFileBean,  @RequestParam(value = "uploadFiles[]", required = false) MultipartFile[] uploadFiles
+			 ) {
 		try { 
 		 if (loginUserBean.isUserLogin() == true) {  
 			 	int contentIdx = boardService.modifyBoardInfo(modifyPostBean); 
@@ -194,7 +195,8 @@ public class BoardController {
 		}catch (Exception e) {
 			e.printStackTrace();
 		}finally {
-			model.addAttribute("content_idx", modifyPostBean.getContent_idx());
+			//model.addAttribute("content_idx", modifyPostBean.getContent_idx());
+			//model.addAttribute("content_idx", modifyBoardFileBean.getContent_idx());
 		}
 
 		return "board/modify_success";

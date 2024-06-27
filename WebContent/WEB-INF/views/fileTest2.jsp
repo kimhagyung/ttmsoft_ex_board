@@ -142,6 +142,8 @@ $(function(){
 		        }
 		    })
 		});
+    // 폼 초기화
+    this.reset();
 });
 </script>
 </head>

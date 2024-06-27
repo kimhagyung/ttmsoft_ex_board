@@ -19,11 +19,31 @@ public interface BoardMapper {
 	
 	@Insert("insert into content_table(content_idx,content_subject,content_text,user_idx,content_board_idx,content_date,content_is_public,modifyContent_date) values(content_seq.nextval,#{content_subject, jdbcType=VARCHAR},#{content_text, jdbcType=VARCHAR},#{user_idx, jdbcType=INTEGER, javaType=Integer},#{content_board_idx},sysdate,#{content_is_public}, SYSDATE)")
 	@SelectKey(statement="SELECT content_seq.currval FROM dual", keyProperty="content_idx", before=false, resultType=int.class)
-	void addBoardInfo(ContentBean boardPostBean); //컨텐츠 내용 추가 
-	 
+	void addBoardInfo(ContentBean boardPostBean); //컨텐츠 내용 추가  
 	
 	@Insert("insert into board_file values(board_file_seq.nextval,#{file_path},#{file_name},SYSDATE,#{content_idx},#{file_size,jdbcType=VARCHAR}) ")
+	@SelectKey(statement="SELECT board_file_seq.currval FROM dual", keyProperty="board_file_idx", before=false, resultType=int.class)
 	void addBoardFileInfo(BoardFileBean boardFileBean); // 컨텐츠 사진 추가 
+	
+	@Select("SELECT content_board_idx\r\n"
+			+ "FROM (\r\n"
+			+ "    SELECT * \r\n"
+			+ "    FROM content_table c, board_info_table b\r\n"
+			+ "    where c.content_board_idx=b.board_info_idx\r\n"
+			+ "    ORDER BY content_idx DESC\r\n"
+			+ ") \r\n"
+			+ "WHERE ROWNUM = 1") 
+	int LetestContent_idx(); //가장 최근에 생성된 게시글 아이디 
+	
+	@Select("SELECT content_idx\r\n"
+			+ "FROM (\r\n"
+			+ "    SELECT b.content_idx\r\n"
+			+ "    FROM board_file b, content_table c\r\n"
+			+ "    WHERE b.content_idx = c.content_idx\r\n"
+			+ "    and board_file_idx=#{board_file_idx}\r\n"
+			+ ")\r\n"
+			+ "WHERE ROWNUM = 1")
+	int LetestModifyContent_idx(int board_file_idx); //가장 최근에 생성된 사진 아이디 
 	
 	@Select("select * from content_table where content_idx=#{content_idx} ")
 	ContentBean getBoardInfo(int content_idx); //각 게시글들 조회 

@@ -114,7 +114,7 @@ public class BoardService {
 		return modifyBoardInfo.getContent_idx(); 
 	}
 
-	// 사진 수정없는 게시글 수정
+	// 사진 수정
 	public void modifyBoardFileBean(BoardFileBean modifyBoardFileInfo, MultipartFile uploadFile) {
 		try {
 			if (uploadFile != null && !uploadFile.isEmpty()) { // 파일이 null이 아니고 비어있지 않은 경우에만 파일 업로드를 수행합니다.
@@ -134,7 +134,16 @@ public class BoardService {
 			e.printStackTrace();
 		}
 	}
+	
+	//가장 최근 생성 (생성 시 사용)
+	public int LetestContent_idx() {
+		return boardDao.LetestContent_idx();
+	}
 
+	//가장 최근에 생성 된 (수정시 사용)
+	public int LetestModifyContent_idx(int board_file_idx) {
+		return boardDao.LetestModifyContent_idx(board_file_idx);
+	} 
 	// 게시글 삭제
 	public void deleteBoardInfo(int content_idx) {
 		boardDao.deleteBoardInfo(content_idx);

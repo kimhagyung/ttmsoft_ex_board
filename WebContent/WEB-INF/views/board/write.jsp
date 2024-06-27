@@ -9,9 +9,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="${root}/resources/se2/js/service/HuskyEZCreator.js"></script>
 <script>
-	let oEditors = []; 
-
-    
+	let oEditors = [];
 	smartEditor=function(){
 	    nhn.husky.EZCreator.createInIFrame({
 	        oAppRef: oEditors,
@@ -21,24 +19,44 @@
 	    })
 	}
 	$(document).ready(function() {
-	    let filesArr = [];
-		 //파일태그 추가 
-        $('.selected-image').append( '<input type="file" id="uploadFiles" name="uploadFiles" style="display: none;"   class="form-control" accept="${boardAllInfo.file_ext}" multiple  />'
-        +'<label for="uploadFiles"> <h5>첨부파일(최대 ${boardAllInfo.is_file }개)<i class="bi bi-camera-fill mx-2" id="uploadFiles"></i></h5></label>');
-       
+	
 		smartEditor();
         function submitContents(elClickedObj) {
             oEditors.getById["editor"].exec("UPDATE_CONTENTS_FIELD", []); // 에디터의 내용이 html형식으로 저장되도록 하는거??.
             // 에디터의 내용을 출력합니다.
             //alert(document.getElementById("editor").value);
-        }  
-        $('input[name="uploadFiles"]').change(function() {
+        } 
+        // 전송 버튼 클릭 이벤트 핸들러 추가
+        $('#submit').on('click', function() {
+            submitContents(this);
+        }); 
+    });
+</script>  
+<script> 
+
+var filesArr = [];
+var fileNo = 0;
+	$(document).ready(function() {
+		 //파일태그 추가 
+		 /*
+        $('.selected-image').append( '<input type="file" id="uploadFiles1" name="uploadFiles[]" style="display: none;"   class="form-control" accept="${boardAllInfo.file_ext}" multiple  />'
+        +'<label for="uploadFiles1"> <h5>첨부파일(최대 ${boardAllInfo.is_file }개)<i class="bi bi-camera-fill mx-2"></i></h5></label>');
+       */  
+        $('input[name="uploadFiles[]"]').change(function() {
             var maxFileSizeKB = ${boardAllInfo.file_size};
+            var maxFileCnt = ${boardAllInfo.is_file}; 
             var attFileCnt = document.querySelectorAll('.filebox').length;
             var files = $(this)[0].files;
+            var totalFiles = attFileCnt + files.length;
 
-            for (var j = 0; j < files.length; j++) {
-                var fileSizeKB = files[j].size / 1024; // 파일 크기 kB
+            if (totalFiles > maxFileCnt) {
+                alert('파일 첨부는 최대 ' + maxFileCnt + '개까지 가능합니다.');
+                $(this).val(''); // 파일 선택 취소
+                return false;
+            }
+            
+            for (var j = 0; j < files.length; j++) { 
+                var fileSizeKB = files[j].size / 1024; // 파일 크기 kB 
                 if (fileSizeKB > maxFileSizeKB) {
                     alert('파일 크기는 ' + maxFileSizeKB + 'KByte 이하여야 합니다.');
                     console.log("현재 업로드한 파일 크기", fileSizeKB);
@@ -47,48 +65,49 @@
                 } else {
                     // 목록 추가
                     let htmlData = '';
-                    htmlData += '<div id="file' + j + '" class="filebox">';
+                    htmlData += '<div id="file' + fileNo + '" class="filebox">';
                     htmlData += '   <p class="name">' + files[j].name + '</p>'; // files.name -> files[j].name 수정
-                    htmlData += '   <a class="delete" onclick="deleteFile(' + j + ');"><i class="bi bi-dash"></i></a>';
+                    htmlData += '   <a class="delete" onclick="deleteFile(' + fileNo + ');"><i class="bi bi-dash"></i></a>';
                     htmlData += '</div>';
                     $('.file-list').append(htmlData); 
-
+                    fileNo++;
                     // 파일 배열에 담기
                     filesArr.push(files[j]);
                 }
             } 
             // 초기화
-            $(this).val(''); // 모든 파일 선택 취소
+            //$(this).val(''); // 모든 파일 선택 취소
         });
 
         
         
         $('#uploadForm').submit(function(event) {
             var formData = new FormData(); 
-         // event.preventDefault(); // 폼 기본 동작 방지
+          //event.preventDefault(); // 폼 기본 동작 방지
+
+          var board_subject = $('#board_subject').val();
+          var content_text = $('#editor').val(); 
             for (var i = 0; i < filesArr.length; i++) {
                 // 삭제되지 않은 파일만 폼데이터에 담기
                 if (!filesArr[i].is_delete) {
-                    formData.append('uploadFiles', filesArr[i]);
+                    formData.append('uploadFiles[]', filesArr[i]);
                     console.log("filesArr[i] :", filesArr[i])
                     console.log('파일 이름:', filesArr[i].name);
                     console.log('파일 크기:', filesArr[i].size / 1024, 'kB'); 
                 }
             }
 
-            var board_subject = $('#board_subject').val();
-            var content_text = $('.content_text').val();
 
             formData.append('content_subject', board_subject);
             formData.append('content_text', content_text); 
-            //formData.append('content_board_idx', ${param.index}); 
-            //formData.append('user_idx', ${loginUserBean.user_idx}); 
+            formData.append('content_board_idx', ${param.index}); 
+            formData.append('user_idx', ${loginUserBean.user_idx}); 
 
             console.log("board_subject : ", board_subject)
             console.log("content_text : ", content_text)
-            console.log("content_info_idx : ", ${param.index})
+            console.log("content_board_idx : ", ${param.index})
             console.log("user_idx : ", ${loginUserBean.user_idx})
- 			submitContents(this); //스마트 에디터 
+ 			 
             // 서버로 formData 전송
             $.ajax({
                 url: '${root }/board/write_pro',
@@ -105,7 +124,7 @@
                 }
             });
             // 업로드 후 배열 비우기
-            filesArr = [];
+            //filesArr = [];
         }); 
     });
 	
@@ -115,18 +134,7 @@
     } 
 </script>
 
-<style>
- .insert {
-   padding: 20px 30px;
-   display: block;
-   width: 600px;
-   margin: 5vh auto;
-   height: 90vh;
-   border: 1px solid #dbdbdb;
-   -webkit-box-sizing: border-box;
-   -moz-box-sizing: border-box;
-   box-sizing: border-box;
-}
+<style> 
 .insert .file-list {
     height: 200px;
     overflow: auto;
@@ -150,8 +158,8 @@
         <div class="col-sm-3"></div>
         <div class="col-sm"> 
             <form action="${root }/board/write_pro" method="post" enctype="multipart/form-data" id="uploadForm">
-               	<input type="hidden" name="content_board_idx" value="${param.index}" />      
-               	<input type="hidden" name="user_idx" value="${loginUserBean.user_idx}" />  
+<%--            <input type="hidden" name="content_board_idx" value="${param.index}" />      
+               	<input type="hidden" name="user_idx" value="${loginUserBean.user_idx}" />   --%>
                 <div class="form-group">
                     <label for="board_subject"><h4>제목</h4></label> 
                     <input name="content_subject" type="text" id="board_subject" name="board_subject" class="form-control" placeholder="제목을 입력해 주세요" />
@@ -175,15 +183,14 @@
                 </div>
                 <c:if test="${boardAllInfo.file_checked==1 }">
 	                <div class="form-group insert">
-	                  	<%-- <input type="file" id="uploadFiles" name="uploadFiles" style="display: none;"   class="form-control" accept="${boardAllInfo.file_ext}" multiple  /> --%>
-	                   <%--  <label for="uploadFiles"> <h5>첨부파일(최대 ${boardAllInfo.is_file }개)<i class="bi bi-camera-fill mx-2" id="uploadFiles"></i></h5></label>
-	                    --%> <div class="selected-image"></div> 
+	                  	<input type="file" id="uploadFiles" name="uploadFiles[]" style="display: none;"   class="form-control" accept="${boardAllInfo.file_ext}" multiple  />                    <label for="uploadFiles"> <h5>첨부파일(최대 ${boardAllInfo.is_file }개)<i class="bi bi-camera-fill mx-2" id="uploadFiles"></i></h5></label>
+	                    <div class="selected-image"></div> 
 	                    <div class="file-list"></div> 
 	                </div>     
                 </c:if>                        
                 <div class="form-group">
                     <div class="text-right">
-                        <button type="submit" class="btn btn-primary">작성하기</button>
+                        <button type="submit" id="submit" class="btn btn-primary">작성하기</button>
                     </div>
                 </div>                  
                 <div class="col-sm-3"></div> 

@@ -23,9 +23,15 @@ public class ContentBean {
 	private String modifyContent_date; 
 	private String file_ext;
 	private String file_size;
-	
+	private int hiddenContent_idx;
 	 
 	 
+	public int getHiddenContent_idx() {
+		return hiddenContent_idx;
+	}
+	public void setHiddenContent_idx(int hiddenContent_idx) {
+		this.hiddenContent_idx = hiddenContent_idx;
+	}
 	public String getFile_size() {
 		return file_size;
 	}

@@ -32,10 +32,9 @@
         }); 
     });
 </script>  
-<script>
-$(function() { 
+<script> 
 
-let uploadedFiles = []; // 업로드된 파일들을 담을 배열
+let filesArr = new Array(); // 업로드된 파일들을 담을 배열
  
 	$(function(){
 		var isFile = ${boardAllInfo.is_file};
@@ -63,8 +62,7 @@ let uploadedFiles = []; // 업로드된 파일들을 담을 배열
                     uploadedFiles.push(files[j]); // 배열에 파일 추가
                 }
             }
-        });
-	});
+        }); 
 /* 		// 파일 입력 필드 삭제 버튼에 대한 이벤트 핸들러
         $(document).on('click', '.btn_delete', function() {
             $(this).closest('.form-inline').remove();
@@ -77,6 +75,7 @@ let uploadedFiles = []; // 업로드된 파일들을 담을 배열
 	        for (var i = 0; i < uploadedFiles.length; i++) {
 	            formData.append('uploadFiles', uploadedFiles[i]);
 	            //formData.append('file_size', (uploadedFiles[i].size / 1024));
+	            console.log("파일:",uploadedFiles[i])
 	            console.log('파일 이름:', uploadedFiles[i].name);
 	            console.log('파일 크기:', uploadedFiles[i].size / 1024, 'kB'); 
 	        }

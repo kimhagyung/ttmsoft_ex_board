@@ -34,6 +34,13 @@ public class BoardDao {
 		return boardMapper.getBoardPageInfo(content_board_idx,rowBounds);
 	}
 	
+	
+	public int LetestContent_idx() {
+		return boardMapper.LetestContent_idx();
+	}
+	public int LetestModifyContent_idx(int board_file_idx) {
+		return boardMapper.LetestModifyContent_idx(board_file_idx);
+	} 
 	public int getBoardPageInfoCnt(int content_board_idx) {
 		 
 		return boardMapper.getBoardPageInfoCnt(content_board_idx);
