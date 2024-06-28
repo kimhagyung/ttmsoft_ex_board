@@ -512,7 +512,7 @@ function updateReply(replyIdx, editedText,commentIdx){
 				<div
 					style="border: 1px solid rgba(100, 100, 100, 0.5); padding: 10px; border-radius: 5px">${boardInfo.content_text}</div>
 			</div>
-
+		
 			<div class="form-group">
 		<%-- 	<c:forEach var="file" items="${boardfileBean }">
 				<c:if test="${file.board_file_idx != null}">

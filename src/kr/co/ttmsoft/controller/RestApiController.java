@@ -6,14 +6,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import kr.co.ttmsoft.beans.AdminAnswerBean;
 import kr.co.ttmsoft.beans.BoardFileBean;
@@ -238,13 +241,14 @@ public class RestApiController {
 		boardService.deleteBoardInfo(content_idx);
 	}
 	
-	//게시글 수정 시 파일 삭제  
+	//게시글 수정 시 파일 삭제 
+	/*
 	@GetMapping("/deleteFile")
 	public void deleteFile(@RequestParam("board_file_idx") int board_file_idx) {
 		System.out.println("받은 파일 번호:"+board_file_idx);
 		boardService.deleteBoardFile(board_file_idx);
 	}
-	
+	*/
 	
 	//게시글 수정 시 파일 삭제 후 조회  
 	@GetMapping("/getFileInfo")
@@ -289,8 +293,21 @@ public class RestApiController {
 		System.out.println("req의 게시판 값");
 		return req;
 	}
-	
-	
-
+	 
+	 
+	 @GetMapping("/deleteFile")
+	    public void deleteFile(@RequestParam("board_file_idx") String boardFileIdxJson) {
+	        try {
+	            ObjectMapper objectMapper = new ObjectMapper();
+	            List<Integer> boardFileIdxList = objectMapper.readValue(boardFileIdxJson, List.class);
+	            
+	            for (Integer fileIdx : boardFileIdxList) { 
+	                boardService.deleteBoardFile(fileIdx);
+	                System.out.println(fileIdx + "번 째 삭제 완료");
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
 	
 }

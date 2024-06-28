@@ -33,6 +33,7 @@
 						<th class="w-50">제목</th>
 						<th class="text-center d-none d-md-table-cell">작성자</th>
 						<th class="text-center d-none d-md-table-cell">작성날짜</th>
+						<th class="text-center d-none d-md-table-cell">조회수</th>
 					</tr>
 				</thead> 
 				<tbody>
@@ -60,6 +61,7 @@
 										</td>
 										<td class="text-center d-none d-md-table-cell">${boardWriterName[loop.index] }</td>
 										<td class="text-center d-none d-md-table-cell">${obj.content_date }</td>
+										<td class="text-center d-none d-md-table-cell">${obj.viewCnt }</td> 
 									</tr>
 								</c:if>
 							</c:if>  

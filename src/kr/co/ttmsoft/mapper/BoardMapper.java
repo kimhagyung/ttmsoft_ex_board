@@ -51,6 +51,11 @@ public interface BoardMapper {
 	@Select("select * from board_file where content_idx=#{content_idx} order by board_file_idx desc")
 	List<BoardFileBean> getBoardFileInfo(int content_idx); //게시글 사진 조회 
 	
+	@Select("select file_path \r\n"
+			+ "from board_file \r\n"
+			+ "where board_file_idx=#{board_file_idx}")
+	String getFileFindPath(int board_file_idx); //삭제할 게시글 경로 조회 
+	
 	@Select("select * \r\n"
 			+ "from board_info_table b, content_table c\r\n"
 			+ "where b.board_info_idx=c.content_board_idx and content_board_idx=#{content_board_idx} order by content_idx desc")
@@ -135,6 +140,12 @@ public interface BoardMapper {
     		"WHERE UPPER(board_info_name) LIKE '%' || UPPER(#{board_info_name, jdbcType=VARCHAR}) || '%' and is_usage=#{is_usage, jdbcType=VARCHAR} order by board_info_idx desc")
     List<BoardInfoBean> searchBoardNameInfoYOrNo(@Param("board_info_name")String board_info_name, @Param("is_usage")String is_usage); //사용여부도 검색 
 	 
+    
+    @Update("update content_table \r\n"
+    		+ "set viewCnt=viewCnt+1\r\n"
+    		+ "where content_idx=#{content_idx}")
+	void plusCnt(int content_idx); //게시글 조회수 증가 
+    
 	//네이버 에디터 (테스트용)
 	@Insert("insert into naverEditor_table(naverEditor_idx,naverEditor_subject,naverEditor_text,naverEditor_file,naverEditor_date,is_publish,user_idx,board_info_idx) values(naverEditor_seq.nextval, #{naverEditor_subject},#{naverEditor_text},#{naverEditor_file, jdbcType=VARCHAR},sysdate,#{is_publish, jdbcType=INTEGER },#{user_idx},#{board_info_idx})")
 	void addNaverEditorBean(NaverEditorBean naverEditorBean);

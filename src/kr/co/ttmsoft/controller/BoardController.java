@@ -76,7 +76,7 @@ public class BoardController {
 		List<BoardFileBean> boardfileBean=boardService.getBoardFileInfo(content_idx); //게시글 사진 정보 
 		String boardWriterName = (boardService.getContentUserName(content_idx));
 		BoardInfoBean boardAllInfo = boardService.getAllBoardInfo(boardInfo.getContent_board_idx());
-		
+		boardService.plusCnt(content_idx);
 		/*
 		System.out.println("받아온 게시글 내용: " + boardInfo.getContent_text());
 		for(BoardFileBean boardfile:boardfileBean) { 
@@ -88,7 +88,7 @@ public class BoardController {
 		
 		model.addAttribute("boardWriterName", boardWriterName); //게시글 작성자 이름 
 		model.addAttribute("boardInfo", boardInfo); //게시글 정보 
-		model.addAttribute("boardAllInfo", boardAllInfo); //게시판 보든 정보 
+		model.addAttribute("boardAllInfo", boardAllInfo); //게시판 모든 정보 
 		model.addAttribute("boardfileBean", boardfileBean); //게시글의 사진 정보 
 		return "board/read";
 	}

@@ -33,10 +33,10 @@
     });
 </script>   
 <script>
-var filesArr = [];
-var fileNo = 0;
+var filesArr = []; //서버로 보낼 파일들이 저장되어있음 
+var fileNo = 0; //deleteNewFile함수에 사용하는 것 
 var deletedFiles = []; // 삭제된 파일을 추적하기 위한 배열
-var modifyFiles = [];
+var modifyFiles = []; //아직 사용은 안하고 있음
 var modify=0; //deletedFiles배열의 인덱스값을 관리하는 변수임 
 $(function(){ 
 	$('input[name="uploadFiles[]"]').change(function() {
@@ -61,10 +61,10 @@ $(function(){
 	            return false;
 	        } else {
 	            // 삭제된 기존 파일이 있는지 확인
-	            var FileBoardIdx = deletedFiles[modify];
+	            var FileBoardIdx = deletedFiles[modify]; //modify 인덱스에 해당하는 값
 	            console.log("existingFileIdx?????",FileBoardIdx)
 	            //var existingFileIdx = deletedFiles.indexOf(modify); 
-	            if (FileBoardIdx != undefined) {
+	            if (FileBoardIdx != undefined) { //modify 인덱스에 해당하는 값이 존재하지 않으면(즉, 그 이후로 임시삭제가 진행된 값이 없는 경우 )
 	                // 삭제된 파일을 다시 추가
 	                //modifyFiles.push(files[j]); // 배열에 파일 추가
 	                //console.log("삭제된 파일이 다시 추가됨:", files[j].name);
@@ -165,21 +165,43 @@ $(function(){
         //console.log("content_board_idx : ", ${param.index})
        // console.log("user_idx : ", ${loginUserBean.user_idx})
 			 
-        // 서버로 formData 전송
-        $.ajax({
-		        url: '${root }/board/modify_pro?content_idx=${param.content_idx}',
-		        type: 'POST',
-		        data: formData,
-		        processData: false, // 데이터 처리 방식 설정 (FormData 객체 사용시 false로 설정)
-		        contentType: false, // 컨텐츠 타입 설정 (FormData 객체 사용시 false로 설정)
+       console.log("deletedFiles[modify] 상태는?????",deletedFiles[modify])
+       if (deletedFiles[modify] !== undefined) {
+		    // 삭제할 파일들 중 undefined가 나타나기 전까지의 부분 배열 추출
+		    let filesToDelete = []; 
+		    for (let i = modify; i < deletedFiles.length; i++) {
+		        if (deletedFiles[i] === undefined) break;
+		        filesToDelete.push(deletedFiles[i]);
+		    }
+		    
+		    // 파일 삭제하기 
+		    $.ajax({
+		        url: '${root}/deleteFile',
+		        type: 'GET',
+		        data: { board_file_idx: JSON.stringify(filesToDelete) }, //배열은 이런형태로
 		        success: function(response) {
-		            console.log('수정 완료:', response);
-		            // 성공적으로 업로드된 경우 처리할 로직
+		            console.log('파일이 성공적으로 삭제되었습니다.'); 
 		        },
-		        error: function(error) {
-		            console.error('업로드 오류:', error);
+		        error: function(xhr, status, error) {
+		            console.error('파일 삭제 실패:', error);
 		        }
-		    });  
+		    });
+		}  
+	        // 서버로 formData 전송 
+	        $.ajax({
+			        url: '${root }/board/modify_pro?content_idx=${param.content_idx}',
+			        type: 'POST',
+			        data: formData,
+			        processData: false, // 데이터 처리 방식 설정 (FormData 객체 사용시 false로 설정)
+			        contentType: false, // 컨텐츠 타입 설정 (FormData 객체 사용시 false로 설정)
+			        success: function(response) {
+			            console.log('수정 완료:', response);
+			            // 성공적으로 업로드된 경우 처리할 로직
+			        },
+			        error: function(error) {
+			            console.error('업로드 오류:', error);
+			        }
+			    });   
         // 업로드 후 배열 비우기
         //filesArr = [];
     }); 
@@ -249,7 +271,6 @@ $(function(){
 				                <div class="form-group insert">
 				                  	<input type="file" id="uploadFiles" name="uploadFiles[]" style="display: none;"   class="form-control" accept="${boardAllInfo.file_ext}" multiple  />
 									<label for="uploadFiles"> <h5>첨부파일(최대 ${boardAllInfo.is_file }개)<i class="bi bi-camera-fill mx-2" id="uploadFiles"></i></h5></label>
-				                    <div class="selected-image"></div> 
 				                    <c:forEach var="file" items="${boardfileBean}">
 									    <div id="file" class="filebox_${file.board_file_idx}">
 									        <span class="name_${file.board_file_idx}">${file.file_name}</span>

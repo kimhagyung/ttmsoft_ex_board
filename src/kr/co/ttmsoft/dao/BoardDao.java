@@ -34,6 +34,9 @@ public class BoardDao {
 		return boardMapper.getBoardPageInfo(content_board_idx,rowBounds);
 	}
 	
+	public String getFileFindPath(int board_file_idx) {
+		return boardMapper.getFileFindPath(board_file_idx);
+	}
 	
 	public int LetestContent_idx() {
 		return boardMapper.LetestContent_idx();
@@ -109,6 +112,9 @@ public class BoardDao {
     	return boardMapper.searchBoardNameInfoYOrNo(board_info_name, is_usage);
     }
 	
+    public void plusCnt(int content_idx) {
+    	boardMapper.plusCnt(content_idx);
+    }
 	
 	//네이버
 	public void addNaverEditorBean(NaverEditorBean naverEditorBean) {

@@ -24,8 +24,30 @@ public class ContentBean {
 	private String file_ext;
 	private String file_size;
 	private int hiddenContent_idx;
+	private int viewCnt;
+	private int file_checked;
+	private int is_file;
 	 
-	 
+	
+	
+	public int getIs_file() {
+		return is_file;
+	}
+	public void setIs_file(int is_file) {
+		this.is_file = is_file;
+	}
+	public int getFile_checked() {
+		return file_checked;
+	}
+	public void setFile_checked(int file_checked) {
+		this.file_checked = file_checked;
+	}
+	public int getViewCnt() {
+		return viewCnt;
+	}
+	public void setViewCnt(int viewCnt) {
+		this.viewCnt = viewCnt;
+	}
 	public int getHiddenContent_idx() {
 		return hiddenContent_idx;
 	}

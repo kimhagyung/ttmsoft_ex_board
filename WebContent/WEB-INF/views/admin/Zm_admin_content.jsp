@@ -36,51 +36,48 @@
 <link rel="stylesheet"
 	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
  <script src="${root}/resources/se2/js/service/HuskyEZCreator.js"></script>
-<script> 
-	let oEditors = [];
-	let currentEditorId = null;
-	function smartEditor(editorId) { 
-	    if (currentEditorId) {
-	        nhn.husky.EZCreator.getById[currentEditorId].destroy();
-	    }
-	    currentEditorId = editorId;
+<script>
 	
-	    nhn.husky.EZCreator.createInIFrame({
-	        oAppRef: oEditors,
-	        elPlaceHolder: editorId,
-	        sSkinURI: "${root}/resources/se2/SmartEditor2Skin.html",
-	        fCreator: "createSEditor2"
-	    }); 
-	}
 	$(document).ready(function() {
-
-	    // 검색 버튼 클릭 시 이동
-	   $('#searchButton').on('click', handleSearchButtonClick);
-		//smartEditor();
-        function submitContents(editorId) { 
-            oEditors.getById[editorId].exec("UPDATE_CONTENTS_FIELD", []); // 에디터의 내용이 textarea에 적용 
-            console.log("editorId??:",editorId)
-            // 에디터의 내용을 출력합니다.
-            //alert(document.getElementById("editor").value); 
-        }  
-         
-        $(document).on('click', '[id^=submit]', function() {
-            var buttonId = $(this).attr('id'); // 클릭된 버튼의 id  
-            var boardIdx = buttonId.replace('submit', ''); // 'submit' 문자열을 제거하여 board.content_idx 값 .  
-            console.log("boardIdx?",boardIdx)
-            submitContents("contentText_"+boardIdx); 
-            //alert(document.getElementById("contentText_"+boardIdx).value);  
-            submitForm(boardIdx);
-        });
-        
-    });   
 	
-var filesArr = []; //서버로 보낼 파일들이 저장되어있음 
-var fileNo = 0; //deleteNewFile함수에 사용하는 것 
-var deletedFiles = []; // 삭제된 파일을 추적하기 위한 배열
-var modifyFiles = []; //아직 사용은 안하고 있음
-var modify=0; //deletedFiles배열의 인덱스값을 관리하는 변수임 
+		//smartEditor();
+        function submitContents(elClickedObj) {
+            oEditors.getById["editor"].exec("UPDATE_CONTENTS_FIELD", []); // 에디터의 내용이 textarea에 적용됩니다.
+            // 에디터의 내용을 출력합니다.
+            //alert(document.getElementById("editor").value);
+        } 
+        // 전송 버튼 클릭 이벤트 핸들러 추가
+        $('#submit').on('click', function() {
+            submitContents(this);
+        }); 
+    });
+</script>  
+<script>
 
+		let oEditors = [];
+		let currentEditorId = null;
+		function smartEditor(editorId) {
+		    if (currentEditorId) {
+		        nhn.husky.EZCreator.getById[currentEditorId].destroy();
+		    }
+		    currentEditorId = editorId;
+
+		    nhn.husky.EZCreator.createInIFrame({
+		        oAppRef: oEditors,
+		        elPlaceHolder: editorId,
+		        sSkinURI: "${root}/resources/se2/SmartEditor2Skin.html",
+		        fCreator: "createSEditor2"
+		    });
+		}
+
+	$(document).ready(function() {
+	
+    // 검색 버튼 클릭 시 이동
+   $('#searchButton').on('click', handleSearchButtonClick);
+
+});
+	 
+let uploadedFiles = []; 
 function handleSearchButtonClick() {
         const selectedOption = $('#inputState2').val(); // board_info_idx인듯
         const selectedOption2 = $('#inputState3').val(); // 임시 삭제 여부 검색
@@ -100,7 +97,6 @@ function handleSearchButtonClick() {
                 
                 if (response.searchBoard.length > 0) {
                 	for (var i = 0; i < response.searchBoard.length; i++) {
-                		
                 		var board=response.searchBoard[i]; 
                     	var replyHtml = '<tr>'
                       	replyHtml += '<td>'+ (i+1) + '</td>'
@@ -187,8 +183,8 @@ function handleSearchButtonClick() {
 		             	modifyModal += '        <h5 class="modal-title fs-5" id="ModifyModalToggle_' + board.content_idx + '">게시글 수정하기</h5>';
 		             	modifyModal += '        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>';
 		             	modifyModal += '      </div>';
-		             	modifyModal += '      <form action="${root }/admin/m_admin_contentPro" method="post" enctype="multipart/form-data" id="uploadForm_' + board.content_idx + '">'; // 여기에 form 태그 추가
-		             	modifyModal += '	  <input type="hidden" name="hiddenContent_idx" value="'+ board.content_idx +'" />'
+		             	modifyModal += '      <form action="${root }/board/modify_pro" method="post" enctype="multipart/form-data" id="uploadForm" >' // 여기에 form 태그 추가
+		             	modifyModal += '	  <input type="hidden" name="content_idx" value="'+ board.content_idx +'" />'
 		             	modifyModal += '      <div class="modal-body">'; 
 		             	modifyModal += '					<table class="table table-bordered">'
 		             	modifyModal += '						<tbody>';
@@ -204,67 +200,100 @@ function handleSearchButtonClick() {
 		                modifyModal += '							</tr>';
 		                modifyModal += '							<tr>';
 		                modifyModal += '								<th scope="row">제목</th>'; 
-		                modifyModal += '								<td colspan="3"><input type="text" class="form-control" id="content_subject_'+board.content_idx +'" name="content_subject" value="'+board.content_subject+'" /></td>'; 
+		                modifyModal += '								<td colspan="3"><input type="text" id="editor" class="form-control" name="content_subject" value="'+board.content_subject+'" /></td>'; 
 		                modifyModal += '							</tr>';
 		                modifyModal += '                  			<tr>';
                         modifyModal += '                      			<th scope="row">내용</th>';
-                      	modifyModal += '    							<td colspan="3"><textarea class="form-control editor_' + board.content_idx + '" id="contentText_' + board.content_idx + '" rows="10" name="content_text">' + board.content_text + '</textarea></td>';
+                        modifyModal += '                      			<td colspan="3"><textarea class="form-control" id="contentText_' + board.content_idx + '" rows="10" name="content_text">' + board.content_text + '</textarea></td>';
                         modifyModal += '                 			</tr>';
 		                modifyModal += '							<tr>';
 		                modifyModal += '								<th scope="row">첨부</th>'; 
-		                modifyModal += '									<td colspan="3">'; 
+		                modifyModal += '									<td colspan="3">';
 			             // 파일 리스트 추가 
-		                if (board.file_checked == 1) {
-						    modifyModal += '<input type="file" id="uploadFiles" onchange="filechange(' + board.is_file + ', ' + board.file_size + ', ' + relatedFiles.length +  ')" name="uploadFiles[]" style="display: none;" class="form-control" accept="' + board.file_ext + '" multiple />';
-						    modifyModal += '<label for="uploadFiles"><h5>첨부파일(최대 ' + board.is_file + ' 개)<i class="bi bi-camera-fill mx-2" id="uploadFiles"></i></h5></label>';
+                       for (var k = 0; k < relatedFiles.length; k++) {
+                    	  
+                    		    modifyModal += '<div class="row">';
+	   						    modifyModal += '    <div class="col-8" id="filename' + relatedFiles[k].board_file_idx + '">' + relatedFiles[k].file_name + '</div>';
+	   						    modifyModal += '    <div class="col-2">';
+	   						    modifyModal += '        <input type="button" value="수정" class="btn btn-link" onclick="modifyFile(' + relatedFiles[k].board_file_idx + ', ' + relatedFiles[k].content_idx + ')"/>';
+	   						    modifyModal += '    </div>';
+	   						    modifyModal += '    <div class="col-2">';
+	   						    modifyModal += '        <input type="button" value="삭제" onclick="deleteFile(' + relatedFiles[k].board_file_idx + ')" class="btn btn-link"/>';
+	   						    modifyModal += '    </div>';
+	   						    modifyModal += '    <div style="display: none;">';
+	   						    modifyModal += '        <input type="file" style="display: none;" name="uploadFiles" id="modifyFiles' + relatedFiles[k].board_file_idx + '" class="border border-secondary" accept="'+board.file_ext + '"  multiple>';
+	   						    modifyModal += '    </div>';
+	   						    modifyModal += '</div>';
+                    	  
+						   
 						}
-						
-						for (var k = 0; k < relatedFiles.length; k++) {  
-						    modifyModal += '<div id="file" class="filebox_'+relatedFiles[k].board_file_idx+'">'
-						    modifyModal += '<span class="name'+relatedFiles[k].board_file_idx+'">'+ relatedFiles[k].file_name + '</span>'
-						    modifyModal += '  <a class="delete'+relatedFiles[k].board_file_idx+'" onclick="deleteFile('+relatedFiles[k].board_file_idx+');"><i class="bi bi-dash" style="color:red;"></i></a>'
-						    modifyModal += '</div>' 
-						    modifyModal += '<div class="NewFiles_' + relatedFiles[k].board_file_idx + '"></div>'; //수정된 파일 리스트 올 자리 
-						} 
-						modifyModal += '<div class="NewFiles"></div>';//새롭게 추가될 파일 리스트가 올 자리
+			             
+                       var isFile = board.file_size; //첨부파일 개수 
+	       		        if(board.length < isFile) {
+	       		        	modifyModal +='<label for="uploadFiles"> <h5>첨부파일(최대 ${boardAllInfo.is_file }개)<i class="bi bi-camera-fill mx-2" id="uploadFiles"></i></h5></label>';
+	       		            for (var i = board.length; i < isFile; i++) {
+	       		            	modifyModal += '<div class="form-inline">' ;
+	       		            	modifyModal += '<input type="file" name="uploadFiles" accept="' + board.file_ext +'" class="form-control" multiple>';
+	       		            	modifyModal += '</div>' ;
+	       		            } 
+	       		            // 파일 선택 시 크기 체크
+	       		           $('input[name="uploadFiles"]').on('change', function() {
+	       		                var maxFileSizeKB = board.file_size; 
+	
+	       		                var files = $(this)[0].files;
+	       		                for (var j = 0; j < files.length; j++) {
+	       		                    var fileSizeKB = files[j].size / 1024; // 파일 크기 kB
+	       		                    if (fileSizeKB > maxFileSizeKB) {
+	       		                        alert('파일 크기는'+ maxFileSizeKB +'KByte 이하여야 합니다.');
+	       		                        console.log("현재 업로드한 파일 크기", fileSizeKB);
+	       		                        $(this).val(''); // 파일 선택 취소
+	       		                        return false;
+	       		                    }else {
+	       		                        uploadedFiles.push(files[j]); // 배열에 파일 추가
+	       		                    }
+	       		                }
+	       		            }); 
+	       		        }
+ 
 	                    modifyModal += '									</td>';
 		                modifyModal += '							</tr>';
 		                modifyModal += '						</tbody>';     
 		                modifyModal += '					</table>';     
 		                modifyModal += '	   			</div>';     
 		             	modifyModal += '      			<div class="modal-footer">';
-		             	modifyModal += '					<button type="submit" id="submit'+board.content_idx+'"   class="btn btn-link">수정완료</button>';
+		             	modifyModal += '       			 	<button type="submit" class="btn btn-link"/>수정완료</button>';
 		             	modifyModal += '        			<button type="button" class="btn btn-link" data-bs-target="#ContentManage_' + board.content_idx + '" data-bs-toggle="modal">취소</button>';
 		             	modifyModal += '      			</div>';
 		             	modifyModal += '      		</form>'; //form끝
 		             	modifyModal += '    		</div>';
 		             	modifyModal += ' 	 </div>';
 		             	modifyModal += '</div>'; 
-		             	
+		             	 
 		             	$("#searchResults").append(replyHtml);
 		             	// 모달을 body에 추가
 		                $('body').append(modalHtml);
 		             	//수정 모달을 body에 추가
 		                $('body').append(modifyModal);
-		             	
-		            	$('[id^=ModifyModalToggle_]').on('shown.bs.modal', function () {
-		        		    var editorId = 'contentText_' + $(this).attr('id').split('_')[1];
-		        		    console.log("editorId : ????",editorId)  
-		        		    smartEditor(editorId);  
-		        		});  
 
-		        	    // 모달이 닫힐 때 에디터 인스턴스 제거
-		        		$('[id^=ModifyModalToggle_]').on('shown.bs.modal', function () {
-		        		    var editorId = 'contentText_' + $(this).attr('id').split('_')[1]; 
-		        		    smartEditor(editorId); 
-		        		    
-		        		}); 
-                	} 
-                }  else {
+		                // 모달이 열릴 때마다 smartEditor 함수 호출
+		                $('[id^=ModifyModalToggle_]').on('shown.bs.modal', function (e) {
+		                    let editorId = 'contentText_' + $(this).attr('id').split('_')[1];
+		                    smartEditor(editorId);
+		                });
+
+		                // 모달이 닫힐 때 에디터 인스턴스 제거
+		                $('[id^=ModifyModalToggle_]').on('hidden.bs.modal', function () {
+		                    if (currentEditorId) {
+		                        nhn.husky.EZCreator.getById[currentEditorId].destroy();
+		                        currentEditorId = null;
+		                    }
+		                }); 
+                	}
+                } else {
                 	$("#searchResults").append('<tr>' +
                 									'<td colspan="7">검색 결과가 없습니다.</td>'+
                 								'</tr>');
-                } 
+                }
             },
             error: function(error) {
                 console.error('Error:', error);
@@ -272,225 +301,195 @@ function handleSearchButtonClick() {
             }
         });
 	}
-  
-function filechange(is_file,file_size,relatedFilesLength) {
-    var maxFileSizeKB = file_size;
-    var maxFileCnt = is_file;
-   	var attFileCnt = relatedFilesLength; // DB에서 받아온 값 사이즈 
-    console.log("attFileCnt 는???????????????????", attFileCnt);
-    console.log("현재첨부된 파일 개수 :", totalFiles);
-    console.log("uploadFiles를 클릭 시 modify의 값", modify);
-	console.log("file_size??",file_size) 
-	
-    var files = $('#uploadFiles')[0].files; 
-    for (var j = 0; j < files.length; j++) {
-        var fileSizeKB = files[j].size / 1024; // 파일 크기 kB
-        if (fileSizeKB > maxFileSizeKB) {
-            alert('파일 크기는 ' + maxFileSizeKB + 'KByte 이하여야 합니다.');
-            console.log("현재 업로드한 파일 크기", fileSizeKB);
-            $('#uploadFiles').val(''); // 파일 선택 취소
-            return false;
-        } else {
-            var FileBoardIdx = deletedFiles[modify];
-            console.log("existingFileIdx?????", FileBoardIdx);
-
-            if (FileBoardIdx != undefined) {
-                var formData = new FormData();
-                formData.append('board_file_idx', FileBoardIdx);
-                console.log("modify의 현재값 :", modify);
-                let htmlData2 = '';
-                htmlData2 += '<div id="file' + deletedFiles[modify] + '" class="filebox_' + deletedFiles[modify] + '">';
-                htmlData2 += '   <span class="name">' + files[j].name + '</span>';
-                htmlData2 += '   <a class="delete" onclick="deleteFile(' + deletedFiles[modify] + ');"><i class="bi bi-dash" style="color:red;"></i></a>';
-                htmlData2 += '</div>';
-                $('.NewFiles_' + deletedFiles[modify]).append(htmlData2);
-
-                formData.append('uploadFiles', files[j]); //수정할 파일임 
-                $.ajax({
-                    url: '${root}/board/modifyFile',
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        console.log('수정완료:', response);
-                        modifyFiles.push(); //얜 모임 ?? 
-                        modify++;
-                        console.log("modify의 수정완료 후 값:", modify);
-                        handleSearchButtonClick()
-                    },
-                    error: function(error) {
-                        console.error('업로드 오류:', error);
-                    }
-                });
-            } else {
-                var totalFiles = attFileCnt + filesArr.length + 1;
-                if (totalFiles > maxFileCnt) {
-                    alert('파일 첨부는 최대 ' + maxFileCnt + '개까지 가능합니다.');
-                    $('#uploadFiles').val(''); // 파일 선택 취소
-                    return false;
-                }
-
-                let htmlData = '';
-                htmlData += '<div id="file' + fileNo + '"  class="filebox_' + deletedFiles[modify] + '">';
-                htmlData += '   <span class="name">' + files[j].name + '</span>';
-                htmlData += '   <a class="delete" onclick="deleteNewFile(' + fileNo + ');"><i class="bi bi-dash" style="color:red;"></i></a>';
-                htmlData += '</div>';
-                $('.NewFiles').append(htmlData); 
-                fileNo++;
-                filesArr.push(files[j]);
-                console.log("새로운 파일 추가됨:", files[j].name);
-            }
-        }
-    }
-} 
-	// 삭제 함수 
-	function deleteFile(board_file_idx) {
-	    var filename = $('.name_' + board_file_idx).text();
-	    console.log("deleteFilefilename??", filename);
-	    console.log("삭제한 파일 아이디??", board_file_idx);
-	    $('.filebox_'+board_file_idx).remove(); // .empty() 대신 .remove() 사용
-	    deletedFiles.push(board_file_idx); // 삭제된 파일 인덱스를 배열에 추가
-	   // filesArr[board_file_idx].is_delete = true;
-	    console.log("현재 삭제된 파일 인덱스 배열:", deletedFiles);
-	    console.log("현재 삭제된 파일의 modify인덱스에 해당하는 값 : ", deletedFiles[modify])
-	    
-	}
-	
-	// 새로운 파일 삭제 함수
-	function deleteNewFile(num) {
-	    document.querySelector("#file" + num).remove(); 
-	    //filesArr[num].is_delete = true; 
-	    filesArr.pop(); // 배열에서 파일을 제거
-	} 
  
 //게시글 임시삭제처리 함수 
- function isdeleted(content_idx){
- 	var isConfirmed=confirm('삭제처리 하시겠습니까?')
- 	
- 	if(isConfirmed){
- 		$.ajax({
- 			url : '${root}/tempDeleted',
- 			type : 'GET',
- 			data : {content_idx:content_idx},
- 			success : function(response){
- 				alert('게시글이 삭제처리 되었습니다.')  
- 				$('#ContentManage_' + content_idx).modal('hide');
- 				handleSearchButtonClick();
- 			}
- 		});
- 	}else{
- 		alert('취소하셨습니다. ')
- 	}
- }
-
- //삭제처리 해제 
- function clearDelete(content_idx){
- var isConfirmed=confirm('삭제처리를 해제 하시겠습니까?')
- 	
- 	if(isConfirmed){
- 		$.ajax({
- 			url : '${root}/ClearDeleted',
- 			type : 'GET',
- 			data : {content_idx:content_idx},
- 			success : function(response){
- 				alert('게시글 삭제처리가 해제 되었습니다. 되었습니다.')  
- 				$('#ContentManage_' + content_idx).modal('hide'); 
- 				handleSearchButtonClick();
- 			}
- 		});
- 	}else{
- 		alert('취소하셨습니다.')
- 	}
- }
-
- //게시글 완전삭제 처리 함수 
- function deleted(content_idx){
- 	var isConfirmed=confirm('게시글을 영구적으로 삭제 하시겠습니까?')
- 	console.log("content_idx :",content_idx)
- 	if(isConfirmed){
- 		$.ajax({
- 			url : '${root}/ComDeleted',
- 			type : 'GET',
- 			data : {content_idx:content_idx},
- 			success : function(response){
- 				alert('게시글이 삭제 되었습니다.') 
- 				$('#ContentManage_' + content_idx).modal('hide');
- 				handleSearchButtonClick();
- 			}
- 		});
- 	}else{
- 		alert('취소하셨습니다. ')
- 	}
- }
-
-
- //폼제출 !  
-function submitForm(content_idx){
-        var formData = new FormData(); 
-     //event.preventDefault(); // 폼 기본 동작 방지 
-      var board_subject = $('#content_subject_'+content_idx).val();
-      var content_text = $('#contentText_' + content_idx).val();  
-      
-      
-        for (var i = 0; i < filesArr.length; i++) { 
-                formData.append('uploadFiles[]', filesArr[i]);
-                console.log("filesArr[i] :", filesArr[i])
-                console.log('파일 이름:', filesArr[i].name);
-                console.log('파일 크기:', filesArr[i].size / 1024, 'kB');  
-        }
-
-
-        formData.append('content_subject', board_subject);
-        formData.append('content_text', content_text); 
-        //formData.append('content_board_idx', ${param.index}); 
-      //  formData.append('user_idx', ${loginUserBean.user_idx});
-        formData.append('content_idx', content_idx);  
-        console.log("board_subject : ", board_subject)
-        console.log("content_text : ", content_text)
- 
-        //console.log("content_board_idx : ", ${param.index})
-       // console.log("user_idx : ", ${loginUserBean.user_idx})
-			 
-       console.log("deletedFiles[modify] 상태는?????",deletedFiles[modify])
-       if (deletedFiles[modify] !== undefined) {
-		    // 삭제할 파일들 중 undefined가 나타나기 전까지의 부분 배열 추출
-		    let filesToDelete = []; 
-		    for (let i = modify; i < deletedFiles.length; i++) {
-		        if (deletedFiles[i] === undefined) break;
-		        filesToDelete.push(deletedFiles[i]);
-		    }
-		    
-		    // 파일 삭제하기 
-		    $.ajax({
-		        url: '${root}/deleteFile',
-		        type: 'GET',
-		        data: { board_file_idx: JSON.stringify(filesToDelete) }, //배열은 이런형태로
-		        success: function(response) {
-		            console.log('파일이 성공적으로 삭제되었습니다.'); 
-		        },
-		        error: function(xhr, status, error) {
-		            console.error('파일 삭제 실패:', error);
-		        }
-		    });
-		}  
-        // 서버로 formData 전송 
-        $.ajax({
-		        url: '${root }/admin/m_admin_contentPro?content_idx='+content_idx,
-		        type: 'POST',
-		        data: formData,
-		        processData: false, // 데이터 처리 방식 설정 (FormData 객체 사용시 false로 설정)
-		        contentType: false, // 컨텐츠 타입 설정 (FormData 객체 사용시 false로 설정)
-		        success: function(response) {
-		            console.log('수정 완료:', response);
-		            // 성공적으로 업로드된 경우 처리할 로직
-		        },
-		        error: function(error) {
-		            console.error('업로드 오류:', error);
-		        }
-		    });    
-    
+function isdeleted(content_idx){
+	var isConfirmed=confirm('삭제처리 하시겠습니까?')
+	
+	if(isConfirmed){
+		$.ajax({
+			url : '${root}/tempDeleted',
+			type : 'GET',
+			data : {content_idx:content_idx},
+			success : function(response){
+				alert('게시글이 삭제처리 되었습니다.')  
+				$('#ContentManage_' + content_idx).modal('hide');
+				handleSearchButtonClick();
+			}
+		});
+	}else{
+		alert('취소하셨습니다. ')
+	}
 }
+
+//삭제처리 해제 
+function clearDelete(content_idx){
+var isConfirmed=confirm('삭제처리를 해제 하시겠습니까?')
+	
+	if(isConfirmed){
+		$.ajax({
+			url : '${root}/ClearDeleted',
+			type : 'GET',
+			data : {content_idx:content_idx},
+			success : function(response){
+				alert('게시글 삭제처리가 해제 되었습니다. 되었습니다.')  
+				$('#ContentManage_' + content_idx).modal('hide'); 
+				handleSearchButtonClick();
+			}
+		});
+	}else{
+		alert('취소하셨습니다.')
+	}
+}
+
+//게시글 완전삭제 처리 함수 
+function deleted(content_idx){
+	var isConfirmed=confirm('게시글을 영구적으로 삭제 하시겠습니까?')
+	console.log("content_idx :",content_idx)
+	if(isConfirmed){
+		$.ajax({
+			url : '${root}/ComDeleted',
+			type : 'GET',
+			data : {content_idx:content_idx},
+			success : function(response){
+				alert('게시글이 삭제 되었습니다.') 
+				$('#ContentManage_' + content_idx).modal('hide');
+				handleSearchButtonClick();
+			}
+		});
+	}else{
+		alert('취소하셨습니다. ')
+	}
+}
+ 
+
+
+// 파일 수정 함수 
+function modifyFile(boardFileIdx,content_idx) {
+    // 수정할 파일의 id를 가지고 input file을 클릭합니다.
+   	document.getElementById('modifyFiles' + boardFileIdx).click(); 
+ 	// 파일 선택 시 크기 체크
+ 	
+	  $.ajax({
+           url: '${root}/ReqboardInfo?board_file_idx='+boardFileIdx +'&content_idx='+content_idx,  
+           type: 'GET',
+   		   dataType:'Json',   
+           success: function(response) {
+               //console.log('해당 게시판 정보 가져오기 성공:', response);  
+              $('input[name="uploadFiles"]').off('change').on('change', function() {
+                   var maxFileSizeKB = response.file_size; //최대 파일 사이즈 
+                   console.log("maxFileSizeKB :",maxFileSizeKB)
+                   console.log("boardFileIdx :",boardFileIdx)
+                   var files = $(this)[0].files;
+			        for (var j = 0; j < files.length; j++) {
+			            var fileSizeKB = files[j].size / 1024; // 파일 크기 kB
+			            var formData = new FormData();  
+			            
+			            formData.append('board_file_idx', boardFileIdx);
+			            formData.append('content_idx', content_idx);
+			            if (fileSizeKB > maxFileSizeKB) {
+			                alert('파일 크기는'+ maxFileSizeKB +'KByte 이하여야 합니다.');
+			                console.log("현재 업로드한 파일 크기", fileSizeKB);
+			                $(this).val(''); // 파일 선택 취소
+			                return false;
+			            }else {
+			                uploadedFiles.push(files[j]); // 배열에 파일 추가
+			                formData.append('uploadFiles', uploadedFiles[j]);
+			                console.log('파일 이름:', uploadedFiles[j].name);
+			    	        console.log('파일 크기:', uploadedFiles[j].size / 1024, 'kB');
+			    	        // 파일 이름을 해당 요소에 표시
+			                $('#filename' + boardFileIdx).text(files[j].name);
+			    	        //파일 수정 ajax
+			                $.ajax({
+			    		        url: '${root }/board/modifyFile',
+			    		        type: 'POST',
+			    		        data: formData,
+			    		        processData: false, // 데이터 처리 방식 설정 (FormData 객체 사용시 false로 설정)
+			    		        contentType: false, // 컨텐츠 타입 설정 (FormData 객체 사용시 false로 설정)
+			    		        success: function(response) {
+			    		            console.log('수정완료:', response);  
+			    		            uploadedFiles = []; 
+			    		            handleSearchButtonClick();
+			    		        },
+			    		        error: function(error) {
+			    		            console.error('업로드 오류:', error);
+			    		        }
+			    		    });
+			            }
+			        }
+               });
+           },
+           error: function(error) {
+               console.error('조회 오류:', error); 
+           }
+       });
+ 	  
+    console.log("수정버튼을 클릭한 파일아이디 : "+boardFileIdx) 
+}
+
+//파일 삭제 함수 
+function deleteFile(boardFileIdx) { 
+	
+	var isConfirmed=confirm('파일을 삭제하시겠습니까?');
+	
+	if(isConfirmed){
+        $.ajax({
+            url: '${root}/deleteFile',  
+            type: 'GET',  
+            data: { board_file_idx: boardFileIdx }, // 삭제할 파일의 인덱스 전달
+            success: function(response) {
+                console.log('파일 삭제 성공:', response); 
+                alert('파일을 삭제 하였습니다.:'); 
+                handleSearchButtonClick();
+            },
+            error: function(error) {
+                console.error('파일 삭제 오류:', error);
+                // 파일 삭제 오류 시 필요한 로직 추가
+            }
+        });
+	}
+}	
+
+ 
+
+//업로드 함수  
+$('#uploadForm').submit(function(event) {
+   	event.preventDefault(); // 폼 기본 동작 방지
+
+    var formData = new FormData(); 
+     
+ 
+    var board_subject = $('input[name="content_subject"]').val();
+    var content_text = $('input[name="content_text"]').val(); 
+    formData.append('content_subject', board_subject);
+    formData.append('content_text', content_text);   
+	console.log("번호 : ",board_subject);
+	console.log("번호 : ",content_text);
+	
+    // 서버로 formData 전송 
+	    $.ajax({
+	        url: '${root }/board/modify_pro',
+	        type: 'POST',
+	        data: formData,
+	        processData: false, // 데이터 처리 방식 설정 (FormData 객체 사용시 false로 설정)
+	        contentType: false, // 컨텐츠 타입 설정 (FormData 객체 사용시 false로 설정)
+	        success: function(response) {
+	            console.log('수정 완료:', response);
+	            // 성공적으로 업로드된 경우 처리할 로직
+	        },
+	        error: function(error) {
+	            console.error('업로드 오류:', error);
+	        }
+	    });  
+	  
+    // 업로드 후 배열 비우기
+    //uploadedFiles = [];
+    
+    
+    
+}); 
+ 
+ 
 </script>
 </head>
 

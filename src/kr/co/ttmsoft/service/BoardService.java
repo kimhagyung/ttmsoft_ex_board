@@ -116,25 +116,37 @@ public class BoardService {
 
 	// 사진 수정
 	public void modifyBoardFileBean(BoardFileBean modifyBoardFileInfo, MultipartFile uploadFile) {
-		try {
-			if (uploadFile != null && !uploadFile.isEmpty()) { // 파일이 null이 아니고 비어있지 않은 경우에만 파일 업로드를 수행합니다.
-				String originalFileName = uploadFile.getOriginalFilename();
-				String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
-				String randomName = UUID.randomUUID().toString() + extension; // 임의의 이름 생성
-				long fileSize = uploadFile.getSize()/ 1024;
-				modifyBoardFileInfo.setFile_name(originalFileName);
-				modifyBoardFileInfo.setFile_path(randomName); 
-				modifyBoardFileInfo.setFile_size(fileSize);
-				System.out.println("서비스에서 파일 사이즈"+fileSize);
-				// 파일을 지정된 경로에 저장합니다.
-				uploadFile.transferTo(new File(path_upload + "/" + randomName)); 
-				boardDao.modifyBoardFileBean(modifyBoardFileInfo);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
+	    try {
+	        if (uploadFile != null && !uploadFile.isEmpty()) { // 파일이 null이 아니고 비어있지 않은 경우에만 파일 업로드를 수행합니다.
+	            // 기존 파일 삭제
+	            String filePath=boardDao.getFileFindPath(modifyBoardFileInfo.getBoard_file_idx());//기존 파일 경로 조회 
+	            String existingFilePath = path_upload + "/" + filePath;
+	            System.out.println("삭제해야할 getBoard_file_idx:"+existingFilePath);
+	            File existingFile = new File(existingFilePath);
+	            if (existingFile.exists()) {
+	                existingFile.delete();
+	                System.out.println("기존 파일 삭제 완료: " + existingFilePath);
+	            } 
+	            	 // 새로운 파일 업로드
+		            String originalFileName = uploadFile.getOriginalFilename();
+		            String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+		            String randomName = UUID.randomUUID().toString() + extension; // 임의의 이름 생성
+		            long fileSize = uploadFile.getSize() / 1024;
+		            modifyBoardFileInfo.setFile_name(originalFileName);
+		            modifyBoardFileInfo.setFile_path(randomName); 
+		            modifyBoardFileInfo.setFile_size(fileSize);
+		            System.out.println("서비스에서 파일 사이즈" + fileSize);
+
+		            // 파일을 지정된 경로에 저장합니다.
+		            uploadFile.transferTo(new File(path_upload + "/" + randomName)); 
+		            boardDao.modifyBoardFileBean(modifyBoardFileInfo);
+	             
+	        }
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
+	} 
+
 	//가장 최근 생성 (생성 시 사용)
 	public int LetestContent_idx() {
 		return boardDao.LetestContent_idx();
@@ -171,7 +183,16 @@ public class BoardService {
 	
 	
 	//게시판 수정 시 파일 삭제 
-	public void deleteBoardFile(int board_file_idx) {
+	public void deleteBoardFile(int board_file_idx) { 
+	    // 기존 파일 삭제
+	    String filePath=boardDao.getFileFindPath(board_file_idx);//기존 파일 경로 조회 
+	    String existingFilePath = path_upload + "/" + filePath;
+	    System.out.println("삭제해야할 existingFilePath:"+existingFilePath);
+	    File existingFile = new File(existingFilePath);
+	    if (existingFile.exists()) {
+	        existingFile.delete();
+	        System.out.println("수정 시 완전 삭제 할 때 기존 파일 삭제 완료: " + existingFilePath);
+	    }
 		boardDao.deleteBoardFile(board_file_idx);
 	}
 	
@@ -185,6 +206,12 @@ public class BoardService {
     	return boardDao.searchBoardNameInfoYOrNo(board_info_name, is_usage);
     }
 
+	
+	//조회수 함수 
+	 public void plusCnt(int content_idx) {
+		 boardDao.plusCnt(content_idx);
+	    }
+		
 	// 네이버
 	public void addNaverEditorBean(NaverEditorBean naverEditorBean, MultipartFile uploadFile) {
 		String fileName = uploadFile.getOriginalFilename();
