@@ -52,10 +52,20 @@
 	        fCreator: "createSEditor2"
 	    }); 
 	}
-	$(document).ready(function() {
-
-	    // 검색 버튼 클릭 시 이동
-	   $('#searchButton').on('click', handleSearchButtonClick);
+	$(document).ready(function() { 
+			 var dataTable = $('#dataTable').DataTable({
+			        "paging": true, // 페이징 기능 활성화
+			        "lengthChange": false, // 페이지당 아이템 수 변경 기능 비활성화
+			        "searching": false, // 검색 기능 비활성화 (검색은 별도로 처리됨)
+			        "info": true, // 정보 표시 기능 활성화
+			        "autoWidth": false, // 자동 너비 조정 비활성화
+			        "responsive": true // 반응형 테이블 지원
+			    });
+		 
+		    // 검색 버튼 클릭 시 테이블 갱신
+		    $('#searchButton').on('click', function() {
+		        handleSearchButtonClick(dataTable);
+		    });
 		//smartEditor();
         function submitContents(editorId) { 
             oEditors.getById[editorId].exec("UPDATE_CONTENTS_FIELD", []); // 에디터의 내용이 textarea에 적용 
@@ -81,7 +91,7 @@ var deletedFiles = []; // 삭제된 파일을 추적하기 위한 배열
 var modifyFiles = []; //아직 사용은 안하고 있음
 var modify=0; //deletedFiles배열의 인덱스값을 관리하는 변수임 
 
-function handleSearchButtonClick() {
+function handleSearchButtonClick(dataTable) {
         const selectedOption = $('#inputState2').val(); // board_info_idx인듯
         const selectedOption2 = $('#inputState3').val(); // 임시 삭제 여부 검색
         console.log("선택한 옵션", selectedOption);
@@ -92,6 +102,8 @@ function handleSearchButtonClick() {
             type: "GET",  
             dataType:'Json',
             success: function(response) { 
+            	// 기존 데이터 삭제
+                dataTable.clear().draw();
                 $('#searchResults').empty(); // 이전 결과 초기화  
                 console.log("검색이 성공했습니다")
                 //console.log("받아온 게시글: ",response.searchBoard)
@@ -102,16 +114,17 @@ function handleSearchButtonClick() {
                 	for (var i = 0; i < response.searchBoard.length; i++) {
                 		
                 		var board=response.searchBoard[i]; 
-                    	var replyHtml = '<tr>'
-                      	replyHtml += '<td>'+ (i+1) + '</td>'
-                      	replyHtml += '<td>'+ board.content_idx + '</td>'
-                      	replyHtml += '<td>'+ board.board_info_name + '</td>'
-                      	replyHtml += '<td>'+ board.content_subject + '</td>'
-                      	replyHtml += '<td>'+ board.content_date + '</td>'
-                      	replyHtml += '<td>'+ board.is_deleted+'</td>'
-                      	replyHtml += '<td><input type="button" data-bs-toggle="modal" data-bs-target="#ContentManage_' + board.content_idx + '" class="btn btn-info" value="자세히보기" /></td>';
-						replyHtml += '</tr>'
-                      	
+                		 var rowData = [ 
+                             (i + 1),
+                             board.content_idx,
+                             board.board_info_name,
+                             board.content_subject,
+                             board.content_date,
+                             board.viewCnt,
+                             board.is_deleted,
+                             '<input type="button" data-bs-toggle="modal" data-bs-target="#ContentManage_' + board.content_idx + '" class="btn btn-info" value="자세히보기" />'
+     	                    ];
+     	                    dataTable.row.add(rowData).draw(false); // 테이블에 행 추가
 						
 						// 자세히 보기 모달의 HTML 생성
 		                var modalHtml = '<div class="modal fade" id="ContentManage_' + board.content_idx + '" tabindex="-1" aria-labelledby="ContentManage_' + board.content_idx + 'Label" aria-hidden="true">';
@@ -163,10 +176,10 @@ function handleSearchButtonClick() {
 		                modalHtml += '						</tbody></table></div>';   
 		                modalHtml += '				<div class="modal-footer">';
 		                if(board.is_deleted == 'N'){
-		                	 modalHtml += '	     			<button type="button" class="btn btn-link" id="isDeleted" onclick="isdeleted(' + board.content_idx + ')" >삭제처리</button>';
+		                	 modalHtml += '	     			<button type="button" class="btn btn-link" id="isDeleted_'+board.content_idx+'" onclick="isdeleted(' + board.content_idx + ')" >삭제처리</button>';
 				               
 		                }else if(board.is_deleted=='Y'){
-		                	 modalHtml += '					<button type="button" class="btn btn-link" id="isDeleted" onclick="clearDelete(' + board.content_idx + ')" >삭제처리 해제</button>';
+		                	 modalHtml += '					<button type="button" class="btn btn-link" id="isDeleted_'+board.content_idx+'" onclick="clearDelete(' + board.content_idx + ')" >삭제처리 해제</button>';
 				               
 		                }
 		                modalHtml += '					<button type="button" class="btn btn-link" onclick="deleted(' + board.content_idx + ')">완전삭제</button>';
@@ -187,7 +200,7 @@ function handleSearchButtonClick() {
 		             	modifyModal += '        <h5 class="modal-title fs-5" id="ModifyModalToggle_' + board.content_idx + '">게시글 수정하기</h5>';
 		             	modifyModal += '        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>';
 		             	modifyModal += '      </div>';
-		             	modifyModal += '      <form action="${root }/admin/m_admin_contentPro" method="post" enctype="multipart/form-data" id="uploadForm_' + board.content_idx + '">'; // 여기에 form 태그 추가
+		             	modifyModal += '      <form action="${root }/admin/m_admin_contentPro" method="post" enctype="multipart/form-data" id="uploadForm_' + board.content_idx + '">'; 
 		             	modifyModal += '	  <input type="hidden" name="hiddenContent_idx" value="'+ board.content_idx +'" />'
 		             	modifyModal += '      <div class="modal-body">'; 
 		             	modifyModal += '					<table class="table table-bordered">'
@@ -241,7 +254,7 @@ function handleSearchButtonClick() {
 		             	modifyModal += ' 	 </div>';
 		             	modifyModal += '</div>'; 
 		             	
-		             	$("#searchResults").append(replyHtml);
+		             	//$("#searchResults").append(replyHtml);
 		             	// 모달을 body에 추가
 		                $('body').append(modalHtml);
 		             	//수정 모달을 body에 추가
@@ -261,9 +274,8 @@ function handleSearchButtonClick() {
 		        		}); 
                 	} 
                 }  else {
-                	$("#searchResults").append('<tr>' +
-                									'<td colspan="7">검색 결과가 없습니다.</td>'+
-                								'</tr>');
+                	 dataTable.clear().draw(); // 검색 결과가 없을 경우 테이블 초기화
+                     //$("#searchResults").append('<tr><td colspan="7">검색 결과가 없습니다.</td></tr>');
                 } 
             },
             error: function(error) {
@@ -317,7 +329,9 @@ function filechange(is_file,file_size,relatedFilesLength) {
                         modifyFiles.push(); //얜 모임 ?? 
                         modify++;
                         console.log("modify의 수정완료 후 값:", modify);
-                        handleSearchButtonClick()
+                        // DataTable 객체 다시 가져오기
+    	                var dataTable = $('#dataTable').DataTable();
+    	                handleSearchButtonClick(dataTable);
                     },
                     error: function(error) {
                         console.error('업로드 오류:', error);
@@ -364,45 +378,52 @@ function filechange(is_file,file_size,relatedFilesLength) {
 	    filesArr.pop(); // 배열에서 파일을 제거
 	} 
  
-//게시글 임시삭제처리 함수 
- function isdeleted(content_idx){
- 	var isConfirmed=confirm('삭제처리 하시겠습니까?')
- 	
- 	if(isConfirmed){
- 		$.ajax({
- 			url : '${root}/tempDeleted',
- 			type : 'GET',
- 			data : {content_idx:content_idx},
- 			success : function(response){
- 				alert('게시글이 삭제처리 되었습니다.')  
- 				$('#ContentManage_' + content_idx).modal('hide');
- 				handleSearchButtonClick();
- 			}
- 		});
- 	}else{
- 		alert('취소하셨습니다. ')
- 	}
- }
+	// 게시글 임시삭제처리 함수 
+	function isdeleted(content_idx) {
+	    var isConfirmed = confirm('삭제처리 하시겠습니까?'); 
+	    if (isConfirmed) {
+	        $.ajax({
+	            url: '${root}/tempDeleted',
+	            type: 'GET',
+	            data: { content_idx: content_idx },
+	            success: function(response) {
+	                alert('게시글이 삭제처리 되었습니다.');
+	                $('#isDeleted_' + content_idx)
+	                    .text('삭제처리 해제')
+	                    .attr('onclick', 'clearDelete(' + content_idx + ')');
+	                $('#ContentManage_' + content_idx).modal('hide');
+	                // DataTable 객체 다시 가져오기
+	                var dataTable = $('#dataTable').DataTable();
+	                handleSearchButtonClick(dataTable);
+	            }
+	        });
+	    } else {
+	        alert('취소하셨습니다.');
+	    }
+	}
 
- //삭제처리 해제 
- function clearDelete(content_idx){
- var isConfirmed=confirm('삭제처리를 해제 하시겠습니까?')
- 	
- 	if(isConfirmed){
- 		$.ajax({
- 			url : '${root}/ClearDeleted',
- 			type : 'GET',
- 			data : {content_idx:content_idx},
- 			success : function(response){
- 				alert('게시글 삭제처리가 해제 되었습니다. 되었습니다.')  
- 				$('#ContentManage_' + content_idx).modal('hide'); 
- 				handleSearchButtonClick();
- 			}
- 		});
- 	}else{
- 		alert('취소하셨습니다.')
- 	}
- }
+	// 삭제처리 해제 
+	function clearDelete(content_idx) {
+	    var isConfirmed = confirm('삭제처리를 해제 하시겠습니까?');
+	    if (isConfirmed) {
+	        $.ajax({
+	            url: '${root}/ClearDeleted',
+	            type: 'GET',
+	            data: { content_idx: content_idx },
+	            success: function(response) {
+	                alert('게시글 삭제처리가 해제 되었습니다.');
+	                $('#isDeleted_' + content_idx)
+	                    .text('삭제처리')
+	                    .attr('onclick', 'isdeleted(' + content_idx + ')');
+	                $('#ContentManage_' + content_idx).modal('hide');
+	                var dataTable = $('#dataTable').DataTable();
+	                handleSearchButtonClick(dataTable);
+	            }
+	        });
+	    } else {
+	        alert('취소하셨습니다.');
+	    }
+	}
 
  //게시글 완전삭제 처리 함수 
  function deleted(content_idx){
@@ -415,8 +436,10 @@ function filechange(is_file,file_size,relatedFilesLength) {
  			data : {content_idx:content_idx},
  			success : function(response){
  				alert('게시글이 삭제 되었습니다.') 
+ 				
+ 				 var dataTable = $('#dataTable').DataTable();
+	                handleSearchButtonClick(dataTable); 
  				$('#ContentManage_' + content_idx).modal('hide');
- 				handleSearchButtonClick();
  			}
  		});
  	}else{
@@ -483,7 +506,9 @@ function submitForm(content_idx){
 		        contentType: false, // 컨텐츠 타입 설정 (FormData 객체 사용시 false로 설정)
 		        success: function(response) {
 		            console.log('수정 완료:', response);
-		            // 성공적으로 업로드된 경우 처리할 로직
+		            $('#ContentManage_' + content_idx).modal('hide');
+		            var dataTable = $('#dataTable').DataTable();
+	                handleSearchButtonClick(dataTable); 
 		        },
 		        error: function(error) {
 		            console.error('업로드 오류:', error);
@@ -566,7 +591,7 @@ function submitForm(content_idx){
 						role="button" data-toggle="dropdown" aria-haspopup="true"
 						aria-expanded="false"> <span
 							class="mr-2 d-none d-lg-inline text-gray-600 small">${loginAdminBean.admin_name }</span> 
-					</a> <!-- Dropdown - User Information -->
+					</a>  
 						<div
 							class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
 							aria-labelledby="userDropdown"> 
@@ -575,10 +600,8 @@ function submitForm(content_idx){
 								class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
 								Logout
 							</a>
-						</div></li>
-
-				</ul>
-
+						</div></li> 
+				</ul> 
 			</nav>
                 <!-- End of Topbar -->
 
@@ -634,6 +657,7 @@ function submitForm(content_idx){
                                             <th>게시판명</th>
                                             <th>제목</th>
                                             <th>등록일</th>
+                                            <th>조회수</th>
                                             <th>임시삭제</th> 
                                             <th>자세히보기</th> 
                                         </tr>
@@ -646,6 +670,7 @@ function submitForm(content_idx){
                                             <th>제목</th>
                                             <th>등록일</th>
                                             <th>임시삭제</th> 
+                                            <th>조회수</th>
                                             <th>자세히보기</th> 
                                         </tr>
                                     </tfoot>
@@ -725,22 +750,7 @@ function submitForm(content_idx){
 	<!-- Page level custom scripts -->
 	<script src="${root}/resources/js/demo/datatables-demo.js"></script>
 
- <script>
- $(document).ready(function() {
-	    // DataTable 초기화 확인 후 초기화
-	    if (!$.fn.DataTable.isDataTable('#dataTable')) {
-	        $('#dataTable').DataTable({
-	            "paging": true,
-	            "searching": true,
-	            "ordering": true,
-	            "info": true,
-	            "lengthChange": true,
-	            "pageLength": 10,
-	            "lengthMenu": [5, 10, 25, 50, 75, 100]
-	        });
-	    }
-	});
-</script>
+ 
 </body>
 
 </html>

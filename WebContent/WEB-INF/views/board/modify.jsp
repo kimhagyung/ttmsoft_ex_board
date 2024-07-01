@@ -15,7 +15,7 @@
 	        oAppRef: oEditors,
 	        elPlaceHolder: "editor",
 	        sSkinURI: "${root}/resources/se2/SmartEditor2Skin.html",
-	        fCreator: "createSEditor2" 
+	        fCreator: "createSEditor2"
 	    })
 	}
 	$(document).ready(function() {

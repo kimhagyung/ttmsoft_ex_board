@@ -84,53 +84,75 @@
 	});
 </script> 
 <script>
-$(function(){
-	$("#SearchBoardInfo").click(function(){
-		var searchKeyword=$("#inputBoardName").val();
-		var is_Usage=$("#is_Usage").val();
-		console.log("검색 키워드 : ", searchKeyword);
-		console.log("사용여부 : ", is_Usage);
-		
-		$.ajax({
-			url : '${root}/SearchInfo?board_info_name='+searchKeyword+'&is_usage='+is_Usage,
-			type: 'GET',
-			dataType:'Json',
-			success: function(response){
-				console.log("검색 성공 " ,response); 
-				$("#board_Info").empty();
-				var SearchResult=response.searchResult;
-				var ContentCnt=response.contentCnt;
-				console.log("SearchResult : ",SearchResult)
-				console.log("ContentCnt", ContentCnt)
-				if (SearchResult.length > 0) {
-					for (var i = 0; i < SearchResult.length; i++) {
-						var item=SearchResult[i];  
-				            $("#board_Info").append(
-				                '<tr>' +
-				                '<td>' + (i+1) + '</td>' +
-				                '<td>' + item.board_info_idx + '</td>' +
-				                '<td>' + item.board_info_name + '</td>' +
-				                '<td>' + ContentCnt[i] + '</td>' +
-				                '<td>' + item.is_usage + '</td>' +
-				                '<td>' + item.board_date + '</td>' +
-				                '<td><input type="button" value="수정" ' +
-				                'data-bs-toggle="modal" ' +
-				                'data-bs-target="#BoardModifyModal_' + item.board_info_idx + '" ' +
-				                'class="btn btn-info" /></td>' +
-				                '</tr>'
-				            );
-					}
-				}else {
-					$("#board_Info").append('<tr><td colspan="7"> 검색 결과가 없습니다</td></tr>');
-				}
-			},
-			error : function(error){
-				console.log("검색 오류 발생 ", error)
-			}
-		});
-	});
+$(document).ready(function() {
+	//table.clear().draw();
+    // DataTables 초기화
+    var table = $('#dataTable').DataTable({
+        paging: true,
+        searching: false,
+        ordering: true,
+        pageLength: 10,
+        destroy: true
+    });
+
+    // 검색 버튼 클릭 이벤트 핸들러
+    $("#SearchBoardInfo").click(function() {
+        var searchKeyword = $("#inputBoardName").val();
+        var is_Usage = $("#is_Usage").val();
+        console.log("검색 키워드 : ", searchKeyword);
+        console.log("사용여부 : ", is_Usage);
+
+        $.ajax({
+            url: '${root}/SearchInfo?board_info_name=' + searchKeyword + '&is_usage=' + is_Usage,
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                console.log("검색 성공 ", response); 
+                
+                // 기존 데이터 삭제
+                table.clear().draw();
+
+                var SearchResult = response.searchResult;
+                var ContentCnt = response.contentCnt;
+                console.log("SearchResult : ", SearchResult);
+                console.log("ContentCnt", ContentCnt);
+
+                if (SearchResult.length > 0) {
+                    for (var i = 0; i < SearchResult.length; i++) {
+                        var item = SearchResult[i];
+                        table.row.add([
+                            i + 1,
+                            item.board_info_idx,
+                            item.board_info_name,
+                            ContentCnt[i],
+                            item.is_usage,
+                            item.board_date,
+                            '<input type="button" value="수정" ' +
+                            'data-bs-toggle="modal" ' +
+                            'data-bs-target="#BoardModifyModal_' + item.board_info_idx + '" ' +
+                            'class="btn btn-info" />'
+                        ]).draw(false);
+                    }
+                } else {
+                    table.row.add([
+                        '',
+                        '',
+                        '검색 결과가 없습니다',
+                        '',
+                        '',
+                        '',
+                        ''
+                    ]).draw(false);
+                }
+            },
+            error: function(error) {
+                console.log("검색 오류 발생 ", error);
+            }
+        });
+    });
 });
-	
+
+
 </script>
 <script>
 $(function(){
@@ -147,6 +169,43 @@ $(function(){
 		var fileSizeInput = $('#fileSizeInput').val();
 		
 		var CheckFile= document.getElementById('CheckFile');
+		var isChecked = CheckFile.checked;
+		//var allcheck = $('#allcheck').val(); 
+
+        console.log('체크된 값들:', checkedValues);
+        console.log('파일첨부기능(isChecked):', isChecked);
+        console.log('첨부파일 수(inputState):', inputState);
+        console.log('첨부파일 사이즈(fileSizeInput):', fileSizeInput);
+        //console.log('전체체크여부:', allcheck);
+        
+        if (isChecked) {
+           if (checkedValues.length === 0 || inputState == 0 || fileSizeInput == 0) {
+                alert('파일 옵션을 설정해 주세요');
+                return false;
+            }else if(fileSizeInput > 8000){
+            	alert('첨부파일 사이즈는 8000Kbyte 이하로 입력해 주세요')
+            	return false;
+            }
+        }
+         
+	});
+	
+	$('[id^=modifyForm_]').submit(function(event) {
+	    var board_info_idx =  $(this).attr('id').split('_')[1];
+	    console.log("board_info_idx : ????",board_info_idx)   
+		//event.preventDefault(); 
+	     
+		const checkboxes = document.querySelectorAll('.CheckExt2_'+board_info_idx);
+		// 체크된 체크박스들의 값을 배열 담는다.
+        const checkedValues = Array.from(checkboxes)
+            .filter(checkbox => checkbox.checked)
+            .map(checkbox => checkbox.value);
+        
+        // 콘솔에 체크된 값들을 출력합니다.
+		var inputState = $('#inputState2_'+board_info_idx).val();
+		var fileSizeInput = $('#fileSizeInput2_'+board_info_idx).val();
+		
+		var CheckFile= document.getElementById('CheckFile2_'+board_info_idx);
 		var isChecked = CheckFile.checked;
 		//var allcheck = $('#allcheck').val(); 
 
@@ -306,7 +365,7 @@ $(function(){
 					</div>
 					<div class="card-body">
 						<div class="table-responsive">
-							<table class="table table-bordered" id="dataTable" width="100%"
+							<table class="table table-bordered dataTable " id="dataTable" width="100%"
 								cellspacing="0">
 								<thead>
 									<tr>
@@ -369,7 +428,7 @@ $(function(){
 
 	<!-- 게시판 수정 모달 -->
 		<c:forEach var="boardinfo" items="${CreateBoard }" varStatus="var">
-			<form:form action="${root }/admin/modifyBoardPro" method="post" modelAttribute="ModifyCreateBoardBean">  
+			<form:form action="${root }/admin/modifyBoardPro" method="post" modelAttribute="ModifyCreateBoardBean" id="modifyForm_${boardinfo.board_info_idx}">  
 				<div class="modal fade"
 					id="BoardModifyModal_${boardinfo.board_info_idx }"
 					tabindex="-1" aria-labelledby="BoardModifyModalLabel"
@@ -812,6 +871,7 @@ $(function(){
 	<!-- Page level custom scripts -->
 	<script src="${root}/resources/js/demo/datatables-demo.js"></script>
  <script>
+ /*
  $(document).ready(function() {
 	    // DataTable 초기화 확인 후 초기화
 	    if (!$.fn.DataTable.isDataTable('#dataTable')) {
@@ -825,7 +885,7 @@ $(function(){
 	            "lengthMenu": [5, 10, 25, 50, 75, 100]
 	        });
 	    }
-	});
+	});*/
 </script>
 </body>
 
