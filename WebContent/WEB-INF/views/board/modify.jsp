@@ -143,7 +143,7 @@ $(function(){
     $('#uploadForm').submit(function(event) {
         var formData = new FormData(); 
       //event.preventDefault(); // 폼 기본 동작 방지
-
+	var content_is_public = $('input[name="content_is_public"]:checked').val();
       var board_subject = $('#board_subject').val();
       var content_text = $('#editor').val(); 
         for (var i = 0; i < filesArr.length; i++) { 
@@ -155,6 +155,7 @@ $(function(){
 
 
         formData.append('content_subject', board_subject);
+        formData.append('content_is_public', content_is_public);
         formData.append('content_text', content_text); 
         //formData.append('content_board_idx', ${param.index}); 
       //  formData.append('user_idx', ${loginUserBean.user_idx});
@@ -254,11 +255,11 @@ $(function(){
 								<div class="form-group">
 				                <label for="public"><h4>공개여부</h4></label><br>
 				                	<div class="form-check form-check-inline">
-									  <input class="form-check-input" type="radio" name="content_is_public" id="public1_${boardInfo.content_idx}" value="1" ${boardInfo.content_is_public == 1 ? 'checked' : ''}>
+									  <input class="form-check-input" type="radio" name="content_is_public" id="public1_${boardInfo.content_idx}" value="1"  ${boardInfo.content_is_public == 1 ? 'checked' : ''}>
 									  <label class="form-check-label" for="public1_${boardInfo.content_idx}">공개</label>
 									</div>
 									<div class="form-check form-check-inline">
-									  <input class="form-check-input" type="radio" name="content_is_public" id="public2_${boardInfo.content_idx}" value="0" ${boardInfo.content_is_public == 0 ? 'checked' : ''}>
+									  <input class="form-check-input" type="radio" name="content_is_public" id="public2_${boardInfo.content_idx}" value="0"  ${boardInfo.content_is_public == 0 ? 'checked' : ''}>
 									  <label class="form-check-label" for="public2_${boardInfo.content_idx}">비공개</label>
 									</div>
 				                </div>

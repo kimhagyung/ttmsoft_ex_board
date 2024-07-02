@@ -21,11 +21,18 @@
 	$(document).ready(function() {
 	
 		smartEditor();
-        function submitContents(elClickedObj) {
-            oEditors.getById["editor"].exec("UPDATE_CONTENTS_FIELD", []); // 에디터의 내용이 html형식으로 저장되도록 하는거??.
-            // 에디터의 내용을 출력합니다.
-            //alert(document.getElementById("editor").value);
-        } 
+		/*
+		 function encodeHTMLContent(str) {
+	            return str.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "\\n");
+	        }*/
+	        function submitContents(elClickedObj) {
+	            oEditors.getById["editor"].exec("UPDATE_CONTENTS_FIELD", []); // 에디터의 내용이 html형식으로 저장되도록 하는거.
+	            // 에디터의 내용을 가져옵니다.
+	           // var content_text = document.getElementById("editor").value; 
+	           // content_text = encodeHTMLContent(content_text); 
+	           // document.getElementById("editor").value = content_text;
+	            //alert(document.getElementById("editor").value);
+	        } 
         // 전송 버튼 클릭 이벤트 핸들러 추가
         $('#submit').on('click', function() {
             submitContents(this);
@@ -87,6 +94,7 @@ var fileNo = 0;
 
           var board_subject = $('#board_subject').val();
           var content_text = $('#editor').val(); 
+          var content_is_public = $('input[name="content_is_public"]:checked').val(); // 공개 여부 값 가져오기
             for (var i = 0; i < filesArr.length; i++) {
                 // 삭제되지 않은 파일만 폼데이터에 담기
                 if (!filesArr[i].is_delete) {
@@ -97,7 +105,7 @@ var fileNo = 0;
                 }
             }
 
-
+            formData.append('content_is_public', content_is_public);
             formData.append('content_subject', board_subject);
             formData.append('content_text', content_text); 
             formData.append('content_board_idx', ${param.index}); 

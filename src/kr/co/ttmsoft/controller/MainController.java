@@ -33,7 +33,7 @@ public class MainController {
 		List<BoardInfoBean> topMenuList = topMenuService.getTopMenuList(); // 메뉴 사이즈를 위해
 
 		System.out.println("메뉴 사이즈 !!" + topMenuList.size());
-
+		 
 		for (int i = 1; i <= topMenuList.size(); i++) {
 			MainBoardInfo.addAll(boardService.getBoardInfoo(i));
 			System.out.println("i의 값은? " + i);

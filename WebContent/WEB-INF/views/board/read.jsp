@@ -2,7 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="root" value="${pageContext.request.contextPath }" />
 <!DOCTYPE html>
 <!-- <html xmlns:th="http://www.thymeleaf.org"> thymeleaf 선언 -->
@@ -508,29 +508,29 @@ function updateReply(replyIdx, editedText,commentIdx){
 			<div class="form-group">
 				<label for="board_content">내용</label>
 				<!-- Thymeleaf에서 HTML 태그가 이미 저장된 내용을 출력. -->
-				<!--<div th:utext="${boardInfo.content_text}">${boardInfo.content_text}</div>  -->
-				<div
-					style="border: 1px solid rgba(100, 100, 100, 0.5); padding: 10px; border-radius: 5px">${boardInfo.content_text}</div>
+				<%--  <div th:utext="${boardInfo.content_text}"  escapeXml="false" >${boardInfo.content_text}</div> --%> 
+				  <div style="border: 1px solid rgba(100, 100, 100, 0.5); padding: 10px; border-radius: 5px"><c:out value="${boardInfo.content_text}" escapeXml="false" /></div>
+			 
 			</div>
 		
-			<div class="form-group">
-		<%-- 	<c:forEach var="file" items="${boardfileBean }">
-				<c:if test="${file.board_file_idx != null}">
-					<img src="${root }/upload/${file.file_path}" width="100%"
-						style="border-radius: 5px;" class="mt-3" />
-				</c:if> 
-			</c:forEach>  --%>   
+			<div class="form-group"> 
 				    <%-- 이미지 파일 캐러셀 --%>
 				    <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
 				        <div class="carousel-inner">
 				            <c:forEach var="file" items="${boardfileBean}" varStatus="loop">
-				                <c:if test="${file.board_file_idx != null}">
-				                    <c:set var="extension" value="${fn:substringAfter(file.file_name, '.')}"/> 
-			                        <c:if test="${extension eq 'jpg' or extension eq 'jpeg' or extension eq 'png' or extension eq 'bmp' or extension eq 'tiff' or extension eq 'tif' or extension eq 'svg'}">     <div class="carousel-item ${loop.index == 0 ? 'active' : ''}">
-			                                <img src="${root}/upload/${file.file_path}" class="d-block w-100" style="height: 500px; border-radius: 5px;" alt="pic">
-			                            </div>
-			                        </c:if> 
-				                </c:if>
+				                    <c:if test="${file.board_file_idx != null}">
+							        <c:set var="extension" value="${fn:substringAfter(file.file_name, '.')}"/> 
+							        <c:choose>
+							            <c:when test="${extension eq 'jpg' or extension eq 'jpeg' or extension eq 'png' or extension eq 'bmp' or extension eq 'tiff' or extension eq 'tif' or extension eq 'svg'}">
+							                <div class="carousel-item ${loop.index == 0 ? 'active' : ''}">
+							                    <img src="${root}/upload/${file.file_path}" class="d-block w-100" style="height: 500px; border-radius: 5px;" alt="pic">
+							                </div>
+							            </c:when>
+							            <c:otherwise>
+							                <!-- 확장자가 이미지가 아닌 경우에는 아무 처리도 하지 않음 -->
+							            </c:otherwise>
+							        </c:choose>
+							    </c:if>
 				            </c:forEach>
 				        </div>
 				        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">

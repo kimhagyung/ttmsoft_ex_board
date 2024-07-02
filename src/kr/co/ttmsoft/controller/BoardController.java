@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -76,16 +77,15 @@ public class BoardController {
 		List<BoardFileBean> boardfileBean=boardService.getBoardFileInfo(content_idx); //게시글 사진 정보 
 		String boardWriterName = (boardService.getContentUserName(content_idx));
 		BoardInfoBean boardAllInfo = boardService.getAllBoardInfo(boardInfo.getContent_board_idx());
-		boardService.plusCnt(content_idx);
-		/*
-		System.out.println("받아온 게시글 내용: " + boardInfo.getContent_text());
-		for(BoardFileBean boardfile:boardfileBean) { 
-			System.out.println("받아온 사진 이름 :"+boardfile.getFile_name());
-			System.out.println("받아온 사진 경로 :"+boardfile.getFile_path());
-		}
-		System.out.println("받아온 작성자 이름: " + boardWriterName);
-	*/
-		
+		boardService.plusCnt(content_idx); //조회수
+	  
+ 
+        // HTML 디코딩
+        //String decodedContent = StringEscapeUtils.unescapeHtml4(boardInfo.getContent_text());
+        //System.out.println("decodedContent???"+decodedContent);
+        //boardInfo.setContent_text(decodedContent);
+    
+	 
 		model.addAttribute("boardWriterName", boardWriterName); //게시글 작성자 이름 
 		model.addAttribute("boardInfo", boardInfo); //게시글 정보 
 		model.addAttribute("boardAllInfo", boardAllInfo); //게시판 모든 정보 
@@ -116,9 +116,9 @@ public class BoardController {
 	    System.out.println("받아온 사용자 아이디는?" + boardPostBean.getUser_idx());
 	    System.out.println("받아온 글내용은?" + boardPostBean.getContent_text());
 	    System.out.println("받아온 제목은?" + boardPostBean.getContent_subject());
-	    System.out.println("받아온 파일 사이즈는?" + boardFilePostBean.getFile_size());
+	    System.out.println("받아온 파일 사이즈는?" + boardFilePostBean.getFile_size());*/  
 	    System.out.println("공개여부는?" + boardPostBean.getContent_is_public());
-	    */  
+	    
 		 try {
 		        if (loginUserBean.isUserLogin() || loginAdminBean.isAdmin_login()) { // 로그인 여부 확인
 		            int contentIdx = boardService.addBoardInfo(boardPostBean); // 내용 저장 및 게시글 번호 반환  
