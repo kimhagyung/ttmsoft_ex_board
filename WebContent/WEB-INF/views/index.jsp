@@ -54,7 +54,7 @@ function SecretWrite(){
 													                <a href="${root}/board/read?content_idx=${info.content_idx}">${info.content_subject}</a>
 													            </c:when>
 													            <c:when test="${empty loginUserBean.user_idx or loginUserBean.user_idx != info.user_idx}">
-													                <a href="${root}/board/read?content_idx=${info.content_idx}" onclick="SecretWrite(); return false;">${info.content_subject}</a>
+													                <a href="${root}/board/read?content_idx=${info.content_idx}" onclick="SecretWrite(); return false;">[비공개 글입니다]</a>
 													            </c:when>
 													        </c:choose>
 													    </c:when>
