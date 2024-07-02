@@ -14,14 +14,14 @@ create table board_info_table(
     file_size number default 0,
     file_ext varchar2(500),
     board_date date, 
-    is_public number(1) default 0 check(is_public in(0,1)) 
+    is_public number(1) default 0 check(is_public in(0,1))
 );       
 --댓글 테이블 -----------------------------------------------------------------------------------------------------
 --댓글 번호(시퀀스)
 create sequence comment_seq
-start with 0
+start with 1
 increment by 1
-minvalue 0;
+minvalue 1;
 create table comment_table(
 	comment_idx number constraint COMMENT_PK primary key,
     comments varchar(500) not null,
@@ -34,7 +34,7 @@ create table comment_table(
 create sequence reply_seq
 start with 1
 increment by 1
-minvalue 0;
+minvalue 1;
 create table reply_table(
     reply_idx number constraint REPLY_PK primary key, 
     reply varchar(500) not null, 
@@ -46,9 +46,9 @@ create table reply_table(
 --게시글 테이블 -----------------------------------------------------------------------------------------------------
 --게시글 번호(시퀀스)
 create sequence content_seq
-start with 0
+start with 1
 increment by 1
-minvalue 0;
+minvalue 1;
 create table content_table(
 	content_idx number constraint CONTENT_PK primary key,
 	content_subject varchar2(500),
@@ -58,16 +58,16 @@ create table content_table(
 	content_board_idx number not null
 	                  constraint CONTENT_FK2 references board_info_table(board_info_idx) on delete cascade,
 	content_date date not null,
-    content_is_public number(1) default 1 check(is_public in(0,1)),
+    content_is_public number(1) default 1 check(content_is_public in(0,1)),
     is_deleted varchar(1) default 'N' check(is_deleted in('Y','N')),
     modifyContent_date date,
-    admin_idx constraint CONTENT_FK3 references admin_table(admin_idx) on delete cascade
-);   
+    viewCnt number default 0
+);    
 --게시판 파일 시퀀스
 create sequence board_file_seq
 start with 1
 increment by 1
-minvalue 0;
+minvalue 1;
 -- 게시판 파일 테이블 
 create table board_file(
     board_file_idx number constraint BOARD_FILE primary key, 
@@ -80,9 +80,9 @@ create table board_file(
 );    
 --회원 번호(시퀀스) -----------------------------------------------------------------------------------------------------
 create sequence user_seq
-start with 0
+start with 1
 increment by 1
-minvalue 0;
+minvalue 1;
 --회원 테이블
 create table user_table(
 	user_idx number constraint USER_PK primary key,
@@ -97,7 +97,7 @@ create table user_table(
 create sequence admin_seq
 start with 1
 increment by 1
-minvalue 0;
+minvalue 1;
 --관리자 테이블 
 create table admin_table(
     admin_idx number constraint ADMIN_PK primary key, 
