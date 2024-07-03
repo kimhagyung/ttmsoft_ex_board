@@ -1,9 +1,20 @@
 package kr.co.ttmsoft.controller;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -309,5 +320,104 @@ public class RestApiController {
 	            e.printStackTrace();
 	        }
 	    }
-	
+	 
+	 /*
+	 //스마트 에디터 사진파일 처리 
+	 @PostMapping("/smarteditorMultiImageUpload")
+		public void smarteditorMultiImageUpload(HttpServletRequest request, HttpServletResponse response){
+			try {
+				System.out.println("smarteditorMultiImageUpload 진입!!");
+				//파일정보
+				String sFileInfo = "";
+				//파일명을 받는다 - 일반 원본파일명
+				String sFilename = request.getHeader("file-name");
+				//파일 확장자
+				String sFilenameExt = sFilename.substring(sFilename.lastIndexOf(".")+1);
+				//확장자를소문자로 변경
+				sFilenameExt = sFilenameExt.toLowerCase();
+					
+				//이미지 검증 배열변수
+				String[] allowFileArr = {"jpg","png","bmp","gif"};
+
+				//확장자 체크
+				int nCnt = 0;
+				for(int i=0; i<allowFileArr.length; i++) {
+					if(sFilenameExt.equals(allowFileArr[i])){
+						nCnt++;
+					}
+				}
+
+				//이미지가 아니라면
+				if(nCnt == 0) {
+					PrintWriter print = response.getWriter();
+					print.print("NOTALLOW_"+sFilename);
+					print.flush();
+					print.close();
+				} else {
+					//디렉토리 설정 및 업로드	
+					
+					//파일경로
+					String filePath = "C://workspace_2020_12//ttmsoft_board_test//WebContent//resources//multiImageFile//";
+					//String filePath = request.getContextPath() + "resources//multiImageFile//";
+					File file = new File(filePath);
+					
+					if(!file.exists()) {
+						file.mkdirs();
+					}
+					
+					String sRealFileNm = "";
+					SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+					String today= formatter.format(new java.util.Date());
+					sRealFileNm = today+UUID.randomUUID().toString() + sFilename.substring(sFilename.lastIndexOf("."));
+					String rlFileNm = filePath + sRealFileNm;
+					
+					///////////////// 서버에 파일쓰기 ///////////////// 
+					try {
+					    InputStream inputStream = request.getInputStream();
+					    OutputStream outputStream = new FileOutputStream(rlFileNm);
+					    int numRead;
+					    byte bytes[] = new byte[Integer.parseInt(request.getHeader("file-size"))];
+					    
+					    while ((numRead = inputStream.read(bytes, 0, bytes.length)) != -1) {
+					        outputStream.write(bytes, 0, numRead);
+					    }
+					    
+					    if (inputStream != null) {
+					        inputStream.close();
+					    }
+					    
+					    outputStream.flush();
+					    outputStream.close();
+					    // 파일 저장 완료 후 콘솔에 로그 출력
+					    System.out.println("File saved successfully: " + rlFileNm);
+					} catch (IOException e) {
+					    e.printStackTrace(); // 예외 발생 시 스택 트레이스 출력
+					}
+
+					
+					///////////////// 이미지 /////////////////
+					try {
+					    // 정보 출력
+					    sFileInfo += "&bNewLine=true";
+					    // img 태그의 title 속성을 원본파일명으로 적용시켜주기 위함
+					    sFileInfo += "&sFileName=" + sFilename;
+					    sFileInfo += "&sFileURL=" + request.getContextPath() + "/resources/multiImageFile/" + sRealFileNm;
+					    	
+					    
+					    PrintWriter printWriter = response.getWriter();
+					    printWriter.print(sFileInfo);
+					    printWriter.flush();
+					    printWriter.close();
+					    System.out.println("가져오기 성공 !"); 
+					    System.out.println("sFileURL??: " + request.getContextPath() + "/resources/multiImageFile/" + sRealFileNm);
+					} catch (IOException e) {
+					    e.printStackTrace(); // 예외 발생 시 스택 트레이스 출력
+					    System.err.println("Failed to print image info: " + e.getMessage());
+					}
+
+				}	
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}*/ 
 }

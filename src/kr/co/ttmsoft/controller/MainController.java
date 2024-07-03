@@ -35,8 +35,7 @@ public class MainController {
 		System.out.println("메뉴 사이즈 !!" + topMenuList.size());
 		 
 		for(BoardInfoBean topMenu : topMenuList) {
-			MainBoardInfo.addAll(boardService.getBoardInfoo(topMenu.getBoard_info_idx())); 
-			System.out.println("topMenu의 값은? " + topMenu);
+			MainBoardInfo.addAll(boardService.getBoardInfoo(topMenu.getBoard_info_idx()));  
 		} 
 
 		model.addAttribute("MainBoardInfo", MainBoardInfo);

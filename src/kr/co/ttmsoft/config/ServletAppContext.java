@@ -21,6 +21,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.resource.PathResourceResolver;
 
 import kr.co.ttmsoft.beans.AdminBean;
 import kr.co.ttmsoft.beans.UserBean;
@@ -68,7 +69,7 @@ public class ServletAppContext implements WebMvcConfigurer {
 
 	@Autowired
 	private TopMenuService topMenuService;
-
+/*
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		// 정적 파일 경로 매핑(이거 지우면 사진 경로 못찾음)
@@ -77,7 +78,17 @@ public class ServletAppContext implements WebMvcConfigurer {
 		 
 		// 네이버 스마트 에디터 경로때문에 적어둠 
 		 registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
-	}
+	}*/
+    
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/resources/**")
+                .addResourceLocations("/WEB-INF/resources/")
+                .setCachePeriod(3600)
+                .resourceChain(true)
+                .addResolver(new PathResourceResolver());
+        registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
+    }
 	@Override
 	public void configureViewResolvers(ViewResolverRegistry registry) {
 		// Controller의 메서드가 반환하는 파일 앞뒤에 경로와 확장자 추가
