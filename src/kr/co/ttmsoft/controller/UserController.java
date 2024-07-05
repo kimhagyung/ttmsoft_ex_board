@@ -35,7 +35,8 @@ public class UserController {
 		return "user/login";
 	}
 	@PostMapping("/login_pro")
-	public String login_pro(@ModelAttribute("LoginUserBean") UserBean LoginUserBean, Model model, HttpServletRequest request,HttpServletResponse response){
+	public String login_pro(@ModelAttribute("LoginUserBean") UserBean LoginUserBean, Model model,
+			HttpServletRequest request,HttpServletResponse response, HttpSession session){
 		 // 이전 페이지 URI 가져오기
         String prevPage = (String) request.getSession().getAttribute("prevPage");
         System.out.println("prevPage 정보는?" + prevPage);
@@ -47,6 +48,20 @@ public class UserController {
 					System.out.println("지금 로그인 !!" + LoginUserBean.getUser_id());
 					model.addAttribute("prevPage", prevPage);
 			        }
+
+		        session.setAttribute("user_id", LoginUserBean.getUser_id());
+				session.setAttribute("user_pw", LoginUserBean.getUser_pw());
+				session.setAttribute("user_name",LoginUserBean.getUser_name());  
+				
+
+		        String userId = (String) session.getAttribute("user_id");
+		        String userPw = (String) session.getAttribute("user_pw");
+		        String userName = (String) session.getAttribute("user_name");
+		        System.out.println("세션에 저장된 user_id: " + userId);
+		        System.out.println("세션에 저장된 user_pw: " + userPw);
+		        System.out.println("세션에 저장된 user_name: " + userName);
+		        //LoginUserBean에는 클라이언트에서 보낸 id, pw 값 뿐이어서 user_name은 null로 뜬다. !  
+		        
 		        return "user/login_success"; 
 			}else {
 				return "user/login_fail";

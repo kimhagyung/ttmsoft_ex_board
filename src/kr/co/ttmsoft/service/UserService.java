@@ -38,6 +38,7 @@ public class UserService {
 				loginUserBean.setUser_pw(tb2.getUser_pw());
 				loginUserBean.setUser_name(tb2.getUser_name());
 				loginUserBean.setUserLogin(true); 
+				
 			} else {
 				System.out.println("로그인 사용자 정보가 없숨"); 
 			}
