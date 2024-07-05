@@ -61,6 +61,7 @@ public class UserController {
 		        System.out.println("세션에 저장된 user_pw: " + userPw);
 		        System.out.println("세션에 저장된 user_name: " + userName);
 		        //LoginUserBean에는 클라이언트에서 보낸 id, pw 값 뿐이어서 user_name은 null로 뜬다. !  
+		        //근데 그냥서비스단에서 추가하기 전에 세션에 저장해서 그런듯하다 ..! 
 		        
 		        return "user/login_success"; 
 			}else {
@@ -113,7 +114,7 @@ public class UserController {
 	public String logout(HttpServletRequest request, Model model) throws Exception {
 		String prevPage = (String) request.getSession().getAttribute("prevPage");
 		HttpSession session=request.getSession(); 
-		session.invalidate();
+		session.invalidate(); 
 		loginUserBean.setUserLogin(false);
 		
 	   if (prevPage != null && !prevPage.equals("")) { // 이전 페이지가 있으면 그 페이지로 리다이렉트
