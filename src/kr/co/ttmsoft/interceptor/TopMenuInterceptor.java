@@ -33,7 +33,7 @@ public class TopMenuInterceptor implements HandlerInterceptor {
         // 요청 시점의 사용자 URI 정보를 Session의 Attribute에 담아서 전달(잘 지워줘야 함)
         // 로그인이 틀려서 다시 하면 요청 시점의 URI가 로그인 페이지가 되므로 조건문 설정
         String uri = request.getHeader("Referer"); // Referer은 요청을 보낸 URL임
-        if (uri != null && !uri.contains("/user/login")) {
+        if (uri != null && !uri.contains("/user/login") && !uri.contains("/user/not_login") && !uri.contains("/user/logout")) {
             request.getSession().setAttribute("prevPage", uri);
         }
 
