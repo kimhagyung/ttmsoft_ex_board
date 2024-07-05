@@ -1,7 +1,5 @@
 package kr.co.ttmsoft.beans;
 
-import org.springframework.web.multipart.MultipartFile;
-
 public class NaverEditorBean {
 	private int naverEditor_idx;
 	private String naverEditor_subject; 

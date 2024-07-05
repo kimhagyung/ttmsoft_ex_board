@@ -2,7 +2,6 @@ package kr.co.ttmsoft.dao;
 
 import java.util.List;
 
-import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -11,10 +10,7 @@ import kr.co.ttmsoft.beans.BoardFileBean;
 import kr.co.ttmsoft.beans.BoardInfoBean;
 import kr.co.ttmsoft.beans.ContentBean;
 import kr.co.ttmsoft.beans.NaverEditorBean;
-import kr.co.ttmsoft.beans.PageBean;
-import kr.co.ttmsoft.beans.UserBean;
 import kr.co.ttmsoft.mapper.BoardMapper;
-import kr.co.ttmsoft.mapper.UserMapper;
 
 @Repository
 public class BoardDao {

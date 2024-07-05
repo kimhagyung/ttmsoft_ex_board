@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import kr.co.ttmsoft.beans.AdminBean;
 import kr.co.ttmsoft.beans.UserBean;
 
 public class LoginInterceptor implements HandlerInterceptor {
@@ -23,6 +22,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 		if(loginUserBean.isUserLogin()==false ) {
 			String contextPath=request.getContextPath();
 			response.sendRedirect(contextPath+"/user/not_login");
+			System.out.println("LoginInterceptor 동작!");
 			return false;
 		}
 			

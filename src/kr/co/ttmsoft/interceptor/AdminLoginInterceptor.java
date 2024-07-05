@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import kr.co.ttmsoft.beans.AdminBean;
-import kr.co.ttmsoft.beans.UserBean;
 
 public class AdminLoginInterceptor implements HandlerInterceptor {
 	

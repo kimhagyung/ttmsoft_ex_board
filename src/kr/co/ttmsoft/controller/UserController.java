@@ -1,9 +1,8 @@
 package kr.co.ttmsoft.controller;
 
-import java.util.List;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -27,8 +26,8 @@ public class UserController {
 	private UserService userService;
 
 	@Resource(name = "loginUserBean")
-	private UserBean loginUserBean;
-
+	private UserBean loginUserBean; 
+    
 	@GetMapping("/login")
 	public String login(@ModelAttribute("LoginUserBean") UserBean LoginUserBean, Model model,
 			@RequestParam(value = "fail", defaultValue = "false") boolean fail) {
@@ -36,17 +35,23 @@ public class UserController {
 		return "user/login";
 	}
 	@PostMapping("/login_pro")
-	public String login_pro(@ModelAttribute("LoginUserBean") UserBean LoginUserBean, Model model) {
- 
+	public String login_pro(@ModelAttribute("LoginUserBean") UserBean LoginUserBean, Model model, HttpServletRequest request,HttpServletResponse response){
+		 // 이전 페이지 URI 가져오기
+        String prevPage = (String) request.getSession().getAttribute("prevPage");
+        System.out.println("prevPage 정보는?" + prevPage);
 		try {
 			userService.getLoginUserInfo(LoginUserBean.getUser_id());
 			if (loginUserBean.isUserLogin() == true) {
-				System.out.println("지금 로그인 !!" + LoginUserBean.getUser_id());
-				return "user/login_success";
-			} else {
+				 // 로그인 성공 후 리다이렉트 설정
+		        if (prevPage != null && !prevPage.equals("")) { // 이전 페이지가 있으면 그 페이지로 리다이렉트
+					System.out.println("지금 로그인 !!" + LoginUserBean.getUser_id());
+					model.addAttribute("prevPage", prevPage);
+			        }
+		        return "user/login_success"; 
+			}else {
 				return "user/login_fail";
 			}
-		} catch (Exception e) {
+		}catch (Exception e) {
 			e.printStackTrace();
 			return "user/login_fail";
 		}
@@ -90,13 +95,17 @@ public class UserController {
 	
 	
 	@GetMapping("/logout")
-	public String logout(HttpServletRequest request) throws Exception {
-		
+	public String logout(HttpServletRequest request, Model model) throws Exception {
+		String prevPage = (String) request.getSession().getAttribute("prevPage");
 		HttpSession session=request.getSession(); 
 		session.invalidate();
 		loginUserBean.setUserLogin(false);
 		
-		return "user/logout_success";
+	   if (prevPage != null && !prevPage.equals("")) { // 이전 페이지가 있으면 그 페이지로 리다이렉트
+	        model.addAttribute("prevPage", prevPage);
+	    }
+
+	    return "user/logout_success";
 	}
 
 	

@@ -39,7 +39,7 @@ function SecretWrite(){
 									</tr>
 								</thead>
 								<tbody>  
-									<c:forEach var="info" items="${MainBoardInfo}">
+									<c:forEach var="info" items="${MainBoardInfo}" >
 										<c:if test="${info.content_board_idx == obj.board_info_idx}">   
 			                                <tr>
 			                                    <td class="text-center">${info.content_idx}</td>

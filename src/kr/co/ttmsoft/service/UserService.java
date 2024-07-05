@@ -29,7 +29,7 @@ public class UserService {
 		userDao.addUserInfo(joinUserBean);
 	}
 
-	public void getLoginUserInfo(String user_id) {
+	public UserBean getLoginUserInfo(String user_id) {
 
 		UserBean tb2 = userDao.getLoginUserInfo(user_id); 
 			if (tb2 != null) {
@@ -37,11 +37,12 @@ public class UserService {
 				loginUserBean.setUser_idx(tb2.getUser_idx());
 				loginUserBean.setUser_pw(tb2.getUser_pw());
 				loginUserBean.setUser_name(tb2.getUser_name());
-				loginUserBean.setUserLogin(true);
+				loginUserBean.setUserLogin(true); 
 			} else {
-				System.out.println("로그인 사용자 정보가 없숨");
+				System.out.println("로그인 사용자 정보가 없숨"); 
 			}
 			System.out.println("로그인 사용자 이름"+tb2.getUser_name()); 
+			return tb2;
 	}
 	
 	public boolean checkuserIdExist(String user_id) {

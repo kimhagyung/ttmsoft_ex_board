@@ -1,9 +1,5 @@
 package kr.co.ttmsoft.beans;
 
-import java.util.List;
-
-import org.apache.ibatis.annotations.Options;
-
 public class ContentBean {
 	 
 	private int content_idx;//게시글 번호

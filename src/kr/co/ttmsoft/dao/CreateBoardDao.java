@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import kr.co.ttmsoft.beans.BoardInfoBean;
-import kr.co.ttmsoft.beans.CreateBoardBean;
-import kr.co.ttmsoft.mapper.CommentMapper;
 import kr.co.ttmsoft.mapper.CreateBoardMapper;
 
 @Repository

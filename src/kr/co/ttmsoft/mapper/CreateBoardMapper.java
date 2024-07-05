@@ -8,7 +8,6 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import kr.co.ttmsoft.beans.BoardInfoBean;
-import kr.co.ttmsoft.beans.CreateBoardBean;
 
 public interface CreateBoardMapper {
 

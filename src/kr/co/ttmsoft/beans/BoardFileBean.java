@@ -1,9 +1,5 @@
 package kr.co.ttmsoft.beans;
 
-import java.util.List;
-
-import org.springframework.web.multipart.MultipartFile;
-
 public class BoardFileBean {
 	
 	private int board_file_idx;  

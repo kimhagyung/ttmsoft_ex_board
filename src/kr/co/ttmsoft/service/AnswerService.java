@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import kr.co.ttmsoft.beans.AdminAnswerBean;
 import kr.co.ttmsoft.dao.AnswerDao;
-import kr.co.ttmsoft.mapper.AnswerMapper;
 
 @Service
 public class AnswerService {

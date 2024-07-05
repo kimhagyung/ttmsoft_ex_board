@@ -1,9 +1,5 @@
 package kr.co.ttmsoft.beans;
 
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-
-
 public class UserBean {
 	
 	private int user_idx;

@@ -2,7 +2,6 @@ package kr.co.ttmsoft.controller;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -26,7 +25,6 @@ import kr.co.ttmsoft.mapper.BoardMapper;
 import kr.co.ttmsoft.service.BoardService;
 import kr.co.ttmsoft.service.CreateBoardService;
 import kr.co.ttmsoft.service.UserService;
-import oracle.jdbc.proxy.annotation.Post;
 
 @Controller
 @RequestMapping("admin")

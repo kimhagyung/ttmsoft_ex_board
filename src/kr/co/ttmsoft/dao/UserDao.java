@@ -3,7 +3,6 @@ package kr.co.ttmsoft.dao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import kr.co.ttmsoft.beans.AdminBean;
 import kr.co.ttmsoft.beans.UserBean;
 import kr.co.ttmsoft.mapper.UserMapper;
 

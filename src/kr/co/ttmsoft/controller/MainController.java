@@ -54,6 +54,12 @@ public class MainController {
 
 		return "fileTest2";
 	}
+	
+	@GetMapping("/testPage")
+	public String testPage() {
+		
+		return "testPage";
+	}
 
 	@PostMapping("/register")
 	public String register(@ModelAttribute("boardFilePostBean") BoardFileBean boardFilePostBean,

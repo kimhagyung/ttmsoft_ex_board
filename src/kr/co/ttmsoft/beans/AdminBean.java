@@ -1,7 +1,5 @@
 package kr.co.ttmsoft.beans;
 
-import org.springframework.web.multipart.MultipartFile;
-
 public class AdminBean {
 	
 	private int admin_idx;

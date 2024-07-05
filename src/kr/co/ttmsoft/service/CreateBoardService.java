@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import kr.co.ttmsoft.beans.BoardInfoBean;
-import kr.co.ttmsoft.beans.CreateBoardBean;
 import kr.co.ttmsoft.dao.CreateBoardDao;
 
 @Service
