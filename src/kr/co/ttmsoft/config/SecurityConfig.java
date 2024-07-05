@@ -24,8 +24,7 @@ import kr.co.ttmsoft.service.UserService;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter implements AuthenticationSuccessHandler {
  
-    private final UserService userService;
- 
+    private final UserService userService; 
 	
     @Autowired
     public SecurityConfig(UserService userService) {
@@ -55,8 +54,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Auth
             System.out.println("IP : " + web.getRemoteAddress());
             System.out.println("Session ID : " + web.getSessionId());
             System.out.println("Authenticated User : " + authenticatedUser.getUser_id());
-            
-            
+             
         } else {
             // 사용자 정보가 없을 경우 처리
             response.sendRedirect("/login?error=true");
