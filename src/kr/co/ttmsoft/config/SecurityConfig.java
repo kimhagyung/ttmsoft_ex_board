@@ -19,7 +19,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 import kr.co.ttmsoft.beans.UserBean;
 import kr.co.ttmsoft.service.UserService;
- 
+//이 파일 없어도 수행됨
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter implements AuthenticationSuccessHandler {
@@ -42,9 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements Auth
                                         Authentication authentication) throws IOException, ServletException {
         String user_id = authentication.getName(); // 인증된 사용자 ID
         UserBean authenticatedUser = userService.getLoginUserInfo(user_id);
-        
-        // 이전 페이지 URI 가져오기
-        String prevPage = (String) request.getSession().getAttribute("prevPage");
+         
 
         if (authenticatedUser != null) {
             // 세션에 사용자 정보 설정
