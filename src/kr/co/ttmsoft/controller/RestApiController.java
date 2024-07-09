@@ -265,8 +265,7 @@ public class RestApiController {
 		if(is_usage.equals("All")) {
 			Result= boardService.searchBoardNameInfo(board_info_name);
 		}else if(is_usage.equals("Y") || is_usage.equals("N")){
-			Result=boardService.searchBoardNameInfoYOrNo(board_info_name,is_usage); 
-			
+			Result=boardService.searchBoardNameInfoYOrNo(board_info_name,is_usage);  
 		} 
 		 
 		for (BoardInfoBean getBoardIdx : Result) {
@@ -274,7 +273,7 @@ public class RestApiController {
 		    System.out.println("게시글 개수 :"+ contentCnt);
 		}
 		
-		 Map<String, Object> result = new HashMap<>();
+		Map<String, Object> result = new HashMap<>();
 	    result.put("searchResult", Result);
 	    result.put("contentCnt", contentCnt);
 		return result;
@@ -284,8 +283,7 @@ public class RestApiController {
 	//관리자 페이지 게시판 정보 요청 ReqboardInfo
 	@GetMapping("/ReqboardInfo") 
 	public BoardInfoBean ReqboardInfo(@RequestParam("board_file_idx") int board_file_idx,
-									@RequestParam("content_idx")int content_idx){
-		
+									@RequestParam("content_idx")int content_idx){ 
 		BoardInfoBean req=topMenuService.getReqboardInfo(content_idx,board_file_idx);
 		System.out.println("req의 게시판 값");
 		return req;

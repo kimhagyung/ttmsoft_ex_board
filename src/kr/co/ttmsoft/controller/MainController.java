@@ -43,22 +43,24 @@ public class MainController {
 		return "index";
 	}
 
+	//사용안함 
 	@GetMapping("/fileTest")
 	public String fileTest() {
 
 		return "fileTest";
 	}
 
+	//사용안함
 	@GetMapping("/fileTest2")
 	public String fileTest2() {
 
 		return "fileTest2";
 	}
 	
-	@GetMapping("/testPage")
+	@GetMapping("/calendarEx")
 	public String testPage() {
-		
-		return "testPage";
+		//캘린더 그냥 해본건데 사용은 안함.
+		return "calendarEx";
 	}
 
 	@PostMapping("/register")
