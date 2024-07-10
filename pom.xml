@@ -147,10 +147,11 @@
 		    <version>1.3.1</version>
 		</dependency>  
 		<!-- 헤더나 푸터 귀찮게 선언 노필요 -->
+		<!-- 반복적으로 사용되는 정보(페이지)를 한곳에 모아둔 프레임워크 -->
 	   <dependency>
 	       <groupId>org.apache.tiles</groupId>
 	       <artifactId>tiles-jsp</artifactId>
-	       <version>3.0.7</version>
+	       <version>3.0.8</version>
 	   </dependency> 
 	   <!-- https://mvnrepository.com/artifact/org.apache.tiles/tiles-core -->
 		<dependency>
@@ -170,6 +171,13 @@
 		    <artifactId>tiles-api</artifactId>
 		    <version>3.0.8</version>
 		</dependency> 
+		<!-- https://mvnrepository.com/artifact/org.apache.tiles/tiles-extras -->
+		<dependency>
+		    <groupId>org.apache.tiles</groupId>
+		    <artifactId>tiles-extras</artifactId>
+		    <version>3.0.5</version>
+		</dependency> 
+		 
 	   <!-- tiles -->
 		<dependency>
 			<groupId>javax.annotation</groupId>

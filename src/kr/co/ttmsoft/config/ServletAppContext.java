@@ -22,6 +22,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.resource.PathResourceResolver;
+import org.springframework.web.servlet.view.UrlBasedViewResolver;
 import org.springframework.web.servlet.view.tiles3.TilesConfigurer;
 import org.springframework.web.servlet.view.tiles3.TilesView;
 import org.springframework.web.servlet.view.tiles3.TilesViewResolver;
@@ -213,15 +214,14 @@ public class ServletAppContext implements WebMvcConfigurer {
 		return res;
 	}
 	
-	/*
+	 
 	@Bean
 	public TilesConfigurer tilesConfigurer() {
 		final TilesConfigurer configurer = new TilesConfigurer();
 		configurer.setDefinitions("/WEB-INF/properties/tiles-config.xml"); 
 		configurer.setCheckRefresh(true);
 		return configurer;
-	}
-	*/
+	} 
 	@Bean
 	public TilesViewResolver tilesViewResolver() {
 		final TilesViewResolver tilesViewResolver = new TilesViewResolver();
@@ -229,13 +229,5 @@ public class ServletAppContext implements WebMvcConfigurer {
 		tilesViewResolver.setOrder(1);
 		return tilesViewResolver;
 	}
-	
-	@Bean
-	public TilesConfigurer tilesConfigurer() {
-		final TilesConfigurer configurer = new TilesConfigurer();
-		configurer.setDefinitions(new String[] {"/WEB-INF/properties/tiles-config.xml"});
-		configurer.setCheckRefresh(true);
-		return configurer;
-	} 
-
+	  
 }

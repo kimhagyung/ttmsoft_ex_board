@@ -5,10 +5,9 @@
 	
 <tiles-definitions> 
 	<!-- 서비스 템플릿 -->
-	<definition name="/*/**.board" template="/WEB-INF/view/board.jsp">
-		<put-attribute name="title" value="게시판 테스트"   />
-		<put-attribute name="head" value="/WEB-INF/view/include/top_menu.jsp" />
-		<!-- <put-attribute name="menu" value="/WEB-INF/view/template/front_menu.jsp" /> -->
+	<definition name=".board" template="/WEB-INF/view/include/board.jsp">
+		<put-attribute name="title" value="게시판 테스트" />
+		<put-attribute name="header" value="/WEB-INF/view/include/top_menu.jsp" />
 		<put-attribute name="footer" value="/WEB-INF/view/include/bottom_info.jsp" />
 		<put-attribute name="body" value="/WEB-INF/view/{1}/{2}.jsp"/>
 	</definition> 
