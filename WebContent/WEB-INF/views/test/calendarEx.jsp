@@ -3,10 +3,12 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>테스트 파일</title>
+<title>캘린더 테스트</title>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+<!-- jQuery UI 라이브러리 추가(아래 두개 추가)-->
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
 <link rel="stylesheet"
 	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
 <script>
@@ -19,7 +21,7 @@
 		tag.forEach(function(dataPicker){
 			$(dataPicker).datepicker({
 				showOn: "button",
-				buttonImage: "../images/admin/ico/icon_calendar1.png",
+				buttonImage: "<i class='bi bi-calendar3'></i>",
 				buttonImageOnly: true, // 버튼에 있는 이미지만 표시한다.
 				nextText: '다음 달', // next 아이콘의 툴팁.
 				prevText: '이전 달', // prev 아이콘의 툴팁.

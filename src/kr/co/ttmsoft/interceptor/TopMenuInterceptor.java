@@ -39,11 +39,12 @@ public class TopMenuInterceptor implements HandlerInterceptor {
 
         // 세션 정보 출력
         HttpSession session = request.getSession();
+        System.out.println("-------------------------------------------------");
         System.out.println("Session ID: " + session.getId());
         System.out.println("Session Creation Time: " + session.getCreationTime());
         System.out.println("Session Last Accessed Time: " + session.getLastAccessedTime());
         System.out.println("Session Max Inactive Interval: " + session.getMaxInactiveInterval());
-
+        System.out.println("-------------------------------------------------");
         // 이전 페이지 정보 출력
         String prevPage = (String) session.getAttribute("prevPage");
         System.out.println("Prev Page: " + prevPage);

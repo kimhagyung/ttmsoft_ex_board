@@ -131,9 +131,9 @@
 			</div> 
 		</div>
 	</div>
-</div>
- 
-	<c:import url="/WEB-INF/views/include/bottom_info.jsp" />
+</div> 
+ <%-- 
+	<c:import url="/WEB-INF/views/include/bottom_info.jsp" /> --%>
  
 </body>
 
