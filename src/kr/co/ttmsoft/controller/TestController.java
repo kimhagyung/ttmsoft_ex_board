@@ -50,4 +50,9 @@ public class TestController {
 		mav.addObject("pagingTestAll",pagingTestAll);
 		return mav;
 	}
+	
+	@GetMapping("/colorTest")
+	public String colorTest() {
+		return "test/colorTest";
+	}
 }

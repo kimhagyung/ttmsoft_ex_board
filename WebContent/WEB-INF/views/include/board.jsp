@@ -12,3 +12,5 @@
 	<tiles:insertAttribute name="footer" />
 </body>
 </html>
+
+<!-- tiles 테스트 파일입니다. -->
