@@ -191,7 +191,8 @@ var fileNo = 0;
                 </div>
                 <c:if test="${boardAllInfo.file_checked==1 }">
 	                <div class="form-group insert">
-	                  	<input type="file" id="uploadFiles" name="uploadFiles[]" style="display: none;"   class="form-control" accept="${boardAllInfo.file_ext}" multiple  />                    <label for="uploadFiles"> <h5>첨부파일(최대 ${boardAllInfo.is_file }개)<i class="bi bi-camera-fill mx-2" id="uploadFiles"></i></h5></label>
+	                  	<input type="file" id="uploadFiles" name="uploadFiles[]" style="display: none;"   class="form-control" accept="${boardAllInfo.file_ext}" multiple  />  
+	                  	<label for="uploadFiles"> <h5>첨부파일(최대 ${boardAllInfo.is_file }개)<i class="bi bi-camera-fill mx-2" id="uploadFiles"></i></h5></label>
 	                    <div class="selected-image"></div> 
 	                    <div class="file-list"></div> 
 	                </div>     

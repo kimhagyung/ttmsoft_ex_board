@@ -6,13 +6,12 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>ColorTest </title>
 </head> 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
 <script src="${root}/resources/js/jquery.mincolors.js"></script>   
-<link rel="stylesheet" href="${root}/resources/css/jquery.minicolors.css">
-<%-- <script src="${root}/resources/css/jquery.minicolors.png"></script>  --%>
+<link rel="stylesheet" href="${root}/resources/css/jquery.minicolors.css"> 
 <script>
 	$(function(){
 		$('#bgColor').minicolors({

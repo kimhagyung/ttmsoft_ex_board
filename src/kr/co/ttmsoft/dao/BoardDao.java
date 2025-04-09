@@ -101,12 +101,13 @@ public class BoardDao {
 	}
 	
 	public List<BoardInfoBean> searchBoardNameInfo(String board_info_name){
-		return boardMapper.searchBoardNameInfo(board_info_name);
-	}
+    	return boardMapper.searchBoardNameInfo(board_info_name);
+    }
 	
     public List<BoardInfoBean> searchBoardNameInfoYOrNo(String board_info_name, String is_usage){
     	return boardMapper.searchBoardNameInfoYOrNo(board_info_name, is_usage);
     }
+    
 	
     public void plusCnt(int content_idx) {
     	boardMapper.plusCnt(content_idx);

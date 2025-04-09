@@ -31,6 +31,13 @@ public class TestController {
 		return "test/fileTest2";
 	}
 	
+	//해시태그테스트(사용은안함)
+	@GetMapping("/hashTag")
+	public String hashTag() {
+		
+		return "test/hashTag";
+	}
+	
 	@GetMapping("/calendarEx")
 	public String testPage() {
 		//캘린더 그냥 해본건데 사용은 안함.
@@ -42,6 +49,7 @@ public class TestController {
 		return "test/paging";
 	}
 	
+	//실패함
 	@GetMapping("/pagingDo")
 	public ModelAndView pagingDo() { 
 		ModelAndView mav = new ModelAndView("jsonView"); 
@@ -51,8 +59,22 @@ public class TestController {
 		return mav;
 	}
 	
+	//색상표 테스트(바우처 참고함)
 	@GetMapping("/colorTest")
 	public String colorTest() {
 		return "test/colorTest";
 	}
+
+	//ckEditor 테스트 
+	@GetMapping("/ckEditor")
+	public String ckEditor() {
+		return "test/ckEditor";
+	}
+	 
+	@GetMapping("/test")
+	public String test() {
+		return "test/test";
+	}
+	
+	
 }

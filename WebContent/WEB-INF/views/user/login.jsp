@@ -28,12 +28,12 @@
 						<form:form action="${root }/user/login_pro" method="post"
 							modelAttribute="LoginUserBean">
 							<div class="form-group">
-								<label for="user_id">아이디</label>
+								<label for="user_id">아이디(rlagkrud90)</label>
 								<form:input path="user_id" type="text" id="user_id"
 									name="user_id" class="form-control" />
 							</div>
 							<div class="form-group">
-								<label for="user_pw">비밀번호</label>
+								<label for="user_pw">비밀번호(gkrud98657)</label>
 								<form:input path="user_pw" type="password" id="user_pw"
 									name="user_pw" class="form-control" />
 							</div>

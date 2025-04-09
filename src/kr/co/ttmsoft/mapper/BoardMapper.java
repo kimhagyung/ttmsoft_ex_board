@@ -129,11 +129,18 @@ public interface BoardMapper {
 	@Delete("delete from board_file where board_file_idx=#{board_file_idx}")
 	void deleteBoardFile(int board_file_idx);
 	
-	
+	/*
     @Select("SELECT * " +
             "FROM board_info_table " +
             "WHERE UPPER(board_info_name) LIKE '%' || UPPER(#{board_info_name}) || '%' order by board_info_idx desc")
-    List<BoardInfoBean> searchBoardNameInfo(String board_info_name);  //게시판 이름 검색 
+    List<BoardInfoBean> searchBoardNameInfo(String board_info_name);  //게시판 이름 검색 */
+    @Select("SELECT * " +
+            "FROM board_info_table " +
+            "WHERE UPPER(REPLACE(board_info_name, ' ', '')) LIKE '%' || UPPER(REPLACE(#{board_info_name}, ' ', '')) || '%' " +
+            "ORDER BY board_info_idx DESC")
+    List<BoardInfoBean> searchBoardNameInfo(String board_info_name);  // 게시판 이름 검색 //(( ' ', '')이 부분은 공백을 공백없음으로 치환하라는 의미  
+    
+    
     
     @Select("SELECT * " +
     		"FROM board_info_table " +
